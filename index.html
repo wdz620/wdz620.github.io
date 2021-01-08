@@ -146,6 +146,137 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-设计模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/01/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+    </h1>
+  
+
+        
+        <a href="/2021/01/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
+  	<time datetime="2021-01-08T13:55:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="设计模式简介"><a href="#设计模式简介" class="headerlink" title="设计模式简介"></a>设计模式简介</h2><blockquote>
+<p>设计模式是一套被反复使用的、多数人知晓的、经过分类编目的、代码设计经验的总结。使用设计模式是为了重用代码、让代码更容易被他人理解、保证代码可靠性。 </p>
+</blockquote>
+<h3 id="设计模式的类型"><a href="#设计模式的类型" class="headerlink" title="设计模式的类型"></a>设计模式的类型</h3><blockquote>
+<p>一共分为23种设计模式，这些模式分为三类：创建型模式（Creational Patterns）、结构型模式（Structural Patterns）、行为型模式（Behavioral Patterns）。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>描述</th>
+<th>包括</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>创建者模式</td>
+<td>这些设计模式提供了一种在创建对象的同时隐藏创建逻辑的方式，而不是使用 new 运算符直接实例化对象。这使得程序在判断针对某个给定实例需要创建哪些对象时更加灵活。</td>
+<td>工厂模式、抽象工厂模式、单例模式、建造者模式、原型模式</td>
+</tr>
+<tr>
+<td>结构型模式</td>
+<td>这些设计模式关注类和对象的组合。继承的概念被用来组合接口和定义组合对象获得新功能的方式。</td>
+<td>适配器模式、桥接模式、组合模式、装饰器模式、外观模式、享元模式、代理模式</td>
+</tr>
+<tr>
+<td>行为型模式</td>
+<td>这些设计模式特别关注对象之间的通信。</td>
+<td>责任链模式、命令模式、迭代器模式、中介者模式、备忘录模式、观察者模式、状态模式、空对象模式、策略模式、模板模式、访问者模式</td>
+</tr>
+</tbody></table>
+<h3 id="设计模式的六大原则"><a href="#设计模式的六大原则" class="headerlink" title="设计模式的六大原则"></a>设计模式的六大原则</h3><p><strong>1、开闭原则</strong>（Open Close Principle）</p>
+<blockquote>
+<p><strong>“对扩展开放，对修改关闭”</strong>。在程序需要进行拓展的时候，不能去修改原有的代码，实现一个热插拔的效果。简言之，是为了使程序的扩展性好，易于维护和升级。想要达到这样的效果，我们需要使用接口和抽象类，后面的具体设计中我们会提到这点。</p>
+</blockquote>
+<p><strong>2、里氏代换原则</strong>（Liskov Substitution Principle）</p>
+<blockquote>
+<p><strong>“任何基类可以出现的地方，子类一定可以出现”</strong>。只有当派生类可以替换掉基类，且软件单位的功能不受到影响时，基类才能真正被复用，而派生类也能够在基类的基础上增加新的行为。里氏代换原则是对开闭原则的补充。实现开闭原则的关键步骤就是抽象化，而基类与子类的继承关系就是抽象化的具体实现，所以里氏代换原则是对实现抽象化的具体步骤的规范。</p>
+</blockquote>
+<p><strong>3、依赖倒转原则</strong>（Dependence Inversion Principle）</p>
+<blockquote>
+<p><strong>针对接口编程，依赖于抽象而不依赖于具体</strong></p>
+</blockquote>
+<p><strong>4、接口隔离原则</strong>（Interface Segregation Principle）</p>
+<blockquote>
+<p><strong>使用多个隔离的接口，比使用单个接口要好</strong>。降低类之间的耦合度。由此可见，其实设计模式就是从大型软件架构出发、便于升级和维护的软件设计思想，它强调降低依赖，降低耦合。</p>
+</blockquote>
+<p><strong>5、迪米特法则，又称最少知道原则</strong>（Demeter Principle）</p>
+<blockquote>
+<p>一个实体应当尽量少地与其他实体之间发生相互作用，使得系统功能模块相对独立。</p>
+</blockquote>
+<p><strong>6、合成复用原则</strong>（Composite Reuse Principle）</p>
+<blockquote>
+<p>尽量使用合成/聚合的方式，而不是使用继承。</p>
+</blockquote>
+<hr>
+<h2 id="创建者模式"><a href="#创建者模式" class="headerlink" title="创建者模式"></a>创建者模式</h2><h3 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h3><blockquote>
+<p>工厂模式（Factory Pattern）是 Java 中最常用的设计模式之一。这种类型的设计模式属于创建型模式，它提供了一种创建对象的最佳方式。<br>在工厂模式中，我们在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。</p>
+</blockquote>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/01/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-ArrayList和LinkedList区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -171,40 +302,9 @@
 <p>两者都是List接口的实现类，两者都是不同步的，也就是非线程安全的。<br>因为在我们正常得使用场景中，都是用来查询的，不会涉及太频繁的增删，如果涉及到频繁的增删，可以使用LinkedList，<br>如果需要线程安全的就是可以使用Vector，CopyOrWriteArrayList。原理都是給方法套个synchronized</p>
 </blockquote>
 <p>2.<strong>底层实现</strong>：</p>
-<blockquote>
-<p>ArrayList底层使用的是数组<br>LinkedList底层使用的是双向链表（JDK1.6之前为循环链表，JDK1.7取消循环）</p>
-</blockquote>
-<p>3.<strong>位置影响</strong>：</p>
-<blockquote>
-<p>LinkedList采用的是链表，所以不会受到链表的影响。<br>ArrayList，由于采用的是数组存储，所以在添加和删除的时候会受到影响.  比如:在执行add(E e)方法时，Arraylist默认是将该元素插入到末尾位置。这种情况的时间复杂度就是O(1).但是当插入到指定位置或删除指定位置的元素时，时间复杂度就是O(n-i).因为在该操作之后要将从i到n-i的元素都进行前/后移动。</p>
-</blockquote>
-<p>4.<strong>访问速度</strong>：</p>
-<blockquote>
-<p>ArrayList支持高效的随机元素访问，LinkedList不支持。快速访问就是通过元素的序号进行快速获取对象，get(int index)方法。</p>
-</blockquote>
-<p>5.<strong>内存空间</strong>：</p>
-<blockquote>
-<p>ArrayList的空间浪费是因为在声明数组的时候，就默认设置了数组的长度，必然会有预留的空间。而LinkedList的是因为要存储每个元素的前驱和后继。</p>
-</blockquote>
-<hr>
-<p><font color=green>扩展：ArrayList初始容量和扩容</font></p>
-<blockquote>
-<p>在JDK1.2到JDK1.6，ArrayList确实是直接创建了一长度为10的数组。<br>而在JDK1.7之后就改变了，实际上初始化赋值的是一个空数组。</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Constructs an empty list with an initial capacity of ten.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>看到默认数组直接赋值为 DEFAULTCAPACITY_EMPTY_ELEMENTDATA；</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Shared empty array instance used for default sized empty instances. We</span></span><br><span class="line"><span class="comment"> * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when</span></span><br><span class="line"><span class="comment"> * first element is added.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</span><br></pre></td></tr></table></figure>
-<p>显然如果在初始化集合时不初始化数组容量（或者说长度），实际上初始化赋值的是一个空数组。该数组的默认长度为0；<br>进一步通过查看add方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></span><br><span class="line">    elementData[size++] = e;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>调用了ensureCapacityInternal这个方法。这个方法翻译为中文意思为确保容量足够.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>直接调用了另一个方法ensureExplicitCapacity（确保明确的容量）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    modCount++;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// overflow-conscious code</span></span><br><span class="line">    <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)</span><br><span class="line">        grow(minCapacity);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>grow方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">     <span class="comment">// overflow-conscious code</span></span><br><span class="line">     <span class="keyword">int</span> oldCapacity = elementData.length;</span><br><span class="line">     <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</span><br><span class="line">     <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</span><br><span class="line">         newCapacity = minCapacity;</span><br><span class="line">     <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</span><br><span class="line">         newCapacity = hugeCapacity(minCapacity);</span><br><span class="line">     <span class="comment">// minCapacity is usually close to size, so this is a win:</span></span><br><span class="line">     elementData = Arrays.copyOf(elementData, newCapacity);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>把原来list的长度作为旧的容量：int oldCapacity = elementData.length;<br>新的容量为旧的容量加上旧的容量的右移一位（涉及位运算，就是原来容量的0.5倍）：int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1);<br>创建一个长度为新容量的ArrayList，然后把旧的都copy过去，从而实现扩容。</p>
-<p>另一种解释角度:<br>​ 当添加第一个元素的时候，oldCapacity为0 ，经过判断第一个条件成立，所以newCapacity 现在等于10。但是第二个if条件判断不成立，所以不会进入hugeCapacity 方法。<br>​ 当添加第11个元素的时候，oldCapacity为10，newCapacity为15 大于minCapacity，所以第一个条件判断不成立。第二个if条件判断也不成立，所以不会进入到hugeCapacity 方法。</p>
-
+        
+          <a class="article-more-a" href="/2021/01/07/ArrayList%E5%92%8CLinkedList%E5%8C%BA%E5%88%AB/#more">more >></a>
+        
       
 
       
@@ -218,6 +318,10 @@
 			 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java基础</a>
         		</li>
       		
 		</ul>
@@ -295,6 +399,10 @@
 			 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Spring</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
         		</li>
       		
 		</ul>
@@ -510,6 +618,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">面试</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
             
             <div class="clearfix"></div>
