@@ -17,7 +17,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200323222806630.png#pic_center">
 <meta property="article:published_time" content="2021-01-11T05:46:48.000Z">
-<meta property="article:modified_time" content="2021-01-13T12:34:44.038Z">
+<meta property="article:modified_time" content="2021-01-13T12:52:40.107Z">
 <meta property="article:author" content="吴东卓">
 <meta property="article:tag" content="面试">
 <meta property="article:tag" content="Java基础">
@@ -234,7 +234,25 @@
 <p><strong>小结：</strong><br>1、当根据key的hash确定其在数组的位置时，如果n为2的幂次方，可以保证数据的均匀插入，如果n不是2的幂次方，可能数组的一些位置永远不会插入数据，浪费数组的空间，加大hash冲突。</p>
 <p>2、一般可能会想通过 % 求余来确定位置，这样也可以，只不过性能不如 &amp; 运算。而且当n是2的幂次方时：hash &amp; (length - 1) == hash % length</p>
 <p>3、因此，HashMap 容量为2次幂的原因，就是为了数据的的均匀分布，减少hash冲突，毕竟hash冲突越大，代表数组中一个链的长度越大，这样的话会降低hashmap的性能。</p>
-<p>参考：<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/huke123/p/13865022.html">参考链接1</a></p>
+<h2 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h2><blockquote>
+<p>HashMap的死锁是怎么回事？<br>HashMap是非线程安全，死锁一般都是产生于并发情况下。我们假设有二个进程T1、T2，HashMap容量为2,T1线程放入key A、B、C、D、E。在T1线程中A、B、C Hash值相同，于是形成一个链接，假设为A-&gt;C-&gt;B，而D、E Hash值不同，于是容量不足，需要新建一个更大尺寸的hash表，然后把数据从老的Hash表中 迁移到新的Hash表中(refresh)。这时T2进程闯进来了，T1暂时挂起，T2进程也准备放入新的key，这时也 发现容量不足，也refresh一把。refresh之后原来的链表结构假设为C-&gt;A，之后T1进程继续执行，链接结构 为A-&gt;C,这时就形成A.next=B,B.next=A的环形链表。一旦取值进入这个环形链表就会陷入死循环。</p>
+</blockquote>
+<blockquote>
+<p>HashMap中能put两个相同key吗？为什么？</p>
+</blockquote>
+<blockquote>
+<p>HashMap中的键值可以为null吗？原理？</p>
+</blockquote>
+<blockquote>
+<p>HashMap扩容机制？</p>
+</blockquote>
+<blockquote>
+<p>补充：线程和进程<br>**进程:**进程是程序的一次执行过程，是一个动态概念，是程序在执行过程中分配和管理资源的基本单位，每一个进程都有一个自己的地址空间，至少有 5 种基本状态，它们是：初始态，执行态，等待状态，就绪状态，终止状态。</p>
+</blockquote>
+<p><strong>线程：</strong>线程是CPU调度和分派的基本单位，它可与同属一个进程的其他的线程共享进程所拥有的全部资源。</p>
+<p><strong>进程和线程的关系</strong><br>线程是进程的一部分<br>一个线程只能属于一个进程，而一个进程可以有多个线程，但至少有一个线程</p>
+<p><strong>抽象比喻：</strong>进程相当于车间的话，那么线程就是车间的工人。一个进程的内存空间是共享的，每个线程都可以使用这些共享内存。比喻成一个进程的内存空间是共享的，每个线程都可以使用这些共享内存。</p>
+<p>参考：<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/huke123/p/13865022.html">参考链接1</a><br><a target="_blank" rel="noopener" href="http://baijiahao.baidu.com/s?id=1665667572592680093&wfr=spider&for=pc">参考链接1</a></p>
 
       
 
