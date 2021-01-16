@@ -17,10 +17,10 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200323222806630.png#pic_center">
 <meta property="article:published_time" content="2021-01-11T05:46:48.000Z">
-<meta property="article:modified_time" content="2021-01-13T12:52:40.107Z">
+<meta property="article:modified_time" content="2021-01-16T12:09:53.690Z">
 <meta property="article:author" content="吴东卓">
 <meta property="article:tag" content="面试">
-<meta property="article:tag" content="Java基础">
+<meta property="article:tag" content="Java集合">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200323222806630.png#pic_center">
   
@@ -235,11 +235,28 @@
 <p>2、一般可能会想通过 % 求余来确定位置，这样也可以，只不过性能不如 &amp; 运算。而且当n是2的幂次方时：hash &amp; (length - 1) == hash % length</p>
 <p>3、因此，HashMap 容量为2次幂的原因，就是为了数据的的均匀分布，减少hash冲突，毕竟hash冲突越大，代表数组中一个链的长度越大，这样的话会降低hashmap的性能。</p>
 <h2 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h2><blockquote>
-<p>HashMap的死锁是怎么回事？<br>HashMap是非线程安全，死锁一般都是产生于并发情况下。我们假设有二个进程T1、T2，HashMap容量为2,T1线程放入key A、B、C、D、E。在T1线程中A、B、C Hash值相同，于是形成一个链接，假设为A-&gt;C-&gt;B，而D、E Hash值不同，于是容量不足，需要新建一个更大尺寸的hash表，然后把数据从老的Hash表中 迁移到新的Hash表中(refresh)。这时T2进程闯进来了，T1暂时挂起，T2进程也准备放入新的key，这时也 发现容量不足，也refresh一把。refresh之后原来的链表结构假设为C-&gt;A，之后T1进程继续执行，链接结构 为A-&gt;C,这时就形成A.next=B,B.next=A的环形链表。一旦取值进入这个环形链表就会陷入死循环。</p>
+<p>HashMap的死锁是怎么回事？</p>
 </blockquote>
+<p>HashMap是非线程安全，死锁一般都是产生于并发情况下。我们假设有二个进程T1、T2，HashMap容量为2,T1线程放入key A、B、C、D、E。在T1线程中A、B、C Hash值相同，于是形成一个链接，假设为A-&gt;C-&gt;B，而D、E Hash值不同，于是容量不足，需要新建一个更大尺寸的hash表，然后把数据从老的Hash表中 迁移到新的Hash表中(refresh)。这时T2进程闯进来了，T1暂时挂起，T2进程也准备放入新的key，这时也 发现容量不足，也refresh一把。refresh之后原来的链表结构假设为C-&gt;A，之后T1进程继续执行，链接结构 为A-&gt;C,这时就形成A.next=B,B.next=A的环形链表。一旦取值进入这个环形链表就会陷入死循环。</p>
 <blockquote>
 <p>HashMap中能put两个相同key吗？为什么？</p>
 </blockquote>
+<p>可以put两个相同的key，但是会覆盖之前的key的value，只显示最新put的value。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* HashMap 的put方法</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> putVal(hash(key), key, value, <span class="keyword">false</span>, <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* HashMap 的containsKey方法</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">containsKey</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> getNode(hash(key), key) != <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 将存入的key进行hash操作，也就是使用key.hashCode()！</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> h;</span><br><span class="line">    <span class="keyword">return</span> (key == <span class="keyword">null</span>) ? <span class="number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>判断put和判断key是否是同一个key的时候，使用大概如下判断逻辑：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (e.hash == hash &amp;&amp; ((k = e.key) == key || (key != <span class="keyword">null</span> &amp;&amp; key.equals(k))))</span><br></pre></td></tr></table></figure>
+<p>先判断Hash是否一致，然后在判断传入key和当前集合中是否有相同的key。如果key相同，则新值替换旧值。其中在判断中使用了</p>
+<ul>
+<li>==</li>
+<li>equals</li>
+</ul>
+<p><strong>简述==和equals</strong></p>
+<ul>
+<li>对于==，如果作用于基本数据类型的变量，则直接比较其存储的 “值”是否相等；如果作用于引用类型的变量，则比较的是所指向的对象的地址！</li>
+<li>对于equals方法，注意：equals方法不能作用于基本数据类型的变量。如果没有对equals方法进行重写，则比较的是引用类型的变量所指向的对象的地址；诸如String等类对equals方法进行了重写的话，比较的是所指向的对象的内容。</li>
+</ul>
+<p>总结:比如实现put两个相同的key进行累加，而不是覆盖。<br>1、如果是类似String这种，已经重写了hashCode和equals的。则只需要创建一个自己的HashMap类，重写put即可。<br>2、如果是自定义的类，那就必须重写了hashCode和equals的，然后在使用自定义的HashMap类了。</p>
+<p>具体代码判断逻辑：<br>判断key是否存在的时候是先比较key的hashCode，再比较相等或equals的，所以重写hashCode()和equals()方法即可实现添加重复元素。重写这两个方法之后就可以覆盖重复的键值对，如果需要对value进行叠加，调用put()方法之前用containsKey()方法判断是否有重复的键值，如果有，则用get()方法获取原有的value，再加上新加入的value即可。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/aflyun/p/10733029.html">参考链接</a></p>
 <blockquote>
 <p>HashMap中的键值可以为null吗？原理？</p>
 </blockquote>
@@ -270,7 +287,7 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java基础</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
         		</li>
       		
 		</ul>
@@ -339,6 +356,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2021/01/16/HashMap%E5%92%8CHashTable/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          HashMap和HashTable
+        
+      </div>
+    </a>
   
   
     <a href="/2021/01/11/%E5%88%9B%E5%BB%BA%E8%80%85%E6%A8%A1%E5%BC%8F/" id="article-nav-older" class="article-nav-link-wrap">
@@ -480,11 +506,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
               </li>
             
             <div class="clearfix"></div>
