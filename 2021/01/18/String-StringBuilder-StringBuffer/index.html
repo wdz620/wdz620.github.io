@@ -17,7 +17,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://image-static.segmentfault.com/837/555/837555812-5599cd9b494f7_articlex">
 <meta property="article:published_time" content="2021-01-18T12:03:25.000Z">
-<meta property="article:modified_time" content="2021-01-18T12:22:20.424Z">
+<meta property="article:modified_time" content="2021-01-18T14:41:18.224Z">
 <meta property="article:author" content="吴东卓">
 <meta property="article:tag" content="面试">
 <meta name="twitter:card" content="summary">
@@ -219,7 +219,42 @@
 <p>Java.lang.StringBuffer 是线程安全的可变字符序列。一个类似于 String 的字符串缓冲区，但不能修改。虽然在任意时间点上它都包含某种特定的字符序列，但通过某些方法调用可以改变该序列的长度和内容。在程序中可将字符串缓冲区安全地用于多线程。而且在必要时可以对这些方法进行同步，因此任意特定实例上的所有操作就好像是以串行顺序发生的，该顺序与所涉及的每个线程进行的方法调用顺序一致。</p>
 <p>StringBuffer 上的主要操作是 append 和 insert 方法，可重载这些方法，以接受任意类型的数据。每个方法都能有效地将给定的数据转换成字符串，然后将该字符串的字符追加或插入到字符串缓冲区中。append 方法始终将这些字符添加到缓冲区的末端；而 insert 方法则在指定的点添加字符。</p>
 <p>例如，如果 z 引用一个当前内容是 “start”的字符串缓冲区对象，则此方法调用 z.append(“le”) 会使字符串缓冲区包含 “startle”( 累加); 而 z.insert(4, “le”) 将更改字符串缓冲区，使之包含 “starlet”。</p>
-<p>在大部分情况下<font color=red> StringBuilder &gt; StringBuffer</font><br>java.lang.StringBuilder 一个可变的字符序列是 JAVA 5.0 新增的。此类提供一个与 StringBuffer 兼容的 API，但不保证同步，所以使用场景是单线程。该类被设计用作 StringBuffer 的一个简易替换，用在字符串缓冲区被单个线程使用的时候（这种情况很普遍）。如果可能，建议优先采用该类，因为在大多数实现中，它比 StringBuffer 要快。两者的使用方法基本相同。<br>参考链接：<br><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002683782">参考链接</a></p>
+<p>在大部分情况下<font color=red> StringBuilder &gt; StringBuffer</font><br>java.lang.StringBuilder 一个可变的字符序列是 JAVA 5.0 新增的。此类提供一个与 StringBuffer 兼容的 API，但不保证同步，所以使用场景是单线程。该类被设计用作 StringBuffer 的一个简易替换，用在字符串缓冲区被单个线程使用的时候（这种情况很普遍）。如果可能，建议优先采用该类，因为在大多数实现中，它比 StringBuffer 要快。两者的使用方法基本相同。</p>
+<blockquote>
+<p>面试高频</p>
+</blockquote>
+<p>1、String创建对象问题</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> String(<span class="string">&quot;abc&quot;</span>);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>上述代码创建了几个对象？</p>
+</blockquote>
+<p>解答：<font color=green>答案是1个或2个。</font><br>铺垫学习：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String str1 = <span class="string">&quot;abc&quot;</span>;  <span class="comment">// 在常量池中</span></span><br><span class="line"> </span><br><span class="line">String str2 = <span class="keyword">new</span> String(<span class="string">&quot;abc&quot;</span>); <span class="comment">// 在堆上</span></span><br></pre></td></tr></table></figure>
+<p>当直接赋值时，字符串“abc”会被存储在常量池中，只有1份，此时的赋值操作等于是创建0个或1个对象。如果常量池中已经存在了“abc”，那么不会再创建对象，直接将引用赋值给str1；如果常量池中没有“abc”，那么创建一个对象，并将引用赋值给str1。</p>
+<p>当JVM遇到上述代码时，会先检索常量池中是否存在“abc”，如果不存在“abc”这个字符串，则会先在常量池中创建这个一个字符串。然后再执行new操作，会在堆内存中创建一个存储“abc”的String对象，对象的引用赋值给str2。此过程创建了2个对象。<br>当然，如果检索常量池时发现已经存在了对应的字符串，那么只会在堆内创建一个新的String对象，此过程只创建了1个对象。</p>
+<blockquote>
+<p>深度问法</p>
+</blockquote>
+<p>只有下面一行代码，那么创建几个对象？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> String(<span class="string">&quot;abc&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>答案<font color=green>不一定是两个</font>。还真不一定。之所以单独列出这个问题是想提醒大家一点：没有直接的赋值操作（str=”abc”），并不代表常量池中没有“abc”这个字符串。衡量创建几个对象、常量池中是否有对应的字符串，不仅仅由你是否创建决定，还要看程序启动时其他类中是否包含该字符串。</p>
+<blockquote>
+<p>再度升级</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="string">&quot;abc&quot;</span> + <span class="string">&quot;def&quot;</span>;</span><br></pre></td></tr></table></figure>
+<p>上面的问题涉及到字符串常量重载“+”的问题，当一个字符串由多个字符串常量拼接成一个字符串时，它自己也肯定是字符串常量。字符串常量的“+”号连接Java虚拟机会在程序编译期将其优化为连接后的值。</p>
+<p>就上面的示例而言，在编译时已经被合并成“abcdef”字符串，因此，<font color=green>只会创建1个对象</font>。并没有创建临时字符串对象abc和def，这样减轻了垃圾收集器的压力。</p>
+<blockquote>
+<p>终极问法</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="string">&quot;abc&quot;</span> + <span class="keyword">new</span> String(<span class="string">&quot;def&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>创建了4个，5个，还是6个对象？<br>解答：<font color=green>准确回答应该是创建了4个字符串对象和1个StringBuilder对象。</font><br>4个对象的说法：常量池中分别有“abc”和“def”，堆中对象new String(“def”)和“abcdef”。<br>这种说法对吗？不完全对，如果说上述代码创建了几个字符串对象，那么可以说是正确的。但上述的代码Java虚拟机在编译的时候同样会优化，会创建一个StringBuilder来进行字符串的拼接，实际效果类似：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String s = <span class="keyword">new</span> String(<span class="string">&quot;def&quot;</span>);</span><br><span class="line"><span class="keyword">new</span> StringBuilder().append(<span class="string">&quot;abc&quot;</span>).append(s).toString();</span><br></pre></td></tr></table></figure>
+<p>很显然，多出了一个StringBuilder对象，那就应该是5个对象。</p>
+<p>那么创建6个对象是怎么回事呢？有同学可能会想了，StringBuilder最后toString()之后的“abcdef”难道不在常量池存一份吗？<br>在toString方法中又新创建了一个String对象，而该String对象传递数组的构造方法来创建的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">String</span><span class="params">(<span class="keyword">char</span> value[], <span class="keyword">int</span> offset, <span class="keyword">int</span> count)</span> </span></span><br></pre></td></tr></table></figure>
+<p>也就是说，String对象的value值直接指向了一个已经存在的数组，而并没有指向常量池中的字符串。<br>因此，上面的准确回答应该是创建了4个字符串对象和1个StringBuilder对象。</p>
+<p>参考链接：<br><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002683782">参考链接</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42509964/article/details/112190942">面试参考</a></p>
 
       
 
