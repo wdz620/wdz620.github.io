@@ -6,20 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>ArrayList和LinkedList | 无雨无晴</title>
+  <title>约瑟夫问题 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1.安全性：  两者都是List接口的实现类，两者都是不同步的，也就是非线程安全的。因为在我们正常得使用场景中，都是用来查询的，不会涉及太频繁的增删，如果涉及到频繁的增删，可以使用LinkedList，如果需要线程安全的就是可以使用Vector，CopyOrWriteArrayList。原理都是給方法套个synchronized  2.底层实现：">
+  <meta name="description" content="思想  设编号为1，2，……n得n个人围坐一圈，约定编号为k（k大于等于1并且小于等于n）的人从1开始报数，数到m的那个人出列。它的下一位继续从1开始报数，数到m的人出列，依次类推，直到所有人都出列为止。解决方法：  1、数组 2、链表 3、递归 4、迭代">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ArrayList和LinkedList">
-<meta property="og:url" content="http://example.com/2021/01/07/ArrayList%E5%92%8CLinkedList%E5%8C%BA%E5%88%AB/index.html">
+<meta property="og:title" content="约瑟夫问题">
+<meta property="og:url" content="http://example.com/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="1.安全性：  两者都是List接口的实现类，两者都是不同步的，也就是非线程安全的。因为在我们正常得使用场景中，都是用来查询的，不会涉及太频繁的增删，如果涉及到频繁的增删，可以使用LinkedList，如果需要线程安全的就是可以使用Vector，CopyOrWriteArrayList。原理都是給方法套个synchronized  2.底层实现：">
+<meta property="og:description" content="思想  设编号为1，2，……n得n个人围坐一圈，约定编号为k（k大于等于1并且小于等于n）的人从1开始报数，数到m的那个人出列。它的下一位继续从1开始报数，数到m的人出列，依次类推，直到所有人都出列为止。解决方法：  1、数组 2、链表 3、递归 4、迭代">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-01-07T13:37:01.000Z">
-<meta property="article:modified_time" content="2021-01-16T10:23:57.103Z">
+<meta property="article:published_time" content="2021-01-19T03:06:13.000Z">
+<meta property="article:modified_time" content="2021-01-19T03:46:44.918Z">
 <meta property="article:author" content="吴东卓">
-<meta property="article:tag" content="面试">
-<meta property="article:tag" content="Java集合">
+<meta property="article:tag" content="笔试">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
@@ -150,66 +149,54 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-ArrayList和LinkedList区别" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-约瑟夫问题" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      ArrayList和LinkedList
+      约瑟夫问题
     </h1>
   
 
         
-        <a href="/2021/01/07/ArrayList%E5%92%8CLinkedList%E5%8C%BA%E5%88%AB/" class="archive-article-date">
-  	<time datetime="2021-01-07T13:37:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-07</time>
+        <a href="/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/" class="archive-article-date">
+  	<time datetime="2021-01-19T03:06:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-19</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>1.<strong>安全性</strong>：</p>
-<blockquote>
-<p>两者都是List接口的实现类，两者都是不同步的，也就是非线程安全的。<br>因为在我们正常得使用场景中，都是用来查询的，不会涉及太频繁的增删，如果涉及到频繁的增删，可以使用LinkedList，<br>如果需要线程安全的就是可以使用Vector，CopyOrWriteArrayList。原理都是給方法套个synchronized</p>
+        <blockquote>
+<p>思想</p>
 </blockquote>
-<p>2.<strong>底层实现</strong>：</p>
+<p>设编号为1，2，……n得n个人围坐一圈，约定编号为k（k大于等于1并且小于等于n）的人从1开始报数，数到m的那个人出列。它的下一位继续从1开始报数，数到m的人出列，依次类推，直到所有人都出列为止。<br>解决方法：</p>
+<ul>
+<li>1、数组</li>
+<li>2、链表</li>
+<li>3、递归</li>
+<li>4、迭代</li>
+</ul>
 <a id="more"></a>
 <blockquote>
-<p>ArrayList底层使用的是数组<br>LinkedList底层使用的是双向链表（JDK1.6之前为循环链表，JDK1.7取消循环）</p>
+<p>模拟题目 JZ-46</p>
 </blockquote>
-<p>3.<strong>位置影响</strong>：</p>
+<p>每年六一儿童节,牛客都会准备一些小礼物去看望孤儿院的小朋友,今年亦是如此。HF作为牛客的资深元老,自然也准备了一些小游戏。其中,有个游戏是这样的:首先,让小朋友们围成一个大圈。然后,他随机指定一个数m,让编号为0的小朋友开始报数。每次喊到m-1的那个小朋友要出列唱首歌,然后可以在礼品箱中任意的挑选礼物,并且不再回到圈中,从他的下一个小朋友开始,继续0…m-1报数….这样下去….直到剩下最后一个小朋友,可以不用表演,并且拿到牛客名贵的“名侦探柯南”典藏版(名额有限哦!!^_^)。请你试着想下,哪个小朋友会得到这份礼品呢？(注：小朋友的编号是从0到n-1)<br>如果没有小朋友，请返回-1</p>
+<p>比如输入 n = 5, m = 3<br>出局顺序：2 0 4 1 -&gt; 3获胜</p>
 <blockquote>
-<p>LinkedList采用的是链表，所以不会受到链表的影响。<br>ArrayList，由于采用的是数组存储，所以在添加和删除的时候会受到影响.  比如:在执行add(E e)方法时，Arraylist默认是将该元素插入到末尾位置。这种情况的时间复杂度就是O(1).但是当插入到指定位置或删除指定位置的元素时，时间复杂度就是O(n-i).因为在该操作之后要将从i到n-i的元素都进行前/后移动。</p>
+<p>解决方法</p>
 </blockquote>
-<p>4.<strong>访问速度</strong>：</p>
-<blockquote>
-<p>ArrayList支持高效的随机元素访问，LinkedList不支持。快速访问就是通过元素的序号进行快速获取对象，get(int index)方法。</p>
-</blockquote>
-<p>5.<strong>内存空间</strong>：</p>
-<blockquote>
-<p>ArrayList的空间浪费是因为在声明数组的时候，就默认设置了数组的长度，必然会有预留的空间。而LinkedList的是因为要存储每个元素的前驱和后继。</p>
-</blockquote>
-<hr>
-<p><font color=green>扩展：ArrayList初始容量和扩容</font></p>
-<blockquote>
-<p>在JDK1.2到JDK1.6，ArrayList确实是直接创建了一长度为10的数组。<br>而在JDK1.7之后就改变了，实际上初始化赋值的是一个空数组。</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Constructs an empty list with an initial capacity of ten.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>看到默认数组直接赋值为 DEFAULTCAPACITY_EMPTY_ELEMENTDATA；</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Shared empty array instance used for default sized empty instances. We</span></span><br><span class="line"><span class="comment"> * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when</span></span><br><span class="line"><span class="comment"> * first element is added.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</span><br></pre></td></tr></table></figure>
-<p>显然如果在初始化集合时不初始化数组容量（或者说长度），实际上初始化赋值的是一个空数组。该数组的默认长度为0；<br>进一步通过查看add方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></span><br><span class="line">    elementData[size++] = e;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>调用了ensureCapacityInternal这个方法。这个方法翻译为中文意思为确保容量足够.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>直接调用了另一个方法ensureExplicitCapacity（确保明确的容量）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    modCount++;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// overflow-conscious code</span></span><br><span class="line">    <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)</span><br><span class="line">        grow(minCapacity);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>grow方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">     <span class="comment">// overflow-conscious code</span></span><br><span class="line">     <span class="keyword">int</span> oldCapacity = elementData.length;</span><br><span class="line">     <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</span><br><span class="line">     <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</span><br><span class="line">         newCapacity = minCapacity;</span><br><span class="line">     <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</span><br><span class="line">         newCapacity = hugeCapacity(minCapacity);</span><br><span class="line">     <span class="comment">// minCapacity is usually close to size, so this is a win:</span></span><br><span class="line">     elementData = Arrays.copyOf(elementData, newCapacity);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>把原来list的长度作为旧的容量：int oldCapacity = elementData.length;<br>新的容量为旧的容量加上旧的容量的右移一位（涉及位运算，就是原来容量的0.5倍）：int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1);<br>创建一个长度为新容量的ArrayList，然后把旧的都copy过去，从而实现扩容。</p>
-<p>另一种解释角度:<br>​ 当添加第一个元素的时候，oldCapacity为0 ，经过判断第一个条件成立，所以newCapacity 现在等于10。但是第二个if条件判断不成立，所以不会进入hugeCapacity 方法。<br>​ 当添加第11个元素的时候，oldCapacity为10，newCapacity为15 大于minCapacity，所以第一个条件判断不成立。第二个if条件判断也不成立，所以不会进入到hugeCapacity 方法。</p>
-
+<p>方法一：数组<br>首先想到的就是定义一个数组，然后不断循环，记录每一个出列的人。直到剩下最后一人。时间复杂度O(n*m),空间复杂度为O(n);<br>思路简单，但是编码过程中遇到很多边界值的问题。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">method1</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (n &lt; <span class="number">1</span> || m &lt; <span class="number">1</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span>[] array = <span class="keyword">new</span> <span class="keyword">int</span>[n];</span><br><span class="line">        <span class="keyword">int</span> i = -<span class="number">1</span>, step = <span class="number">0</span>, count = n;</span><br><span class="line">        <span class="keyword">while</span> (count &gt; <span class="number">0</span>) &#123;   <span class="comment">//跳出循环时将最后一个元素也设置为了-1</span></span><br><span class="line">            i++;          <span class="comment">//指向上一个被删除对象的下一个元素。</span></span><br><span class="line">            <span class="keyword">if</span> (i &gt;= n) i = <span class="number">0</span>;  <span class="comment">//模拟环。</span></span><br><span class="line">            <span class="keyword">if</span> (array[i] == -<span class="number">1</span>) <span class="keyword">continue</span>; <span class="comment">//跳过被删除的对象。</span></span><br><span class="line">            step++;                     <span class="comment">//记录已走过的。</span></span><br><span class="line">            <span class="keyword">if</span> (step == m) &#123;               <span class="comment">//找到待删除的对象。</span></span><br><span class="line">                array[i] = -<span class="number">1</span>;</span><br><span class="line">                step = <span class="number">0</span>;</span><br><span class="line">                count--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> i;<span class="comment">//返回跳出循环时的i,即最后一个被设置为-1的元素</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>方法二:使用环形链表.时间复杂度为 O(n * m),空间复杂度是 O(n)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">method2</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">0</span> || m &lt;= <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 先构造循环链表</span></span><br><span class="line">    Node head = <span class="keyword">new</span> Node(<span class="number">0</span>); <span class="comment">// 头结点, 值为0</span></span><br><span class="line">    Node pre = head;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">        Node temp = <span class="keyword">new</span> Node(i);</span><br><span class="line">        pre.next = temp;</span><br><span class="line">        pre = temp;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 组成环形链表</span></span><br><span class="line">    pre.next = head;</span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (head != pre) &#123;</span><br><span class="line">        <span class="comment">// 报数达到时，删除结点</span></span><br><span class="line">        <span class="keyword">if</span> (++count == m) &#123;</span><br><span class="line">            <span class="comment">// 删除该报数结点</span></span><br><span class="line">            <span class="comment">// 报数结点的下之个指向当前结点的下一个</span></span><br><span class="line">            pre.next = head.next;</span><br><span class="line">            <span class="comment">// 从新计数</span></span><br><span class="line">            count = <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 继续报数</span></span><br><span class="line">            pre = pre.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 当前结点指向当前报数的下一个</span></span><br><span class="line">        head = pre.next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> head.value;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 定义链表节点</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> value;</span><br><span class="line">    <span class="keyword">public</span> Node next;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Node</span><span class="params">(<span class="keyword">int</span> data)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.value = data;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>方法三：递归</p>
+<p>递归是思路是每次我们删除了某一个人之后，我们就对这些人重新编号，然后我们的难点就是找出删除前和删除后人编号的映射关系。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">method3</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> (method3(n - <span class="number">1</span>, m) + m) % n;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>方法四：迭代法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">method4</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 当参与人数为1时，最终留下元素的序号为0</span></span><br><span class="line">    <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 从参与人数为2开始，直到参与人数为n，每次计算参与人数为i时，最终留下元素的序号</span></span><br><span class="line">    <span class="comment">// 注意：%后面为i，由于要求的是参与人数为i时最终留下元素的序号，因此可能结果的最大序号为i-1，所以要%i</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        index = (index + m) % i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
 
       
@@ -222,11 +209,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">笔试</a>
         		</li>
       		
 		</ul>
@@ -282,7 +265,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/01/07/ArrayList%E5%92%8CLinkedList%E5%8C%BA%E5%88%AB/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -296,18 +279,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/01/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          设计模式
-        
-      </div>
-    </a>
   
-  
-    <a href="/2021/01/07/Spring%E5%AD%A6%E4%B9%A0/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Spring学习</div>
+    <a href="/2021/01/18/String-StringBuilder-StringBuffer/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">String/StringBuffer/StringBuilder</div>
       <i class="icon-circle-right"></i>
     </a>
   
