@@ -16,8 +16,9 @@
 <meta property="og:description" content="使用   String 字符串常量 StringBuffer 字符串变量（线程安全） StringBuilder 字符串变量（非线程安全）    如果要操作少量的数据用 String；多线程操作字符串缓冲区下操作大量数据 StringBuffer；单线程操作字符串缓冲区下操作大量数据 StringBuilder。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://image-static.segmentfault.com/837/555/837555812-5599cd9b494f7_articlex">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210302181336985.png">
 <meta property="article:published_time" content="2021-01-18T12:03:25.000Z">
-<meta property="article:modified_time" content="2021-03-02T08:45:49.675Z">
+<meta property="article:modified_time" content="2021-03-02T10:39:45.058Z">
 <meta property="article:author" content="吴东卓">
 <meta property="article:tag" content="面试">
 <meta name="twitter:card" content="summary">
@@ -254,7 +255,14 @@
 <p>那么创建6个对象是怎么回事呢？有同学可能会想了，StringBuilder最后toString()之后的“abcdef”难道不在常量池存一份吗？<br>在toString方法中又新创建了一个String对象，而该String对象传递数组的构造方法来创建的：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">String</span><span class="params">(<span class="keyword">char</span> value[], <span class="keyword">int</span> offset, <span class="keyword">int</span> count)</span> </span></span><br></pre></td></tr></table></figure>
 <p>也就是说，String对象的value值直接指向了一个已经存在的数组，而并没有指向常量池中的字符串。<br>因此，上面的准确回答应该是创建了4个字符串对象和1个StringBuilder对象。</p>
-<p>参考链接：<br><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002683782">参考链接</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42509964/article/details/112190942">面试参考</a></p>
+<p>2、String（是线程安全的）为何被定义为final的，能不能将它修改为非final的？<br>首先明白为什么是final修饰的？</p>
+<ul>
+<li>为了实现字符串池</li>
+<li>为了线程安全</li>
+<li>为了实现String可以创建HashCode不可变性</li>
+</ul>
+<p>final的四个作用参考之前的文章。<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210302181336985.png" alt="image-20210302181336985"><br>清楚的看到final修饰String，代表String的不可继承，final修饰的char[]代表了被存储的数据不可变更性。<br>注意：final代表了不可变，但仅是引用地址的不可变，并不代表数据不会变。<br>但是注意上图上还有private的修饰，两者共同保证了String的不可变性。<br>那么为什么保证String不可变呢？<font color=red>因为只有当字符串是不可变的，字符串池才有可能实现。</font><br>字符串池的实现：可以在运行时节约很多heap空间，因为不同的字符串变量都指向池中的同一个字符串。<br>小结：<br>因为字符串是不可变的，所以是多线程安全的，同一个字符串实例可以被多个线程共享。<br>这样便不用因为线程安全问题而使用同步。字符串自己便是线程安全的。<br>因为字符串是不可变的，所以在它创建的时候HashCode就被缓存了，不需要重新计算。这就使得字符串很适合作为Map中的键，字符串的处理速度要快过其它的键对象。这就是HashMap中的键往往都使用字符串。</p>
+<p>参考链接：<br><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002683782">参考链接</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42509964/article/details/112190942">面试1参考</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/huzi-learnAll/p/13876281.html">面试2参考</a></p>
 
       
 
