@@ -146,6 +146,85 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-StringBuffer-StringBuilder" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/02/StringBuffer-StringBuilder/">StringBuffer-StringBuilder</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/02/StringBuffer-StringBuilder/" class="archive-article-date">
+  	<time datetime="2021-03-02T08:46:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>StringBuilder和StringBuffer区别</p>
+</blockquote>
+<p><strong>区别1：线程安全性</strong><br>StringBuffer：线程安全，StringBuilder：线程不安全。<br>因为 StringBuffer 的所有公开方法都是 synchronized 修饰的，<font color=red>为什么StringBuilder不是线程安全的？</font></p>
+        
+          <a class="article-more-a" href="/2021/03/02/StringBuffer-StringBuilder/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">-- 面试</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/02/StringBuffer-StringBuilder/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-B树-B-树" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -465,19 +544,19 @@
 
 
   
-    <article id="post-String-StringBuilder-StringBuffer" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-String" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/01/18/String-StringBuilder-StringBuffer/">String/StringBuffer/StringBuilder</a>
+      <a class="article-title" href="/2021/01/18/String/">String</a>
     </h1>
   
 
         
-        <a href="/2021/01/18/String-StringBuilder-StringBuffer/" class="archive-article-date">
+        <a href="/2021/01/18/String/" class="archive-article-date">
   	<time datetime="2021-01-18T12:03:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-18</time>
 </a>
         
@@ -496,7 +575,7 @@
 <hr>
 <p>如果要操作少量的数据用 String；<br>多线程操作字符串缓冲区下操作大量数据 StringBuffer；<br>单线程操作字符串缓冲区下操作大量数据 StringBuilder。</p>
         
-          <a class="article-more-a" href="/2021/01/18/String-StringBuilder-StringBuffer/#more">more >></a>
+          <a class="article-more-a" href="/2021/01/18/String/#more">more >></a>
         
       
 
@@ -520,7 +599,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2021/01/18/String-StringBuilder-StringBuffer/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/01/18/String/">展开全文 >></a>
         </p>
       
 
@@ -887,90 +966,6 @@
 
 
   
-    <article id="post-ArrayList和LinkedList区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/01/07/ArrayList%E5%92%8CLinkedList%E5%8C%BA%E5%88%AB/">ArrayList和LinkedList</a>
-    </h1>
-  
-
-        
-        <a href="/2021/01/07/ArrayList%E5%92%8CLinkedList%E5%8C%BA%E5%88%AB/" class="archive-article-date">
-  	<time datetime="2021-01-07T13:37:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>1.<strong>安全性</strong>：</p>
-<blockquote>
-<p>两者都是List接口的实现类，两者都是不同步的，也就是非线程安全的。<br>因为在我们正常得使用场景中，都是用来查询的，不会涉及太频繁的增删，如果涉及到频繁的增删，可以使用LinkedList，<br>如果需要线程安全的就是可以使用Vector，CopyOrWriteArrayList。原理都是給方法套个synchronized</p>
-</blockquote>
-<p>2.<strong>底层实现</strong>：</p>
-        
-          <a class="article-more-a" href="/2021/01/07/ArrayList%E5%92%8CLinkedList%E5%8C%BA%E5%88%AB/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/01/07/ArrayList%E5%92%8CLinkedList%E5%8C%BA%E5%88%AB/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1101,6 +1096,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">-- 面试</a>
               </li>
             
             <div class="clearfix"></div>
