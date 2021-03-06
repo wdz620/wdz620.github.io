@@ -6,19 +6,14 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>约瑟夫问题 | 无雨无晴</title>
+  <title>Tag: JVM | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="思想  设编号为1，2，……n得n个人围坐一圈，约定编号为k（k大于等于1并且小于等于n）的人从1开始报数，数到m的那个人出列。它的下一位继续从1开始报数，数到m的人出列，依次类推，直到所有人都出列为止。解决方法：  1、数组 2、链表 3、递归 4、迭代">
-<meta property="og:type" content="article">
-<meta property="og:title" content="约瑟夫问题">
-<meta property="og:url" content="http://example.com/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="无雨无晴">
+<meta property="og:url" content="http://example.com/tags/JVM/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="思想  设编号为1，2，……n得n个人围坐一圈，约定编号为k（k大于等于1并且小于等于n）的人从1开始报数，数到m的那个人出列。它的下一位继续从1开始报数，数到m的人出列，依次类推，直到所有人都出列为止。解决方法：  1、数组 2、链表 3、递归 4、迭代">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-01-19T03:06:13.000Z">
-<meta property="article:modified_time" content="2021-01-19T03:46:44.918Z">
 <meta property="article:author" content="吴东卓">
-<meta property="article:tag" content="笔试">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
@@ -149,181 +144,64 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-约瑟夫问题" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      约瑟夫问题
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2021" class="archive-year">2021</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2021/03/06/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" class="archive-article-date">
+  	<time datetime="2021-03-05T23:56:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-06</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2021/03/06/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/">类加载机制</a>
     </h1>
   
 
-        
-        <a href="/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/" class="archive-article-date">
-  	<time datetime="2021-01-19T03:06:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>思想</p>
-</blockquote>
-<p>设编号为1，2，……n得n个人围坐一圈，约定编号为k（k大于等于1并且小于等于n）的人从1开始报数，数到m的那个人出列。它的下一位继续从1开始报数，数到m的人出列，依次类推，直到所有人都出列为止。<br>解决方法：</p>
-<ul>
-<li>1、数组</li>
-<li>2、链表</li>
-<li>3、递归</li>
-<li>4、迭代</li>
-</ul>
-<a id="more"></a>
-<blockquote>
-<p>模拟题目 JZ-46</p>
-</blockquote>
-<p>每年六一儿童节,牛客都会准备一些小礼物去看望孤儿院的小朋友,今年亦是如此。HF作为牛客的资深元老,自然也准备了一些小游戏。其中,有个游戏是这样的:首先,让小朋友们围成一个大圈。然后,他随机指定一个数m,让编号为0的小朋友开始报数。每次喊到m-1的那个小朋友要出列唱首歌,然后可以在礼品箱中任意的挑选礼物,并且不再回到圈中,从他的下一个小朋友开始,继续0…m-1报数….这样下去….直到剩下最后一个小朋友,可以不用表演,并且拿到牛客名贵的“名侦探柯南”典藏版(名额有限哦!!^_^)。请你试着想下,哪个小朋友会得到这份礼品呢？(注：小朋友的编号是从0到n-1)<br>如果没有小朋友，请返回-1</p>
-<p>比如输入 n = 5, m = 3<br>出局顺序：2 0 4 1 -&gt; 3获胜</p>
-<blockquote>
-<p>解决方法</p>
-</blockquote>
-<p>方法一：数组<br>首先想到的就是定义一个数组，然后不断循环，记录每一个出列的人。直到剩下最后一人。时间复杂度O(n*m),空间复杂度为O(n);<br>思路简单，但是编码过程中遇到很多边界值的问题。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">method1</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (n &lt; <span class="number">1</span> || m &lt; <span class="number">1</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span>[] array = <span class="keyword">new</span> <span class="keyword">int</span>[n];</span><br><span class="line">        <span class="keyword">int</span> i = -<span class="number">1</span>, step = <span class="number">0</span>, count = n;</span><br><span class="line">        <span class="keyword">while</span> (count &gt; <span class="number">0</span>) &#123;   <span class="comment">//跳出循环时将最后一个元素也设置为了-1</span></span><br><span class="line">            i++;          <span class="comment">//指向上一个被删除对象的下一个元素。</span></span><br><span class="line">            <span class="keyword">if</span> (i &gt;= n) i = <span class="number">0</span>;  <span class="comment">//模拟环。</span></span><br><span class="line">            <span class="keyword">if</span> (array[i] == -<span class="number">1</span>) <span class="keyword">continue</span>; <span class="comment">//跳过被删除的对象。</span></span><br><span class="line">            step++;                     <span class="comment">//记录已走过的。</span></span><br><span class="line">            <span class="keyword">if</span> (step == m) &#123;               <span class="comment">//找到待删除的对象。</span></span><br><span class="line">                array[i] = -<span class="number">1</span>;</span><br><span class="line">                step = <span class="number">0</span>;</span><br><span class="line">                count--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> i;<span class="comment">//返回跳出循环时的i,即最后一个被设置为-1的元素</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>方法二:使用环形链表.时间复杂度为 O(n * m),空间复杂度是 O(n)</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">method2</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">0</span> || m &lt;= <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 先构造循环链表</span></span><br><span class="line">    Node head = <span class="keyword">new</span> Node(<span class="number">0</span>); <span class="comment">// 头结点, 值为0</span></span><br><span class="line">    Node pre = head;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">        Node temp = <span class="keyword">new</span> Node(i);</span><br><span class="line">        pre.next = temp;</span><br><span class="line">        pre = temp;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 组成环形链表</span></span><br><span class="line">    pre.next = head;</span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (head != pre) &#123;</span><br><span class="line">        <span class="comment">// 报数达到时，删除结点</span></span><br><span class="line">        <span class="keyword">if</span> (++count == m) &#123;</span><br><span class="line">            <span class="comment">// 删除该报数结点</span></span><br><span class="line">            <span class="comment">// 报数结点的下之个指向当前结点的下一个</span></span><br><span class="line">            pre.next = head.next;</span><br><span class="line">            <span class="comment">// 从新计数</span></span><br><span class="line">            count = <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 继续报数</span></span><br><span class="line">            pre = pre.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 当前结点指向当前报数的下一个</span></span><br><span class="line">        head = pre.next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> head.value;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 定义链表节点</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> value;</span><br><span class="line">    <span class="keyword">public</span> Node next;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Node</span><span class="params">(<span class="keyword">int</span> data)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.value = data;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>方法三：递归</p>
-<p>递归是思路是每次我们删除了某一个人之后，我们就对这些人重新编号，然后我们的难点就是找出删除前和删除后人编号的映射关系。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">method3</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> (method3(n - <span class="number">1</span>, m) + m) % n;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>方法四：迭代法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">method4</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 当参与人数为1时，最终留下元素的序号为0</span></span><br><span class="line">    <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 从参与人数为2开始，直到参与人数为n，每次计算参与人数为i时，最终留下元素的序号</span></span><br><span class="line">    <span class="comment">// 注意：%后面为i，由于要求的是参与人数为i时最终留下元素的序号，因此可能结果的最大序号为i-1，所以要%i</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        index = (index + m) % i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">笔试</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2021/01/19/%E5%9B%9E%E6%BA%AF%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          回溯法
-        
-      </div>
-    </a>
   
   
-    <a href="/2021/01/18/String/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">String</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
-  
-
-  
-
-  
+    
 
 
           </div>
@@ -346,9 +224,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

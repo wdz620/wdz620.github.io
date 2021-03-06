@@ -6,20 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>约瑟夫问题 | 无雨无晴</title>
+  <title>类加载机制 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="思想  设编号为1，2，……n得n个人围坐一圈，约定编号为k（k大于等于1并且小于等于n）的人从1开始报数，数到m的那个人出列。它的下一位继续从1开始报数，数到m的人出列，依次类推，直到所有人都出列为止。解决方法：  1、数组 2、链表 3、递归 4、迭代">
+  <meta name="description" content="类加载过程完整的类加载过程">
 <meta property="og:type" content="article">
-<meta property="og:title" content="约瑟夫问题">
-<meta property="og:url" content="http://example.com/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:title" content="类加载机制">
+<meta property="og:url" content="http://example.com/2021/03/06/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="思想  设编号为1，2，……n得n个人围坐一圈，约定编号为k（k大于等于1并且小于等于n）的人从1开始报数，数到m的那个人出列。它的下一位继续从1开始报数，数到m的人出列，依次类推，直到所有人都出列为止。解决方法：  1、数组 2、链表 3、递归 4、迭代">
+<meta property="og:description" content="类加载过程完整的类加载过程">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-01-19T03:06:13.000Z">
-<meta property="article:modified_time" content="2021-01-19T03:46:44.918Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210306084321460.png">
+<meta property="article:published_time" content="2021-03-05T23:56:47.000Z">
+<meta property="article:modified_time" content="2021-03-06T00:44:21.409Z">
 <meta property="article:author" content="吴东卓">
-<meta property="article:tag" content="笔试">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -149,54 +153,75 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-约瑟夫问题" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-类加载机制" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      约瑟夫问题
+      类加载机制
     </h1>
   
 
         
-        <a href="/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/" class="archive-article-date">
-  	<time datetime="2021-01-19T03:06:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-19</time>
+        <a href="/2021/03/06/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" class="archive-article-date">
+  	<time datetime="2021-03-05T23:56:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-06</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p>思想</p>
-</blockquote>
-<p>设编号为1，2，……n得n个人围坐一圈，约定编号为k（k大于等于1并且小于等于n）的人从1开始报数，数到m的那个人出列。它的下一位继续从1开始报数，数到m的人出列，依次类推，直到所有人都出列为止。<br>解决方法：</p>
-<ul>
-<li>1、数组</li>
-<li>2、链表</li>
-<li>3、递归</li>
-<li>4、迭代</li>
-</ul>
+        <h4 id="类加载过程"><a href="#类加载过程" class="headerlink" title="类加载过程"></a>类加载过程</h4><p>完整的类加载过程</p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg"></p>
 <a id="more"></a>
+
 <blockquote>
-<p>模拟题目 JZ-46</p>
+<p>加载</p>
 </blockquote>
-<p>每年六一儿童节,牛客都会准备一些小礼物去看望孤儿院的小朋友,今年亦是如此。HF作为牛客的资深元老,自然也准备了一些小游戏。其中,有个游戏是这样的:首先,让小朋友们围成一个大圈。然后,他随机指定一个数m,让编号为0的小朋友开始报数。每次喊到m-1的那个小朋友要出列唱首歌,然后可以在礼品箱中任意的挑选礼物,并且不再回到圈中,从他的下一个小朋友开始,继续0…m-1报数….这样下去….直到剩下最后一个小朋友,可以不用表演,并且拿到牛客名贵的“名侦探柯南”典藏版(名额有限哦!!^_^)。请你试着想下,哪个小朋友会得到这份礼品呢？(注：小朋友的编号是从0到n-1)<br>如果没有小朋友，请返回-1</p>
-<p>比如输入 n = 5, m = 3<br>出局顺序：2 0 4 1 -&gt; 3获胜</p>
+<p>Java虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这个过程就被称为<strong>虚拟机的类加载机制</strong>。</p>
+<p>首先是<em>加载</em>过程需要做的三件事：</p>
+<ul>
+<li>通过一个类的全限定名来获取此类的二进制字节流</li>
+<li>将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构</li>
+<li>在内存中生成一个代表这个类的Class对象，作为方法区这个类的各种数据的访问入口</li>
+</ul>
+<p>加载阶段结束后，Java虚拟机外部的二进制字节流就按照虚拟机所设定的格式存储在方法区之中了。类型数据妥善安置在方法区之后，会在Java堆内存中实例化一个Class对象，这个对象作为程序访问方法区中的类型数据的外部接口。</p>
 <blockquote>
-<p>解决方法</p>
+<p>连接</p>
 </blockquote>
-<p>方法一：数组<br>首先想到的就是定义一个数组，然后不断循环，记录每一个出列的人。直到剩下最后一人。时间复杂度O(n*m),空间复杂度为O(n);<br>思路简单，但是编码过程中遇到很多边界值的问题。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">method1</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (n &lt; <span class="number">1</span> || m &lt; <span class="number">1</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span>[] array = <span class="keyword">new</span> <span class="keyword">int</span>[n];</span><br><span class="line">        <span class="keyword">int</span> i = -<span class="number">1</span>, step = <span class="number">0</span>, count = n;</span><br><span class="line">        <span class="keyword">while</span> (count &gt; <span class="number">0</span>) &#123;   <span class="comment">//跳出循环时将最后一个元素也设置为了-1</span></span><br><span class="line">            i++;          <span class="comment">//指向上一个被删除对象的下一个元素。</span></span><br><span class="line">            <span class="keyword">if</span> (i &gt;= n) i = <span class="number">0</span>;  <span class="comment">//模拟环。</span></span><br><span class="line">            <span class="keyword">if</span> (array[i] == -<span class="number">1</span>) <span class="keyword">continue</span>; <span class="comment">//跳过被删除的对象。</span></span><br><span class="line">            step++;                     <span class="comment">//记录已走过的。</span></span><br><span class="line">            <span class="keyword">if</span> (step == m) &#123;               <span class="comment">//找到待删除的对象。</span></span><br><span class="line">                array[i] = -<span class="number">1</span>;</span><br><span class="line">                step = <span class="number">0</span>;</span><br><span class="line">                count--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> i;<span class="comment">//返回跳出循环时的i,即最后一个被设置为-1的元素</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>方法二:使用环形链表.时间复杂度为 O(n * m),空间复杂度是 O(n)</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">method2</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">0</span> || m &lt;= <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 先构造循环链表</span></span><br><span class="line">    Node head = <span class="keyword">new</span> Node(<span class="number">0</span>); <span class="comment">// 头结点, 值为0</span></span><br><span class="line">    Node pre = head;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">        Node temp = <span class="keyword">new</span> Node(i);</span><br><span class="line">        pre.next = temp;</span><br><span class="line">        pre = temp;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 组成环形链表</span></span><br><span class="line">    pre.next = head;</span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (head != pre) &#123;</span><br><span class="line">        <span class="comment">// 报数达到时，删除结点</span></span><br><span class="line">        <span class="keyword">if</span> (++count == m) &#123;</span><br><span class="line">            <span class="comment">// 删除该报数结点</span></span><br><span class="line">            <span class="comment">// 报数结点的下之个指向当前结点的下一个</span></span><br><span class="line">            pre.next = head.next;</span><br><span class="line">            <span class="comment">// 从新计数</span></span><br><span class="line">            count = <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 继续报数</span></span><br><span class="line">            pre = pre.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 当前结点指向当前报数的下一个</span></span><br><span class="line">        head = pre.next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> head.value;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 定义链表节点</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> value;</span><br><span class="line">    <span class="keyword">public</span> Node next;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Node</span><span class="params">(<span class="keyword">int</span> data)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.value = data;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>方法三：递归</p>
-<p>递归是思路是每次我们删除了某一个人之后，我们就对这些人重新编号，然后我们的难点就是找出删除前和删除后人编号的映射关系。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">method3</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> (method3(n - <span class="number">1</span>, m) + m) % n;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>方法四：迭代法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">method4</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 当参与人数为1时，最终留下元素的序号为0</span></span><br><span class="line">    <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 从参与人数为2开始，直到参与人数为n，每次计算参与人数为i时，最终留下元素的序号</span></span><br><span class="line">    <span class="comment">// 注意：%后面为i，由于要求的是参与人数为i时最终留下元素的序号，因此可能结果的最大序号为i-1，所以要%i</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        index = (index + m) % i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>连接部分分成三个部分，首先进行验证，然后进行准备，最后对其进行解析。</p>
+<p>下面来简单介绍验证的过程。</p>
+<p>首先说明验证的重要性，如果Java虚拟机不检查输入的字节流，对其完全信任的化，很可能就会因为载入了错误或者恶意的字节码流而导致整个系统受到攻击而崩溃，所以验证字节码是Java虚拟机保护自身的一项必要措施。</p>
+<p>验证阶段大致上会完成四个阶段的检验工作：</p>
+<ul>
+<li>文件格式验证(基于二进制流进行的，其他都是基于方法区的存储结构进行)</li>
+<li>元数据验证</li>
+<li>字节码验证</li>
+<li>符号引用验证</li>
+</ul>
+<hr>
+<p>准备阶段是正式为类中定义的变量分配内存并设置类变量初始值的阶段，这些变量所使用的内存都应当在方法区中进行分配。</p>
+<p>在准备阶段需要注意的两个问题：</p>
+<ul>
+<li>这个时候进行内存分配的仅包括类变量，而不包括实例变量，实例变量将会在对象实例化时随着对象一起分配在Java堆中</li>
+<li>这里所设置的初始值”通常情况”下是数据类型默认的零值，比如我们定义了<code>public static int value=123</code> ，那么 value 变量在准备阶段的初始值就是 0 而不是123（初始化阶段才会赋值）。特殊情况：比如给 value 变量加上了 fianl 关键字<code>public static final int value=111</code> ，那么准备阶段 value 的值就被赋值为 111。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210306084321460.png" alt="image-20210306084321460"></p>
+<hr>
+<p>解析阶段是Java虚拟机将常量池内的符号引用替换为直接引用的过程。</p>
+<p>解析阶段主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符这7类符号引用进行。</p>
+<blockquote>
+<p>初始化</p>
+</blockquote>
+<p>类的初始化阶段是类加载过程的最后一个阶段。一种更直接的形式表达：初始化阶段就是执行类构造器<clinit>()方法的过程。</p>
+<ul>
+<li>clinit&lt;&gt;()方法是编译器自动收集类中所有类变量的赋值动作和静态语言块中的语句合并产生的，其中编辑器收集的顺序是有语句在源文件中出现的顺序决定的，静态语句块中只能访问到定义在静态语句块之前的变量，定义在它之后的变量，在签名的静态语句块可以赋值，但是不能访问。</li>
+</ul>
+<p>参考Java虚拟机</p>
+<p><a target="_blank" rel="noopener" href="https://snailclimb.gitee.io/javaguide/#/docs/java/jvm/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B">参考JavaGuide</a></p>
+
       
 
       
@@ -209,7 +234,11 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">笔试</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
         		</li>
       		
 		</ul>
@@ -265,7 +294,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/03/06/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -279,18 +308,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/01/19/%E5%9B%9E%E6%BA%AF%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          回溯法
-        
-      </div>
-    </a>
   
-  
-    <a href="/2021/01/18/String/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">String</div>
+    <a href="/2021/03/05/Java%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Java类的加载顺序</div>
       <i class="icon-circle-right"></i>
     </a>
   

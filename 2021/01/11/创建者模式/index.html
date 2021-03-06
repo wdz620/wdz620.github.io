@@ -16,7 +16,7 @@
 <meta property="og:description" content="单例模式 单例类只能有一个实例。 单例类必须自己创建自己的唯一实例。 单例类必须给所有其他对象提供这一实例。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-01-11T05:31:41.000Z">
-<meta property="article:modified_time" content="2021-03-04T13:04:58.253Z">
+<meta property="article:modified_time" content="2021-03-05T08:24:01.352Z">
 <meta property="article:author" content="吴东卓">
 <meta property="article:tag" content="设计模式">
 <meta name="twitter:card" content="summary">
@@ -185,8 +185,9 @@
 <p>上面的代码相对于前一版本就是添加了一个关键字synchronized来确保安全，但是同样其会带来很大的问题，毕竟当线程来临之时，需要排队等待，这样对性能的损耗可想而知。</p>
 <p>小结：懒汉模式将实例化的时机放到了需要的时候（饿汉则相反，类加载的时候就进行实例化）,也就是“延迟加载”。相比饿汉，其能避免在有些加载的时候实例化可能用不到的实例，但是问题也是需要花精力去解决线程安全的问题。</p>
 <blockquote>
-<p>饿汉模式<br>相比于懒汉模式，在类加载的时候已经存在一个实例。<br>举个例子对两者进行比较：比如有个数据库连接，懒汉就是当你第一次需要访问数据库的时候才回去创建一个连接，而饿汉模式，就是当你程序启动，类加载完毕的时候，已经有连接了。<br>所以饿汉的缺点也显而易见，不可避免的生成很多无用的实例。</p>
+<p>饿汉模式</p>
 </blockquote>
+<p>相比于懒汉模式，在类加载的时候已经存在一个实例。<br>举个例子对两者进行比较：比如有个数据库连接，懒汉就是当你第一次需要访问数据库的时候才回去创建一个连接，而饿汉模式，就是当你程序启动，类加载完毕的时候，已经有连接了。<br>所以饿汉的缺点也显而易见，不可避免的生成很多无用的实例。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 类加载的时候instance已经指向一个实例。</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>虽然没有在代码中看到synchronized关键字，但是饿汉模式也是线程安全的。这是由于JVM类加载的特性，JVM在加载类的时候，是单线程的，所以可以保证只存在单一的实例。<br>另一种解释：饿汉模式因为静态变量是在初始化的时候赋值，而类初始化是线程安全的，不存在多个线程初始化多次的问题，因此是线程安全的。</p>
 <blockquote>
@@ -486,6 +487,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
             
             <div class="clearfix"></div>

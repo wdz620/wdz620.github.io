@@ -146,6 +146,87 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-类加载机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/06/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/">类加载机制</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/06/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" class="archive-article-date">
+  	<time datetime="2021-03-05T23:56:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-06</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="类加载过程"><a href="#类加载过程" class="headerlink" title="类加载过程"></a>类加载过程</h4><p>完整的类加载过程</p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg"></p>
+        
+          <a class="article-more-a" href="/2021/03/06/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/06/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Java类的加载顺序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -169,7 +250,7 @@
         <h4 id="Java类的加载顺序"><a href="#Java类的加载顺序" class="headerlink" title="Java类的加载顺序"></a>Java类的加载顺序</h4><blockquote>
 <p>有继承关系的加载顺序</p>
 </blockquote>
-<p>父类静态方法/静态代码块-&gt;子类静态方法/静态方法块-&gt;父类成员变量/非静态代码块-&gt;父类构造器-&gt;子类成员变量/非静态代码块-&gt;子类构造器</p>
+<p>父类静态方法/静态代码块-&gt;子类静态方法/静态方法块-&gt;父类成员变量/非静态代码块(从上到下顺序排列)-&gt;父类构造器-&gt;子类成员变量/非静态代码块(从上到下顺序排列)-&gt;子类构造器</p>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/Java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F-1614906219572.jpg" alt="顺序"></p>
         
           <a class="article-more-a" href="/2021/03/05/Java%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F/#more">more >></a>
@@ -869,93 +950,6 @@
 
 
   
-    <article id="post-HashMap和HashTable" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/01/16/HashMap%E5%92%8CHashTable/">HashMap和HashTable</a>
-    </h1>
-  
-
-        
-        <a href="/2021/01/16/HashMap%E5%92%8CHashTable/" class="archive-article-date">
-  	<time datetime="2021-01-16T10:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>1.<strong>安全性</strong>：</p>
-<blockquote>
-<p>HashMap是非线程安全的，HashTable是线程安全的：就是因为HashTable内部的实现方法基本都经过synchronized修饰。<br>如果想要保证线程安全最好使用ConcurrentHashMap，详见下面补充</p>
-</blockquote>
-<p>2.<strong>底层实现</strong>：</p>
-<blockquote>
-<p>因为线程安全的原因，HashMap比HashTable效率高一些。此外，HashTable基本被淘汰，尽量不要使用。</p>
-</blockquote>
-        
-          <a class="article-more-a" href="/2021/01/16/HashMap%E5%92%8CHashTable/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/01/16/HashMap%E5%92%8CHashTable/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1098,6 +1092,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
             
             <div class="clearfix"></div>
