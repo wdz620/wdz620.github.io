@@ -6,15 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Tag: 笔试 | 无雨无晴</title>
+  <title>三次握手四次挥手 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="无雨无晴">
-<meta property="og:url" content="http://example.com/tags/%E7%AC%94%E8%AF%95/index.html">
+  <meta name="description" content="三次握手   第一次握手：建立连接时，客户端发送syn包到服务器，并进入SYN_SENT状态，等待服务器确认；SYN：同步序列编号。 第二次握手：服务器收到syn包，必须确认客户的syn，同时自己也发送一个syn包，即syn+ack，此时服务器进入SYN_RCVD状态 第三次握手：客户端收到服务器的syn+ack包，向服务器发送确认包ack&#x3D;k+1，此包发送完毕，客户端和服务器进入ESTABLI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="三次握手四次挥手">
+<meta property="og:url" content="http://example.com/2021/03/10/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/index.html">
 <meta property="og:site_name" content="无雨无晴">
+<meta property="og:description" content="三次握手   第一次握手：建立连接时，客户端发送syn包到服务器，并进入SYN_SENT状态，等待服务器确认；SYN：同步序列编号。 第二次握手：服务器收到syn包，必须确认客户的syn，同时自己也发送一个syn包，即syn+ack，此时服务器进入SYN_RCVD状态 第三次握手：客户端收到服务器的syn+ack包，向服务器发送确认包ack&#x3D;k+1，此包发送完毕，客户端和服务器进入ESTABLI">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210310200702098.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.gif">
+<meta property="article:published_time" content="2021-03-10T12:01:41.000Z">
+<meta property="article:modified_time" content="2021-03-10T12:55:31.302Z">
 <meta property="article:author" content="吴东卓">
+<meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210310200702098.png">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -144,102 +153,215 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-三次握手四次挥手" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/01/19/%E5%9B%9E%E6%BA%AF%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2021-01-19T09:51:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-19</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/19/%E5%9B%9E%E6%BA%AF%E6%B3%95/">回溯法</a>
+    <h1 class="article-title" itemprop="name">
+      三次握手四次挥手
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2021/03/10/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/" class="archive-article-date">
+  	<time datetime="2021-03-10T12:01:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>三次握手</p>
+</blockquote>
+<ul>
+<li>第一次握手：建立连接时，客户端发送syn包到服务器，并进入SYN_SENT状态，等待服务器确认；SYN：同步序列编号。</li>
+<li>第二次握手：服务器收到syn包，必须确认客户的syn，同时自己也发送一个syn包，即syn+ack，此时服务器进入SYN_RCVD状态</li>
+<li>第三次握手：客户端收到服务器的syn+ack包，向服务器发送确认包ack=k+1，此包发送完毕，客户端和服务器进入ESTABLISHED（TCP连接成功）状态，完成三次握手。</li>
+</ul>
+<a id="more"></a>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210310200702098.png" alt="image-20210310200702098"><br>这是非常经典的一个图，首先明确一下其中的一些名词</p>
+<table>
+<thead>
+<tr>
+<th>SYN</th>
+<th>连接建立时用于同步序号。当SYN=1，ACK=0时表示：这是一个连接请求报文段。若同意连接，则在响应报文段中使得SYN=1，ACK=1。因此，SYN=1表示这是一个连接请求，或连接接受报文。SYN这个标志位只有在TCP建产连接时才会被置1，握手完成后SYN标志位被置0。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>seq</td>
+<td>用来标记数据段的顺序，TCP把连接中发送的所有数据字节都编上一个序号，第一个字节的编号由本地随机产生；给字节编上序号后，就给每一个报文段指派一个序号；序列号seq就是这个报文段中的第一个字节的数据编号。</td>
+</tr>
+<tr>
+<td>ACK</td>
+<td>确认号是否有效，一般置为1</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>三次握手相关问题</p>
+</blockquote>
+<p>三次握手的目的就是为了建立可靠的通信信道，简单说就是数据的发送与接受，而三次握手最主要的目的就是双方确认自己与对方的发送与接受是正常的。<br>简单解读：</p>
+<ul>
+<li>第一次握手：客户什么都不能确认；服务器确认了对方发送正常，自己的接受正常。</li>
+<li>第二次握手：客户确定自己发送、接受都正常，对方的发送、接受正常；服务器还是上一个状态（对方发送正常，自己接受正常）</li>
+<li>第三次握手：客户确定自己发送、接受都正常，对方的发送、接受正常；服务器确认自己发送、接受正常，对方发送、接受正常<br>所以说为什么必须三次，如果两次的话，客户能确保自己和对方的接受发送正常，但是服务器不知道自己的发送以及对方的接受如何。</li>
+</ul>
+<p>第2次握手传回了ACK，为什么还要传回SYN？<br>接收端传回发送端所发送的ACK是为了告诉客户端，我接收到的信息确实就是你所发送的信号了，这表明从客户端到服务端的通信是正常的。而回传SYN则是为了建立并确认从服务端到客户端的通信。</p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.gif" alt="三次握手"></p>
+<blockquote>
+<p>四次挥手</p>
+</blockquote>
+<p>客户端-发送一个 FIN，用来关闭客户端到服务器的数据传送<br>服务器-收到这个 FIN，它发回一 个 ACK，确认序号为收到的序号加1 。和 SYN 一样，一个 FIN 将占用一个序号<br>服务器-关闭与客户端的连接，发送一个FIN给客户端<br>客户端-发回 ACK 报文确认，并将确认序号设置为收到序号加1</p>
+<p>解读：</p>
+<ul>
+<li>客户端向服务端发送FIN包，代表客户端已经没有数据要发送</li>
+<li>服务端收到之后，返回一个ack，CLOSE_WAIT等待关闭的状态，因为这时客户段可能还有没进行完的数据</li>
+<li>等待服务端都发送完毕之后，服务端就向客户端发送FIN</li>
+<li>客户端接受到ack之后进入TIME_WAIT状态，同时回复ACK，服务端收到之后直接进入关闭状态，链接关闭。但是客户端要等待2MSL(报文最大生存时间)的时间,才会进入关闭</li>
+</ul>
+<blockquote>
+<p>四次挥手问题</p>
+</blockquote>
+<p>为什么要等待2MSL的时间才关闭？</p>
+<ul>
+<li>为了确保连接的可靠关闭，如果服务端没有收到最后一个ack，那么就会重发FIN</li>
+<li>为了避免段冲重用带来的数据混淆。如果客户端直接进入关闭又用相同的端口向服务端建立一个连接，上一次连接的部分数据在网络上延迟到达客户端，数据就可能发生混淆。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.gif" alt="四次挥手"></p>
+<blockquote>
+<p>参考链接</p>
+</blockquote>
+<p>如有侵权，联系删除。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bj-mr-li/p/11106390.html">参考链接</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qzcsu/article/details/72861891">两张动图-彻底明白TCP的三次握手与四次挥手</a><br><a target="_blank" rel="noopener" href="https://snailclimb.gitee.io/javaguide/#/docs/network/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C?id=%e4%ba%8c-tcp-%e4%b8%89%e6%ac%a1%e6%8f%a1%e6%89%8b%e5%92%8c%e5%9b%9b%e6%ac%a1%e6%8c%a5%e6%89%8b%e9%9d%a2%e8%af%95%e5%b8%b8%e5%ae%a2">JavaGuide</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">笔试</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">回溯法</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机网络</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/03/10/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/" class="archive-article-date">
-  	<time datetime="2021-01-19T03:06:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-19</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/2021/03/10/Java%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Java对象的创建过程
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/09/Java%E5%8F%AA%E6%9C%89%E5%80%BC%E4%BC%A0%E9%80%92/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Java只有值传递</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/">约瑟夫问题</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">笔试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
+
+  
 
 
           </div>
@@ -262,9 +384,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
@@ -340,10 +462,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">面试</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
@@ -353,10 +471,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">笔试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -381,6 +495,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
             
             <div class="clearfix"></div>
