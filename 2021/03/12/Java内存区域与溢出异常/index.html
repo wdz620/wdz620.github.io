@@ -6,18 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Java对象的创建过程 | 无雨无晴</title>
+  <title>Java内存区域与溢出异常 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
-<meta property="og:title" content="Java对象的创建过程">
-<meta property="og:url" content="http://example.com/2021/03/10/Java%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B/index.html">
+  <meta name="description" content="内存区域与溢出异常 运行时数据区域   程序计数器 Java虚拟机栈 本地方法栈 Java堆 方法区">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存区域与溢出异常">
+<meta property="og:url" content="http://example.com/2021/03/12/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8/index.html">
 <meta property="og:site_name" content="无雨无晴">
+<meta property="og:description" content="内存区域与溢出异常 运行时数据区域   程序计数器 Java虚拟机栈 本地方法栈 Java堆 方法区">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-03-10T12:04:58.000Z">
-<meta property="article:modified_time" content="2021-03-10T12:05:11.385Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313082249695.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313085454760.png">
+<meta property="article:published_time" content="2021-03-12T11:39:00.000Z">
+<meta property="article:modified_time" content="2021-03-13T01:23:27.515Z">
 <meta property="article:author" content="吴东卓">
-<meta property="article:tag" content="Java">
+<meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313082249695.png">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -147,27 +152,127 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Java对象的创建过程" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Java内存区域与溢出异常" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Java对象的创建过程
+      Java内存区域与溢出异常
     </h1>
   
 
         
-        <a href="/2021/03/10/Java%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B/" class="archive-article-date">
-  	<time datetime="2021-03-10T12:04:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-10</time>
+        <a href="/2021/03/12/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8/" class="archive-article-date">
+  	<time datetime="2021-03-12T11:39:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-12</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h4 id="内存区域与溢出异常"><a href="#内存区域与溢出异常" class="headerlink" title="内存区域与溢出异常"></a>内存区域与溢出异常</h4><blockquote>
+<p>运行时数据区域</p>
+</blockquote>
+<ul>
+<li>程序计数器</li>
+<li>Java虚拟机栈</li>
+<li>本地方法栈</li>
+<li>Java堆</li>
+<li>方法区</li>
+</ul>
+<a id="more"></a>
+<p>首先明确一个概念：线程私有-&gt;由于Java虚拟机的多线程是通过程序轮流切换、分配处理器执行时间的方式来实现的，在任何一个确定的时刻，一个处理器都只会执行一条程序中的指令。因此为了线程切换后能恢复到正确的执行位置，每条线程都需要有一个独立的程序计数器，各条线程之间计数器互不影响，独立存储，我们称这类内存区域为“线程私有”的内存。</p>
+<p><strong>程序计数器：</strong>是一块较小的内存空间，可以被看作是当前线程所执行的字节码的行号指示器。字节码解释器的工作就是通过这个计数器的值来选取下一个条需要执行的字节码指令，它是程序控制流的指示器，分支、循环、跳转、异常处理等基础的功能都靠这个计数器去完成。此外该内存区域是唯一一个在《Java虚拟机规范》中没有规定任何OutOfMemoryError情况的区域。</p>
+<p><strong>Java虚拟机栈：</strong>主要描述的是Java方法执行的线程内存模型：每个方法被执行的时候，Java虚拟机都会同步创建一个栈帧用于存储<strong>局部变量表、操作数栈、动态连接、方法出口等信息</strong>。其中每个方法被调用直至完成的过程，就意味着一个战阵在虚拟机栈中从入栈到出栈的过程。其中最受关注的就是局部变量表，其中存放了编译期间可知的各种虚拟机基本数据类型、对象引用和returnAddress类型。在内存区域中规定了两类异常情况：</p>
+<ul>
+<li>StackOverFlowError：线程请求深度大于虚拟机所允许的深度</li>
+<li>OutOfMemoryError：Java虚拟机容量可以动态扩展，当栈扩展时无法申请到足够的内存就会抛出OOM异常</li>
+</ul>
+<p><strong>本地方法栈：</strong>作用与上述的虚拟机栈作用非常相似，区别在于虚拟机栈为虚拟机执行Java方法（字节码）服务，而本地方法栈则是为虚拟机使用本地（Native）方法服务</p>
+<p><strong>Java堆：</strong>首先明确Java堆（Java Heap）是虚拟机所管理的内存中最大的一块。Java堆是被所有线程共享的一块内存区域，在虚拟机启动时创建。此内存区域存在的唯一目的就是存放对象实例。Java堆是垃圾收集器管理的内存区域，将Java堆细分的主要目的就是为了更好的回收内存，或者说更快地分配内存。Java堆可以处于物理上不连续的内存空间，但在逻辑上它应该被视为连续的。</p>
+<p><strong>方法区：</strong>与Java堆一样，是各个线程共享的内存区域，它用于存储已被虚拟机加载的类型信息、常量、静态变量、即时编译器编译后的代码缓存等数据。</p>
+<blockquote>
+<p>对象的创建</p>
+</blockquote>
+<p>首先了解Java创建对象的五种方法：</p>
+<ul>
+<li>使用new关键字</li>
+<li>使用Class类的newInstance()方法</li>
+<li>使用Constructor类的newInstance()方法</li>
+<li>使用clone()方法</li>
+<li>使用反序列化</li>
+</ul>
+<p>前三种使用构造函数创建对象。</p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313082249695.png" alt="image-20210313082249695"></p>
+<p>下面再来说说对象的创建过程？以new为例</p>
+<p>Java虚拟机遇到一条new指令时，首先将去检查这个指令的参数是否能在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已被加载解析和初始化。如果没有必须先去执行想听的类加载过程。在类加载检查通过后，接下来虚拟机将为新生对象分配内存，内存的大小在类加载完成的时候便可以确定。</p>
+<p>细化分析：</p>
+<p>1、new出来的新对象先去判断线程栈是否能分配下</p>
+<ul>
+<li>如果能分配下直接分配到栈中</li>
+<li>如果分配不下进行第二步</li>
+</ul>
+<p>2、判断该对象是否足够大</p>
+<ul>
+<li>如果足够大，则直接进入老年代</li>
+<li>如果不够大，继续进行下一步</li>
+</ul>
+<p>3、判断你创建对象的线程TLAB（本地线程缓存区）空间是否足够</p>
+<ul>
+<li>如果足够，直接分配在TLAB中</li>
+<li>如果不够，则进入Eden区中其他空间，然后继续下一步</li>
+</ul>
+<p>4、GC清理</p>
+<ul>
+<li>如果清除掉了该对象，则直接结束</li>
+<li>如果没有清除该对象，进行下一步</li>
+</ul>
+<p>5、此刻对象进入Survivor区，判断年龄是否足够大</p>
+<ul>
+<li>如果年龄足够大，直接进入old区域</li>
+<li>如果不够大，则进入Survivor2区，然后进入第四步，循环反复</li>
+</ul>
+<blockquote>
+<p>上述过程的小疑问</p>
+</blockquote>
+<p>1、为什么对象会优先分配在栈中？</p>
+<p>首先栈是线程私有的，将对象优先分配在栈中，可以通过pop直接将对象的所有信息，空间直接清除，当线程消亡的时候也可以直接清理这一块的TLAB区域。</p>
+<p>2、为什么JVM会让大对象直接进入老年代？</p>
+<p>大对象需要连续的空间来去存储，如果不存入老年代对虚拟机来说可能就是一种负担，如果没有足够的空间就有可能导致提前触发GC来清理空间去安置大对象。</p>
+<p>3、为什么会优先选择进入TLAB？</p>
+<p>TLAB（本地线程缓存池），TLAB的好处就是防止不同线程创建对象会选择同一块内存区域而产生竞争，会使其概率大大减少。</p>
+<p>4、为什么会有两个Survivor区？并且存活且年龄不够大的对象会从一个Survivor区转到另一个Survivor区？</p>
+<p>首先了解可达性分析算法（从GC Roots节点出发向下搜索，如果没有任何引用链，则证明该对象不可用。）</p>
+<p>根据可达性分析算法，JVM会开始寻找所有正在使用的对象，没有使用的就是垃圾，通常情况下，很多对象都是用完即弃的，所以真正在Survivor区长时间存活的对象非常少，将这部分创建从一个Survivor区转到另一个Survivor区后，就可以直接对这个Survivor区进行全量的空间会回收，效率得到提高。</p>
+<blockquote>
+<p>对象的内存布局</p>
+</blockquote>
+<p>在HotSpot虚拟机里，对象在堆内存中的存储布局可以划分为三个部分：对象头、实例数据、对齐填充。</p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313085454760.png" alt="image-20210313085454760"></p>
+<p>在Java中对象的内存分布分为两种情况，非数组对象和数组对象，数组对象和非数组对象的区别在于对象头中，是否需要额外的空间存储数组的长度length。</p>
+<p>1、对象头</p>
+<ul>
+<li>MarkWord：用来存储对象自身的运行时数据，包括一系列的标志位，在32位系统中占四个字节，在64位系统中占8个字节</li>
+<li>ClassPointer：类型指针，用来指向对象对应的Class对象的内存地址，在32位系统占4字节，在64位系统中占8字节</li>
+<li>Length：只在数组对象中存在，用来记录数组的长度，占用4个字节</li>
+</ul>
+<p>2、实例数据</p>
+<p>对象真正存储的有效信息，包括对象的所有成员变量，其大小由各个成员变量的大小决定。</p>
+<p>3、对齐填充</p>
+<p>这部分仅仅起占位符的作用。由于HotSpot虚拟机的自动内存管理系统要求对象起始地址必须是8字节的整数倍，所以为了完整，就需要通过对其填充来补全。</p>
+<p><strong>分析：Object o = new Object()到底占用多少个字节？</strong></p>
+<p>其实这个就是在问对象的内存布局是怎样的：</p>
+<ul>
+<li>在开启压缩指针的情况下，markword占用八个字节，ClassPoint占用四个字节，实例数据为0，一共是12个字节。由于对象需要为8的整数倍，对齐填充会补4个字节，所以一共是16个字节的存储空间。</li>
+<li>在没有指针的情况下，markword占用八个字节，classpoint占用八个字节，无实例数据，一共用16个字节。</li>
+</ul>
+<blockquote>
+<p>参考链接</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/hqGmtNvRburVHHp6O0WlyA">moom聊技术</a></p>
+
       
 
       
@@ -180,7 +285,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
         		</li>
       		
 		</ul>
@@ -236,7 +341,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/03/10/Java%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/03/12/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -419,10 +524,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">

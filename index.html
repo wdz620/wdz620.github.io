@@ -146,26 +146,38 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Java对象的创建过程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Java内存区域与溢出异常" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/10/Java%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B/">Java对象的创建过程</a>
+      <a class="article-title" href="/2021/03/12/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8/">Java内存区域与溢出异常</a>
     </h1>
   
 
         
-        <a href="/2021/03/10/Java%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B/" class="archive-article-date">
-  	<time datetime="2021-03-10T12:04:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-10</time>
+        <a href="/2021/03/12/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8/" class="archive-article-date">
+  	<time datetime="2021-03-12T11:39:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-12</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
+        <h4 id="内存区域与溢出异常"><a href="#内存区域与溢出异常" class="headerlink" title="内存区域与溢出异常"></a>内存区域与溢出异常</h4><blockquote>
+<p>运行时数据区域</p>
+</blockquote>
+<ul>
+<li>程序计数器</li>
+<li>Java虚拟机栈</li>
+<li>本地方法栈</li>
+<li>Java堆</li>
+<li>方法区</li>
+</ul>
+        
+          <a class="article-more-a" href="/2021/03/12/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8/#more">more >></a>
         
       
 
@@ -179,7 +191,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
         		</li>
       		
 		</ul>
@@ -189,7 +201,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/10/Java%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/03/12/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8/">展开全文 >></a>
         </p>
       
 
@@ -1092,10 +1104,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
