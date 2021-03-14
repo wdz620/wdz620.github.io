@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313082249695.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313085454760.png">
 <meta property="article:published_time" content="2021-03-12T11:39:00.000Z">
-<meta property="article:modified_time" content="2021-03-13T01:23:27.515Z">
+<meta property="article:modified_time" content="2021-03-14T01:33:38.372Z">
 <meta property="article:author" content="吴东卓">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -207,7 +207,7 @@
 <p>前三种使用构造函数创建对象。</p>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313082249695.png" alt="image-20210313082249695"></p>
 <p>下面再来说说对象的创建过程？以new为例</p>
-<p>Java虚拟机遇到一条new指令时，首先将去检查这个指令的参数是否能在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已被加载解析和初始化。如果没有必须先去执行想听的类加载过程。在类加载检查通过后，接下来虚拟机将为新生对象分配内存，内存的大小在类加载完成的时候便可以确定。</p>
+<p>Java虚拟机遇到一条new指令时，首先将去检查这个指令的参数是否能在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已被加载解析和初始化。如果没有必须先去执行相应的类加载过程。在类加载检查通过后，接下来虚拟机将为新生对象分配内存，内存的大小在类加载完成的时候便可以确定。（这里说明一下，关于内存的分配大致分为两种方式。第一种是“碰撞指针”，另一种是“空闲列表”，两者的区别在于要进行分配的内存空间是否规整确定，而是否规整又是由于垃圾收集器自身是否带有空间压缩整理的能力决定的。常用的Serial、ParNew等带有压缩功能，所以分配算法属于碰撞指针，简单高效。而当使用CMS这种基于清除算法的收集器时，理论上采用较为复杂的空间列表来分配内存）</p>
 <p>细化分析：</p>
 <p>1、new出来的新对象先去判断线程栈是否能分配下</p>
 <ul>
@@ -269,9 +269,57 @@
 <li>在没有指针的情况下，markword占用八个字节，classpoint占用八个字节，无实例数据，一共用16个字节。</li>
 </ul>
 <blockquote>
+<p>OOM问题</p>
+</blockquote>
+<p>首先明确一下，在Java运行时数据区域中，除了程序计数器，其他几个运行时区域都有可能发生OutOfMemoryError异常的可能。</p>
+<blockquote>
+<p>Java堆溢出</p>
+</blockquote>
+<p>Java堆导致OOM问题无外乎就是两种原因：</p>
+<ul>
+<li>内存泄漏：申请使用完的内存没有释放，导致虚拟机不能再次去使用该内存，此时这种情况就是泄漏，因为别人用不了，申请者也不用了。</li>
+<li>内存溢出：申请的内存大小超过了虚拟机所能提供的内存大小，就会产生溢出</li>
+</ul>
+<p>清楚了问题之后，我们就去解决问题：</p>
+<p>首先如果发生的是内存泄漏，就需要进一步通过工具查看泄漏对象到GC Roots的引用链，找到泄漏对象是通过怎样的引用路径，与哪些GC Roots相关联，才导致垃圾收集器无法回收，一般根据泄漏对象的类型信息以及它到GC Roots引用链的信息，可以比较准确地定位到这些对象的创建位置，进而找出产生内存泄漏的位置。</p>
+<p>当然如果不是内存泄漏，那就说明内存中的对象确实都是必须存活的，那就要检查虚拟机的堆参数设置，看看是否还有可能向上调整空间，从代码上检查是否存在对象生命周期过长，持有状态时间过长、存储结构设计不合理的情况，尽量去减少程序运行期的内存消耗。</p>
+<blockquote>
+<p>虚拟机栈和本地方法栈溢出</p>
+</blockquote>
+<p>虚拟机栈和本地方法栈在HotSpot中不做以区分，其中主要描述了两种异常：</p>
+<ul>
+<li>如果线程请求的栈深度大于虚拟机所允许的最大深度，将抛出StackOverflowError异常</li>
+<li>如果虚拟机的栈内存允许动态扩展，当扩展栈无法申请足够的内存时，将抛出OutOfMemoryError异常</li>
+</ul>
+<p>有个结论：无论由于栈帧太大还是虚拟机容量太小，当新的栈帧内存无法分配的时候，HotSpot虚拟机抛出的都是StackOverflowError异常</p>
+<blockquote>
+<p>方法区和运行时常量池溢出</p>
+</blockquote>
+<p>异常信息：java.lang.OutOfMemoryError:PermGen space</p>
+<p>方法区溢出也是一种常见的内存溢出异常，一个类如果要被垃圾收集器回收，判定条件是很苛刻的。在经常动态生成大量Class的应用中，要特别注意这点。</p>
+<blockquote>
+<p>请你说一下OOM可能发生在哪，怎么查看，怎么调优</p>
+</blockquote>
+<p>最常见的OOM情况有以下三种：</p>
+<ul>
+<li>java.lang.OutOfMemoryError: Java heap space ——&gt;java堆内存溢出，此种情况最常见，一般由于内存泄露或者堆的大小设置不当引起。对于内存泄露，需要通过内存监控软件查找程序中的泄露代码，而堆大小可以通过虚拟机参数-Xms,-Xmx等修改。</li>
+<li>java.lang.OutOfMemoryError: PermGen space ——&gt;java永久代溢出，即方法区溢出了，一般出现于大量Class或者jsp页面，或者采用cglib等反射机制的情况，因为上述情况会产生大量的Class信息存储于方法区。此种情况可以通过更改方法区的大小来解决，使用类似-XX:PermSize=64m -XX:MaxPermSize=256m的形式修改。另外，过多的常量尤其是字符串也会导致方法区溢出。</li>
+<li>java.lang.StackOverflowError ——&gt; 不会抛OOM error，但也是比较常见的Java内存溢出。JAVA虚拟机栈溢出，一般是由于程序中存在死循环或者深度递归调用造成的，栈大小设置太小也会出现此种溢出。可以通过虚拟机参数-Xss来设置栈的大小。</li>
+</ul>
+<p>OOM分析–heapdump<br>要dump堆的内存镜像，可以采用如下两种方式：</p>
+<ul>
+<li>设置JVM参数-XX:+HeapDumpOnOutOfMemoryError，设定当发生OOM时自动dump出堆信息。不过该方法需要JDK5以上版本。</li>
+<li>使用JDK自带的jmap命令。”jmap -dump:format=b,file=heap.bin <pid>“   其中pid可以通过jps获取。  </li>
+</ul>
+<p>dump堆内存信息后，需要对dump出的文件进行分析，从而找到OOM的原因。常用的工具有：</p>
+<ul>
+<li>mat: eclipse memory analyzer, 基于eclipse RCP的内存分析工具。</li>
+<li>jhat：JDK自带的java heap analyze tool，可以将堆中的对象以html的形式显示出来，包括对象的数量，大小等等，并支持对象查询语言OQL，分析相关的应用后，可以通过<a href="http://localhost:7000来访问分析结果。不推荐使用，因为在实际的排查过程中，一般是先在生产环境">http://localhost:7000来访问分析结果。不推荐使用，因为在实际的排查过程中，一般是先在生产环境</a> dump出文件来，然后拉到自己的开发机器上分析，所以，不如采用高级的分析工具比如前面的mat来的高效。</li>
+</ul>
+<blockquote>
 <p>参考链接</p>
 </blockquote>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/hqGmtNvRburVHHp6O0WlyA">moom聊技术</a></p>
+<p>深入理解JVM第二章<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/hqGmtNvRburVHHp6O0WlyA">moom聊技术</a><br><a target="_blank" rel="noopener" href="https://www.nowcoder.com/ta/review-test/review?page=108">牛客讨论区</a></p>
 
       
 
