@@ -146,6 +146,86 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Java类的加载顺序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/05/Java%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F/">Java类的加载顺序</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/05/Java%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F/" class="archive-article-date">
+  	<time datetime="2021-03-05T01:26:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-05</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="Java类的加载顺序"><a href="#Java类的加载顺序" class="headerlink" title="Java类的加载顺序"></a>Java类的加载顺序</h4><blockquote>
+<p>有继承关系的加载顺序</p>
+</blockquote>
+<p>父类静态方法/静态代码块-&gt;子类静态方法/静态方法块-&gt;父类成员变量/非静态代码块(从上到下顺序排列)-&gt;父类构造器-&gt;子类成员变量/非静态代码块(从上到下顺序排列)-&gt;子类构造器</p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/Java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F-1614906219572.jpg" alt="顺序"></p>
+        
+          <a class="article-more-a" href="/2021/03/05/Java%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java基础</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/05/Java%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-项目部署" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -868,88 +948,6 @@
 
 
   
-    <article id="post-HashMap探究" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/01/11/HashMap%E6%8E%A2%E7%A9%B6/">HashMap探究</a>
-    </h1>
-  
-
-        
-        <a href="/2021/01/11/HashMap%E6%8E%A2%E7%A9%B6/" class="archive-article-date">
-  	<time datetime="2021-01-11T05:46:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1、HashMap简介"><a href="#1、HashMap简介" class="headerlink" title="1、HashMap简介"></a>1、HashMap简介</h2><blockquote>
-<p>HashMap是基于哈希表的Map接口实现的，以key-value存储形式存在，主要用来存放键值对。每一个键值对也叫做Entry。这些个键值对（Entry）分散存储在一个数组当中，这个数组就是HashMap的主干。其中它的key、value都可以为null。HashMap的实现是不同步的，所以意味着其并非线程安全</p>
-</blockquote>
-<blockquote>
-<p>JDK1.8之前的HashMap是由数组+链表组成的，数组是HashMap的主体，链表则是为了解决哈希碰撞（hashCode方法计算得到的哈希码值相同导致计算的数组索引相同）而存在的(拉链法解决冲突)<br>JDK1.8之后有了较大的变化，当链表的长度大于阈值(或者红黑树的边界值，默认为8)并且当数组的长度大于64时，此时此索引位置上的所有数据变成使用<strong>红黑树</strong>存储。</p>
-</blockquote>
-<p>补充：<br>将链表转换成红黑树前会进行判断，如果阈值大于8，但是数组长度小于64，此时并不会将链表变成红黑树。而是选择进行数组扩容(参看之前的文章)。<br>这样做的目的就是因为数组比较小，尽量避免红黑树结构，这种情况下变成红黑树，反而降低效率，因为红黑树需要旋转、变色等操作来保持平衡。如果数组长度小于64，数组的搜索时间明显快一些。<br>但是当阈值大于8并且数组长度大于64的情况下，尽管使用红黑树作为底层数组结构更复杂，但是链表变成红黑树，效率会更高效。<br><strong>特点</strong>：1、存取无序的。2、键和值位置可以为null，但是键的位置只能是一个null。3、键位置是唯一的，底层的数据结构控制。4、jdk1.8前后的变化。5、注意转换红黑树的时机。</p>
-        
-          <a class="article-more-a" href="/2021/01/11/HashMap%E6%8E%A2%E7%A9%B6/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/01/11/HashMap%E6%8E%A2%E7%A9%B6/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
@@ -1059,11 +1057,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1071,15 +1069,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1088,6 +1082,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">回溯法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">
