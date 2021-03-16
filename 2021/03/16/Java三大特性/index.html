@@ -16,7 +16,7 @@
 <meta property="og:description" content="封装  介绍  lombok相关 继承 多态">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-16T02:40:53.000Z">
-<meta property="article:modified_time" content="2021-03-16T03:01:53.422Z">
+<meta property="article:modified_time" content="2021-03-16T03:07:32.518Z">
 <meta property="article:author" content="吴东卓">
 <meta property="article:tag" content="Java基础">
 <meta name="twitter:card" content="summary">
@@ -211,10 +211,12 @@
 <li>接口性：多态时超类通过方法签名想子类提供了一个公共的接口，由子类来完善或者覆盖它而实现的</li>
 <li>灵活性：在应用中体现了灵活多样的操作，提高了使用的效率<br>缺点：只能使用父类的引用访问父类的成员</li>
 </ul>
+<p>设计一个简单的Java应用程序来运用所学：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 定义一个类，描述一个矩形，包含有长、宽两种属性和计算面积方法。</span></span><br><span class="line"><span class="comment">* 编写一个类，继承自矩形类，同时该类描述长方体，具有长、宽、高属性和计算体积的方法。</span></span><br><span class="line"><span class="comment">* 编写一个测试类，对以上两个类进行测试，创建一个长方体，定义其长、宽、高，输出其底面积和体积。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rectangle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">double</span> chang;</span><br><span class="line">    <span class="keyword">double</span> kuan;</span><br><span class="line"></span><br><span class="line">    Rectangle(<span class="keyword">double</span> chang,<span class="keyword">double</span> kuan)&#123;</span><br><span class="line">        <span class="keyword">this</span>.chang = chang;</span><br><span class="line">        <span class="keyword">this</span>.kuan = kuan;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">getArea</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> chang * kuan;    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rectangular</span> <span class="keyword">extends</span> <span class="title">Rectangle</span></span>&#123;</span><br><span class="line">    <span class="keyword">double</span> gao;</span><br><span class="line"></span><br><span class="line">    Rectangular(<span class="keyword">double</span> chang, <span class="keyword">double</span> kuan,<span class="keyword">double</span> gao) &#123;</span><br><span class="line">        <span class="keyword">super</span>(chang, kuan);</span><br><span class="line">        <span class="keyword">this</span>.gao = gao;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">getVolume</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> gao * getArea();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RectangleTest</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String []args)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;开始执行&quot;</span>);</span><br><span class="line"></span><br><span class="line">        Rectangular rectangular = <span class="keyword">new</span> Rectangular(<span class="number">15</span>,<span class="number">12</span>,<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;这是体积计算：&quot;</span> + rectangular.getVolume());</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;这是面积计算：&quot;</span> + rectangular.getArea());</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;另一种实例化方式：&quot;</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;这是面积计算：&quot;</span> + <span class="keyword">new</span> Rectangle(<span class="number">15</span>,<span class="number">12</span>).getArea());</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;这是体积计算：&quot;</span> + <span class="keyword">new</span> Rectangular(<span class="number">15</span>,<span class="number">12</span>,<span class="number">5</span>).getVolume());</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/hellosweet1/article/details/81320384">三大特性</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c1ee7e4247bf">Lombok学习</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/28edf5352b63">Java注解原理到案例</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/hellosweet1/article/details/81320384">三大特性</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c1ee7e4247bf">Lombok学习</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/28edf5352b63">Java注解原理到案例</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_34900758/article/details/114145326">java多态</a></p>
 
       
 
@@ -442,15 +444,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Spring</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -463,10 +469,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">回溯法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
