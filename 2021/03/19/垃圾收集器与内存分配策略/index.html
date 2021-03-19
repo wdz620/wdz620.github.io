@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>无雨无晴</title>
+  <title>垃圾收集器与内存分配策略 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="无雨无晴">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="GC（Garbage Collection）垃圾收集进入了“自动化”时代，为什么我们还要去了解垃圾收集和内存分配呢？当需要排查各种内存溢出、内存泄漏问题时，当垃圾收集成为系统达到更高并发量的瓶颈时，我们必须对这些“自动化”技术实施必要的监控和调节。本文跟着三个疑问去学习整理：1、哪些内存需要回收？2、什么时候回收？3、怎么回收？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="垃圾收集器与内存分配策略">
+<meta property="og:url" content="http://example.com/2021/03/19/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/index.html">
 <meta property="og:site_name" content="无雨无晴">
+<meta property="og:description" content="GC（Garbage Collection）垃圾收集进入了“自动化”时代，为什么我们还要去了解垃圾收集和内存分配呢？当需要排查各种内存溢出、内存泄漏问题时，当垃圾收集成为系统达到更高并发量的瓶颈时，我们必须对这些“自动化”技术实施必要的监控和调节。本文跟着三个疑问去学习整理：1、哪些内存需要回收？2、什么时候回收？3、怎么回收？">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-19T00:58:10.000Z">
+<meta property="article:modified_time" content="2021-03-19T01:00:38.079Z">
 <meta property="article:author" content="吴东卓">
+<meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
@@ -144,16 +149,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-垃圾收集器与内存分配策略" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-垃圾收集器与内存分配策略" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/19/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/">垃圾收集器与内存分配策略</a>
+    <h1 class="article-title" itemprop="name">
+      垃圾收集器与内存分配策略
     </h1>
   
 
@@ -167,9 +170,54 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>GC（Garbage Collection）垃圾收集<br>进入了“自动化”时代，为什么我们还要去了解垃圾收集和内存分配呢？<br>当需要排查各种内存溢出、内存泄漏问题时，当垃圾收集成为系统达到更高并发量的瓶颈时，我们必须对这些“自动化”技术实施必要的监控和调节。<br>本文跟着三个疑问去学习整理：<br>1、哪些内存需要回收？<br>2、什么时候回收？<br>3、怎么回收？ </p>
-        
-          <a class="article-more-a" href="/2021/03/19/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/#more">more >></a>
-        
+<a id="more"></a>
+<p>首先从之前的内存运行时区域了解到，一共分为五大区域：<code>程序计数器、虚拟机栈、本地方法栈、Java堆和方法区</code>。前三个区域随着<code>线程而生，随着线程而亡</code>，栈中的栈帧随着方法的进入和推出有序执行出栈和入栈操作。每一个栈帧中分配多少内存基本上实在类结构确定下来就已知的，因此这几个区域的内存分配和回收都具备确定性，这里就不用过多考虑如何回收的问题，<code>当方法结束或者线程结束</code>，内存自然就随着回收。</p>
+<p>而Java堆和方法区有着很明显的<code>不确定性</code>：首先一个接口的多个实现类需要的内存可能会不一样，一个方法执行的不同条件分支所需要的内存也是不一样的。只有处于<code>运行阶段</code>才能明确程序究竟会创建哪些对象，创建多少个对象，这部分内存的<code>分配和回收时动态</code>的。而这一部分的内存该如何去管理也是收集器主要的工作。</p>
+<blockquote>
+<p>对象的存活与否</p>
+</blockquote>
+<p>无论使用什么算法判断对象的存活，都离不开引用。下面说明一下JDK1.2之后的引用：</p>
+<ul>
+<li><code>强引用</code>：类似“Object o = new Object();”无论什么情况下，只要强引用关系还存在，垃圾收集器就<code>永远不会</code>回收掉被引用的对象。</li>
+<li><code>软引用</code>：用来描述一些还有用，但非必须的对象。只要软引用关联着的对象，在系统将要发生内存溢出异常前，会把这些对象列入回收进行<code>二次回收</code>，如果还没有足够的内存，才会抛出内存溢出异常。</li>
+<li><code>弱引用</code>：也是用来描述那些非必须的对象，但是它的强度比软引用还要更弱一点，被其关联的对象只能<code>生存到下次垃圾收集发生</code>为止。当垃圾收集器开始工作的时候，无论当前内存是否足够，都会回收被弱引用关联的对象。</li>
+<li><code>虚引用</code>：最弱的引用关系。为一个对象设置虚引用的唯一目的就是为了能在这个对象被收集器回收时<code>收到一个系统通知</code>。</li>
+</ul>
+<p>在堆里面存放这Java世界中几乎所有的对象实例，垃圾收集器在对堆进行回收前，第一件事情就是要确定哪些对象还“存活”，哪些对象“死去”。</p>
+<p>1、引用计数算法：</p>
+<p>​        在对象中添加一个引用计数器，每当有一个地方引用它，计数器的值就加一；当引用失效时，计数器值就减一。任何时刻当计数器为零的对象就是不可能在被引用的对象。虽然原理简单，判断效率也很高，但是Java虚拟机并不是用这个方法去判断对象的存活与否，因为该算法有个明显的缺陷，比如很难去解决对象之间的相互循环引用的问题。</p>
+<p>2、可达性分析算法：</p>
+<p>​        通过一系列成为“GC Roots”的跟对象作为起始节点集，从这些起点开始，根据引用关系向下搜索，搜索过程所走的路径称为“引用链”，如果某个对象到GCRoots间没有任何引用链相连，或者用图论中的话说就是GCRoots到这个对象不可达，则证明这个对象不可能在使用。</p>
+<p>在Java技术体系中可以作为GC Roots的对象包括：</p>
+<ul>
+<li>在虚拟机栈中引用的对象</li>
+<li>在方法区中静态属性引用的对象</li>
+<li>在方法区中常量引用的对象</li>
+<li>Java虚拟机内部的引用</li>
+<li>所有被同步锁（synchronized）持有的对象</li>
+</ul>
+<blockquote>
+<p>垃圾收集算法</p>
+</blockquote>
+<p>1、标记-清除算法</p>
+<p>算法分为“标记”和“清除”两个阶段：首先标记出所有需要回收的对象，然后统一回收掉所有被标记的对象。也可以反过来考虑，标记所有不需要回收的对象，然后回收未被标记的对象。</p>
+<p>缺点：第一、执行效率不稳定，如果Java堆中包含了大量对象，而且其中大部分都需要回收。这时就需要大量的标记和清除，导致标记和清除的执行效率随着对象数量的增加而降低。第二、内存空间碎片化的问题。标记清除后产生大量不连续的内存碎片，空间碎片太多可能导致程序运行过程中需要分配较大对象时找不到足够的连续内存而不得不提前触发另一次收集动作。</p>
+<p>2、标记-复制算法</p>
+<p>为了解决标记清除算法的第一个问题，出现了标记复制算法。</p>
+<p>算法的主要过程就将内存按容量大小分成大小相等的两个部分，每次只使用其中的一个部分。当这一块的内存使用完毕之后，就将还存活着的对象复制到另一个内存中，然后再把已经使用过的那块内存空间一次清理掉。</p>
+<p>缺点：如果内存中多数对象都是存活的，这种算法将会产生大量的内存间复制的开销（变相说明没有空间碎片化的问题）。第二、这种算法将可用内存缩小为原来的一半，浪费空间。</p>
+<p>3、标记-整理算法</p>
+<p>由于老年代的对象大部分都将存活，所以在老年代一半不会使用标记-复制算法。针对老年代对象的存亡特征，提出了一种具有针对性的“标记整理算法”。</p>
+<p>具体过程还是以标记清除为基础，但是区别在于在标记之后不是直接堆可回收对象进行清理，而是将所有存活对象都向内存空间一端移动，然后直接清理掉边界以外的内存。标记清除算法和标记整理算法的本质区别在于前者是一种非移动式的回收算法，而后则会是一种移动式的。</p>
+<p>缺点：标记整理算法解决了内存碎片问题，也不存在空间的浪费问题，看上去挺美好的。但是，当内存中存活对象多，并且都是一些微小对象，而垃圾对象少时，要移动大量的存活对象才能换取少量的内存空间。而且在其中的对象移动过程操作中必须全程暂停用户应用程序才能进行(Stop The World)。</p>
+<blockquote>
+<p>经典垃圾收集器</p>
+</blockquote>
+<blockquote>
+<p>参考链接</p>
+</blockquote>
+<p>JVM第三章主要内容</p>
+
       
 
       
@@ -191,16 +239,75 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/19/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/03/19/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2021/03/18/TCP%E5%92%8CUDP/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">TCP和UDP</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -220,797 +327,14 @@
 
 
 
-
-  
-    <article id="post-TCP和UDP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/18/TCP%E5%92%8CUDP/">TCP和UDP</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/18/TCP%E5%92%8CUDP/" class="archive-article-date">
-  	<time datetime="2021-03-18T00:29:02.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>还是从一个大家耳熟能详的表格开始</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>TCP</th>
-<th>UDP</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>是否连接</td>
-<td>面向连接</td>
-<td>无连接</td>
-</tr>
-<tr>
-<td>是否可靠</td>
-<td>可靠传输，使用后流量控制和拥塞控制</td>
-<td>不可靠传输</td>
-</tr>
-<tr>
-<td>连接对象个数</td>
-<td>只能是一对一通信</td>
-<td>支持一对一、一对多、多对一和多对多通信</td>
-</tr>
-<tr>
-<td>传输方式</td>
-<td>面向字节流</td>
-<td>面向报文</td>
-</tr>
-<tr>
-<td>首部开销</td>
-<td>首部最少20字节，最大60字节</td>
-<td>首部开销仅仅8字节</td>
-</tr>
-<tr>
-<td>适用场景</td>
-<td>要求可靠传输的应用，比如文件传输</td>
-<td>适用实时应用（电话、视频会议、直播等）</td>
-</tr>
-<tr>
-<td>速度</td>
-<td>慢</td>
-<td>快</td>
-</tr>
-</tbody></table>
-        
-          <a class="article-more-a" href="/2021/03/18/TCP%E5%92%8CUDP/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机网络</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/18/TCP%E5%92%8CUDP/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-进程的状态和转换" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/17/%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81%E5%92%8C%E8%BD%AC%E6%8D%A2/">进程的状态和转换</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/17/%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81%E5%92%8C%E8%BD%AC%E6%8D%A2/" class="archive-article-date">
-  	<time datetime="2021-03-17T01:10:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-17</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>三大基本状态</p>
-</blockquote>
-<p>三大基本状态：</p>
-<ul>
-<li>运行状态：占有cpu,并且就在cpu上执行。</li>
-<li>就绪状态：已经具备运行条件，但由于没有空闲cpu,而暂时不能运行。</li>
-<li>阻塞状态：因等待某一事件而不能运行。</li>
-</ul>
-        
-          <a class="article-more-a" href="/2021/03/17/%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81%E5%92%8C%E8%BD%AC%E6%8D%A2/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">操作系统</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/17/%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81%E5%92%8C%E8%BD%AC%E6%8D%A2/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-进程间的通信方式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/17/%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F/">进程间的通信方式</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/17/%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-03-17T00:43:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-17</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>通过之前的学习我们知道，各个进程拥有的内存空间相互独立，为了保证线程安全，操作系统中明确规定一个进程不能直接去访问另一个进程的地址空间。但是进程之间又不能缺少通信，就比如一个车间需要另一个车间的器件才能完成，就需要进行交流。</p>
-<p>进程的通信主要方式有三种：</p>
-<ul>
-<li>共享存储</li>
-<li>消息传递</li>
-<li>管道通信</li>
-</ul>
-        
-          <a class="article-more-a" href="/2021/03/17/%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">操作系统</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/17/%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-线程和进程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/">线程和进程</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/" class="archive-article-date">
-  	<time datetime="2021-03-16T06:46:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>本文主要通过对网上各个优秀博主的总结，如有需要参考文末的链接进行探究。</p>
-<blockquote>
-<p>抽象概念(来源百度百科)</p>
-</blockquote>
-<p><strong>进程（Process）</strong> 是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。 在当代面向线程设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的描述，进程是程序的实体。</p>
-<p><strong>线程（thread）</strong> 是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。</p>
-        
-          <a class="article-more-a" href="/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">操作系统</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Java三大特性" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/16/Java%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/">Java三大特性</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/16/Java%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/" class="archive-article-date">
-  	<time datetime="2021-03-16T02:40:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <ul>
-<li>封装<br>  介绍<br>  lombok相关</li>
-<li>继承</li>
-<li>多态</li>
-</ul>
-        
-          <a class="article-more-a" href="/2021/03/16/Java%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/16/Java%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-PriorityQueue的使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/15/PriorityQueue%E7%9A%84%E4%BD%BF%E7%94%A8/">PriorityQueue的使用</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/15/PriorityQueue%E7%9A%84%E4%BD%BF%E7%94%A8/" class="archive-article-date">
-  	<time datetime="2021-03-15T05:40:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Java集合中的Queue是队列结构，其中常用的队列如下：</p>
-<ul>
-<li>ArrayBlockingQueue : 基于数组数据结构实现的有界阻塞队列</li>
-<li>LinkedBlockingQueue ： 基于链表数据结构实现的有界阻塞队列</li>
-<li>PriorityBlockingQueue ：基于优先级排序的无界阻塞队列</li>
-<li>DelayQueue ：支持延迟操作的无界阻塞队列</li>
-<li>SynchronousQueue ：用于线程同步的阻塞队列</li>
-</ul>
-        
-          <a class="article-more-a" href="/2021/03/15/PriorityQueue%E7%9A%84%E4%BD%BF%E7%94%A8/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/15/PriorityQueue%E7%9A%84%E4%BD%BF%E7%94%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Java内存区域与溢出异常" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/12/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8/">Java内存区域与溢出异常</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/12/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8/" class="archive-article-date">
-  	<time datetime="2021-03-12T11:39:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="内存区域与溢出异常"><a href="#内存区域与溢出异常" class="headerlink" title="内存区域与溢出异常"></a>内存区域与溢出异常</h4><blockquote>
-<p>运行时数据区域</p>
-</blockquote>
-<ul>
-<li>程序计数器</li>
-<li>Java虚拟机栈</li>
-<li>本地方法栈</li>
-<li>Java堆</li>
-<li>方法区</li>
-</ul>
-        
-          <a class="article-more-a" href="/2021/03/12/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/12/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-三次握手四次挥手" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/10/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/">三次握手四次挥手</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/10/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/" class="archive-article-date">
-  	<time datetime="2021-03-10T12:01:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>铺垫学习：</p>
-<ul>
-<li>单工：数据只在一个方向上传输，不能实现双方通信。</li>
-<li>半双工：允许数据在两个方向上传输，但是同一时间数据只能在一个方向上传输，其实际上是切换的单工。</li>
-<li>双全工：允许数据在两个方向上同时传输。<br>tcp属于双全工，在进行连接之后双方都可以进行数据传送。</li>
-</ul>
-<blockquote>
-<p>三次握手</p>
-</blockquote>
-<ul>
-<li>第一次握手：建立连接时，客户端发送syn包到服务器，并进入SYN_SENT状态，等待服务器确认；SYN：同步序列编号。</li>
-<li>第二次握手：服务器收到syn包，必须确认客户的syn，同时自己也发送一个syn包，即syn+ack，此时服务器进入SYN_RCVD状态</li>
-<li>第三次握手：客户端收到服务器的syn+ack包，向服务器发送确认包ack=k+1，此包发送完毕，客户端和服务器进入ESTABLISHED（TCP连接成功）状态，完成三次握手。</li>
-</ul>
-        
-          <a class="article-more-a" href="/2021/03/10/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机网络</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/10/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Java只有值传递" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/09/Java%E5%8F%AA%E6%9C%89%E5%80%BC%E4%BC%A0%E9%80%92/">Java只有值传递</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/09/Java%E5%8F%AA%E6%9C%89%E5%80%BC%E4%BC%A0%E9%80%92/" class="archive-article-date">
-  	<time datetime="2021-03-09T01:53:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>按值调用：</strong>方法接收的是调用者提供的值。</p>
-<p><strong>引用调用：</strong>方法接受的是调用者提供的变量地址。</p>
-<p>引用传递是说在调用函数时，将实际参数的地址直接传递到被调用的函数中，在被调函数中修改参数值会影响原实参值。</p>
-<blockquote>
-<p>Java程序设计语言总是采用按值调用。也就是说，方法得到的是所有参数值的一个拷贝。</p>
-</blockquote>
-        
-          <a class="article-more-a" href="/2021/03/09/Java%E5%8F%AA%E6%9C%89%E5%80%BC%E4%BC%A0%E9%80%92/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/09/Java%E5%8F%AA%E6%9C%89%E5%80%BC%E4%BC%A0%E9%80%92/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
-    </nav>
+  
+
+  
+
+  
+
   
 
 
@@ -1033,8 +357,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
