@@ -16,7 +16,7 @@
 <meta property="og:description" content="GC（Garbage Collection）垃圾收集进入了“自动化”时代，为什么我们还要去了解垃圾收集和内存分配呢？当需要排查各种内存溢出、内存泄漏问题时，当垃圾收集成为系统达到更高并发量的瓶颈时，我们必须对这些“自动化”技术实施必要的监控和调节。本文跟着三个疑问去学习整理：1、哪些内存需要回收？2、什么时候回收？3、怎么回收？">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-19T00:58:10.000Z">
-<meta property="article:modified_time" content="2021-03-19T01:00:38.079Z">
+<meta property="article:modified_time" content="2021-03-19T11:25:34.451Z">
 <meta property="article:author" content="吴东卓">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -213,6 +213,30 @@
 <blockquote>
 <p>经典垃圾收集器</p>
 </blockquote>
+<p>如果说收集算法是内存回收的<code>方法论</code>，那么垃圾收集器就是内存回收的<code>实践者</code>。</p>
+<p><strong>Serial收集器</strong></p>
+<p>采用标记复制算法，单线程</p>
+<p>Serial是最基础、历史最悠久的收集器，它是一个单线程收集器。意味着它只会使用一个CPU 或一条收集线程去完成收集工作，并且在进行垃圾回收时必须暂停其它所有的工作线程直到收集结束。</p>
+<p><strong>ParNew收集器</strong></p>
+<p>采用标记复制算法，多线程</p>
+<p>ParNew收集器实质上是Serial收集器的多线程并行版本，除了使用多线程进行垃圾收集外，其他行为和之前的Serial完全一致。</p>
+<p>特点：除了Serial收集器外，目前只有它能与CMS收集器配合工作。</p>
+<p><strong>Parallel Scavenge收集器</strong></p>
+<p>采用标记复制算法，多线程</p>
+<p><em>吞吐量优先收集器</em>：特点是它的关注点与其他收集器不同（其他收集器关注尽可能缩短垃圾收集时用户线程的停顿时间），Parallel Scavenge收集器的目标则是达到一个可控制的吞吐量（处理器用于运行用户代码的时间与处理器总消耗时间的比值）。</p>
+<p><strong>Serial Old收集器</strong></p>
+<p>采用标记整理算法，单线程</p>
+<p>主要用途：1、在JDK1.5以及之前的版本中与Parallel Scavenge收集器搭配使用。2、作为CMS收集器发生失败时的后备预案。</p>
+<p><strong>Parallel Old收集器</strong></p>
+<p>采用标记整理算法，多线程</p>
+<p>主要是当时新生代选择Parallel Scavenge收集器，老年代只能选择Serial Old收集器，其他良好的老年代收集器无法与之配合。而且为了达到“吞吐量优先”发挥最大化，Parallel Old出现了。</p>
+<p><strong>CMS收集器</strong></p>
+<p>采用标记清除算法，多线程</p>
+<p>整个过程文伟四个步骤：1、初始标记 2、并发标记 3、重新标记 4、并发清除</p>
+<p>缺点：1、CMS收集器堆处理器资源非常敏感。2、无法处理“浮动垃圾”，可能导致stop the world。3、由于采用标记清除算法，回收结束的时候将导致出现大量碎片化空间。</p>
+<p><strong>Garbage First收集器</strong></p>
+<p>从整体来看是基于标记整理算法，从局部来看是基于标记复制算法，多线程。</p>
+<p>G1是一块主要面向<code>服务端</code>应用的垃圾收集器。</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
@@ -456,11 +480,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
