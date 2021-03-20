@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313082249695.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313085454760.png">
 <meta property="article:published_time" content="2021-03-12T11:39:00.000Z">
-<meta property="article:modified_time" content="2021-03-14T01:33:38.372Z">
+<meta property="article:modified_time" content="2021-03-19T11:36:46.526Z">
 <meta property="article:author" content="吴东卓">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -207,9 +207,11 @@
 <p>前三种使用构造函数创建对象。</p>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313082249695.png" alt="image-20210313082249695"></p>
 <p>下面再来说说对象的创建过程？以new为例</p>
-<p>Java虚拟机遇到一条new指令时，首先将去检查这个指令的参数是否能在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已被加载解析和初始化。如果没有必须先去执行相应的类加载过程。在类加载检查通过后，接下来虚拟机将为新生对象分配内存，内存的大小在类加载完成的时候便可以确定。（这里说明一下，关于内存的分配大致分为两种方式。第一种是“碰撞指针”，另一种是“空闲列表”，两者的区别在于要进行分配的内存空间是否规整确定，而是否规整又是由于垃圾收集器自身是否带有空间压缩整理的能力决定的。常用的Serial、ParNew等带有压缩功能，所以分配算法属于碰撞指针，简单高效。而当使用CMS这种基于清除算法的收集器时，理论上采用较为复杂的空间列表来分配内存）</p>
-<p>细化分析：</p>
-<p>1、new出来的新对象先去判断线程栈是否能分配下</p>
+<p>Java虚拟机遇到一条new指令时，首先将去检查这个指令的参数是否能在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已被加载解析和初始化。如果没有必须先去执行相应的类加载过程。在类加载检查通过后，接下来虚拟机将为新生对象分配内存，内存的大小在类加载完成的时候便可以确定。（这里说明一下，关于内存的分配大致分为两种方式。第一种是“碰撞指针”，另一种是“空闲列表”，两者的区别在于要进行分配的内存空间是否规整确定，而是否规整又是由于垃圾收集器自身是否带有空间压缩整理的能力决定的。常用的Serial、ParNew等带有压缩功能，所以分配算法属于碰撞指针，简单高效。而当使用CMS这种基于清除算法的收集器时，理论上采用较为复杂的空间列表来分配内存）。内存分配完毕之后，虚拟机需要将分配到的内存空间都初始化为零值（不包括对象头），这一步操作保证了对象的实例字段在 Java 代码中可以不赋初始值就直接使用，程序能访问到这些字段的数据类型所对应的零值。初始化零值完成之后，虚拟机要对对象进行必要的设置，例如这个对象是哪个类的实例、如何才能找到类的元数据信息、对象的哈希码、对象的 GC 分代年龄等信息。 这些信息存放在对象头中。 另外，根据虚拟机当前运行状态的不同，如是否启用偏向锁等，对象头会有不同的设置方式。在上面工作都完成之后，从虚拟机的视角来看，一个新的对象已经产生了，但从 Java 程序的视角来看，对象创建才刚开始，<init> 方法还没有执行，所有的字段都还为零。所以一般来说，执行 new 指令之后会接着执行 <init> 方法，把对象按照程序员的意愿进行初始化，这样一个真正可用的对象才算完全产生出来。</p>
+<blockquote>
+<p>上述过程的小疑问</p>
+</blockquote>
+<p>首先细化分析<br>1、new出来的新对象先去判断线程栈是否能分配下</p>
 <ul>
 <li>如果能分配下直接分配到栈中</li>
 <li>如果分配不下进行第二步</li>
@@ -229,14 +231,12 @@
 <li>如果清除掉了该对象，则直接结束</li>
 <li>如果没有清除该对象，进行下一步</li>
 </ul>
+<hr>
 <p>5、此刻对象进入Survivor区，判断年龄是否足够大</p>
 <ul>
 <li>如果年龄足够大，直接进入old区域</li>
 <li>如果不够大，则进入Survivor2区，然后进入第四步，循环反复</li>
 </ul>
-<blockquote>
-<p>上述过程的小疑问</p>
-</blockquote>
 <p>1、为什么对象会优先分配在栈中？</p>
 <p>首先栈是线程私有的，将对象优先分配在栈中，可以通过pop直接将对象的所有信息，空间直接清除，当线程消亡的时候也可以直接清理这一块的TLAB区域。</p>
 <p>2、为什么JVM会让大对象直接进入老年代？</p>
@@ -552,11 +552,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
