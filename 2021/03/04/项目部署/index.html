@@ -17,8 +17,9 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210304185217277.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210304183240484.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321211207238.png">
 <meta property="article:published_time" content="2021-03-04T10:23:03.000Z">
-<meta property="article:modified_time" content="2021-03-04T11:05:31.994Z">
+<meta property="article:modified_time" content="2021-03-21T13:13:31.868Z">
 <meta property="article:author" content="吴东卓">
 <meta property="article:tag" content="项目问题">
 <meta name="twitter:card" content="summary">
@@ -195,6 +196,13 @@
 <p>4、Nginx配置<br>在nginx的config目录下进行如下配置：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen       8084; # 外部访问端口</span><br><span class="line">        server_name  localhost; # 本服务的网址：localhost:8084，但是在外部比如服务器ip为 1.1.1.1:8084</span><br><span class="line"></span><br><span class="line">        #charset koi8-r;</span><br><span class="line"></span><br><span class="line">        #access_log  logs/host.access.log  main;</span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            root   D:\\SourceCode\\ces\\dist\\;     #站点根目录，即网页文件存放的根目录, 默认主页目录在nginx安装目录的html子目录。 </span><br><span class="line">            index  index.html index.htm;    #目录内的默认打开文件,如果没有匹配到index.html,则搜索index.htm,依次类推</span><br><span class="line">        &#125;</span><br><span class="line">        location /api &#123;</span><br><span class="line">        proxy_set_header Host $http_host;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_set_header REMOTE-HOST $remote_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">        proxy_pass http:<span class="comment">//localhost:8443; </span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        #error_page  404              /404.html;    #对错误页面404.html 做了定向配置</span><br><span class="line"></span><br><span class="line">        # redirect server error pages to the static page /50x.html</span><br><span class="line">        #将服务器错误页面重定向到静态页面/50x.html</span><br><span class="line">        #</span><br><span class="line">        error_page   <span class="number">500</span> <span class="number">502</span> <span class="number">503</span> <span class="number">504</span>  /50x.html;</span><br><span class="line">        location = /50x.html &#123;</span><br><span class="line">            root   html;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>上面的proxy_pass就是关键位置，其实想的就是访问自己服务器上的后台接口，所以使用localhost就行了。而且因为这个dist已经传到服务器了，所以就是同级别。<br>在想不懂就是相当于上面的jar包，也是在服务器运行，在服务器上使用localhost就能访问，外部就需要使用：<strong>服务器ip:端口</strong><br>还有就是注意一些参数，比如location后面的/api就是参考vue项目中的格式。还有就是root后面就是就是vue生成的文件位置。</p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321211207238.png" alt="image-20210321211207238"><br>下面是固定格式，跨域请求头</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">add_header Access-Control-Allow-Origin *;</span><br><span class="line">add_header Access-Control-Allow-Methods &#39;GET, POST, OPTIONS&#39;;</span><br><span class="line">add_header Access-Control-Allow-Headers &#39;DNT,X-Mx-ReqToken,Keep-Alive,User- Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content- Type,Authorization&#39;;</span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>参考链接</p>
+</blockquote>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jingxuan-li/p/11754275.html">vue参考链接</a></p>
 
       
@@ -420,10 +428,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
@@ -432,7 +436,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">分布式中间件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -444,11 +456,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
