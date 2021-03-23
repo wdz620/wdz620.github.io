@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>索引 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="主要记录一下关于索引的一些问题，方便自己随时翻阅。主要包括以下内容  索引分类聚集索引和非聚集索引最左匹配原则什么样的值不能作为索引建立索引的原则explain命令慢查询优化步骤索引结构：B+树">
+  <meta name="description" content="软件工程中没有银弹。主要记录一下关于索引的一些问题，方便自己随时翻阅。主要包括以下内容  索引分类聚集索引和非聚集索引最左匹配原则什么样的值不能作为索引建立索引的原则explain命令慢查询优化步骤索引结构：B+树">
 <meta property="og:type" content="article">
 <meta property="og:title" content="索引">
 <meta property="og:url" content="http://example.com/2021/03/21/%E7%B4%A2%E5%BC%95/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="主要记录一下关于索引的一些问题，方便自己随时翻阅。主要包括以下内容  索引分类聚集索引和非聚集索引最左匹配原则什么样的值不能作为索引建立索引的原则explain命令慢查询优化步骤索引结构：B+树">
+<meta property="og:description" content="软件工程中没有银弹。主要记录一下关于索引的一些问题，方便自己随时翻阅。主要包括以下内容  索引分类聚集索引和非聚集索引最左匹配原则什么样的值不能作为索引建立索引的原则explain命令慢查询优化步骤索引结构：B+树">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321090430025.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B4%A2%E5%BC%95%E8%84%91%E5%9B%BE.png">
 <meta property="article:published_time" content="2021-03-21T02:09:14.000Z">
-<meta property="article:modified_time" content="2021-03-22T07:33:50.431Z">
+<meta property="article:modified_time" content="2021-03-23T01:23:14.659Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -172,7 +172,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>主要记录一下关于索引的一些问题，方便自己随时翻阅。主要包括以下内容</p>
+        <p>软件工程中没有银弹。<br>主要记录一下关于索引的一些问题，方便自己随时翻阅。主要包括以下内容</p>
 <blockquote>
 <p>索引分类<br>聚集索引和非聚集索引<br>最左匹配原则<br>什么样的值不能作为索引<br>建立索引的原则<br>explain命令<br>慢查询优化步骤<br>索引结构：B+树</p>
 </blockquote>
@@ -201,6 +201,7 @@
 <li>数量： 一张表只能有一个主键，一张表可以有多个唯一索引</li>
 <li>执行速度：主键执行计划优先、聚集索引所以效率很高。需要回表查询，效率较低。</li>
 </ul>
+<p>这里补充一个关于外键的知识：<br>数据库设计中到底要不要使用数据库外键的问题？<br><code>外键</code>是用于建立和加强两个表数据之间的链接的一列或多列。通过将保存表中主键值的一列或多列添加到另一个表中，可创建两个表之间的链接。这个列就成为第二个表的外键。<br>使用外键的好处：1、增强表和关联表之间的数据完整性和数据一致性。2、可以提高系统的健壮性。3、可以实现开发和数据库设计的分工。<br>使用外键的缺点：1、数据库需要维护外键的内部管理。2、外键等于把数据的一致性事务实现，全部交给数据库服务器完成。3、最重要的还是涉及增删改的时候，为了保证数据一致性，变得更加复杂。<br>当然我们可以减少外键的使用，但是这样就要在逻辑层中自己实现相应的业务。这样无疑会加重服务器的消耗。而且这样业务层就会夹带持久层，产生耦合。<br>所以外键的选用要视情况而定。</p>
 <h3 id="索引失效场景"><a href="#索引失效场景" class="headerlink" title="索引失效场景"></a>索引失效场景</h3><p>1、索引列参与了计算<br>2、索引列使用了 MySQL 中的函数<br>3、使用了前置模糊查询，like ‘%hello’ 不走索引，like hello%’走索引<br>4、索引列使用了正则表达式<br>5、索引列进行了非等值查询，也就是范围查询(不满足最左匹配)<br>6、字符串与数字进行了比较<br>7、OR 条件连接时某些列没有加索引<br>8、MySQL 内部优化器如果估计全表扫描比索引更快，将放弃索引</p>
 <p>最后上一个猛图<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B4%A2%E5%BC%95%E8%84%91%E5%9B%BE.png"></p>
 <blockquote>
