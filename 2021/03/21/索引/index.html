@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321090430025.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B4%A2%E5%BC%95%E8%84%91%E5%9B%BE.png">
 <meta property="article:published_time" content="2021-03-21T02:09:14.000Z">
-<meta property="article:modified_time" content="2021-03-23T01:23:14.659Z">
+<meta property="article:modified_time" content="2021-03-24T01:07:00.315Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -185,13 +185,19 @@
 <h1 id="最左匹配原则"><a href="#最左匹配原则" class="headerlink" title="最左匹配原则"></a>最左匹配原则</h1><p>假设某个表有一个联合索引（c1,c2,c3,c4）以下选项哪些字段使用了该索引：<br>A where c1=x and c2=x and c4&gt;x and c3=x<br>B where c1=x and c2=x and c4=x order by c3<br>C where c1=x and c4= x group by c3,c2<br>D where c1=? and c5=? order by c2,c3<br>E where c1=? and c2=? and c5=? order by c2,c3</p>
 <p>答：A使用了c1、c2、c3、c4索引。（其中注意c4这个，虽然是使用了范围查找，说明它右边的不会在被索引，但是c4这个字段还是可以被索引关联的）B使用了c1、c2两个字段的索引。C使用了c1一个字段的索引。D使用了c1一个字段的索引。E使用了c1、c2的索引。</p>
 <h1 id="MySQL什么样的值不能作为索引？"><a href="#MySQL什么样的值不能作为索引？" class="headerlink" title="MySQL什么样的值不能作为索引？"></a>MySQL什么样的值不能作为索引？</h1><p>1、表记录太少<br>2、经常插入、删除、修改的表<br>3、数据重复且分布平均的表字段<br>4、经常和主字段一块查询但主字段索引值比较多的字段</p>
-<h1 id="建立索引的几大原则"><a href="#建立索引的几大原则" class="headerlink" title="建立索引的几大原则"></a>建立索引的几大原则</h1><p>1、最左匹配原则(注意某些&gt;&lt;的时候，该字段也能被索引关联)<br>2、=和in可以乱序<br>3、尽量选择区分度高的列作为索引<br>4、索引列不能参与计算<br>5、尽量扩展索引、不要新建索引。</p>
-<h1 id="索引失效"><a href="#索引失效" class="headerlink" title="索引失效"></a>索引失效</h1><h1 id="explain-命令"><a href="#explain-命令" class="headerlink" title="explain 命令"></a>explain 命令</h1><p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321090430025.png" alt="image-20210321090430025"></p>
+<h1 id="建立索引的几大原则"><a href="#建立索引的几大原则" class="headerlink" title="建立索引的几大原则"></a>建立索引的几大原则</h1><p>1、最左匹配原则(注意某些&gt;&lt;的时候，该字段也能被索引关联)<br>2、=和in可以乱序<br>3、尽量选择区分度高的列作为索引。(这里的区分度公式是<code>COUNT(DISTINCT col) / COUNT(*)</code>。表示字段不重复的比率，比率越大我们扫描的记录数就越少。)<br>4、索引列不能参与计算<br>5、尽量扩展索引、不要新建索引。<br>6、单个多列组合索引和多个单列索引的检索查询效果不同，因为在执行SQL时，MySQL只能使用一个索引，会从多个单列索引中选择一个限制最为严格的索引。</p>
+<h1 id="索引失效"><a href="#索引失效" class="headerlink" title="索引失效"></a>索引失效</h1><p>1、索引列参与了计算<br>2、索引列使用了 MySQL 中的函数<br>3、使用了前置模糊查询，like ‘%hello’ 不走索引，like hello%’走索引<br>4、索引列使用了正则表达式<br>5、索引列进行了非等值查询，也就是范围查询(不满足最左匹配)<br>6、字符串与数字进行了比较<br>7、OR 条件连接时某些列没有加索引<br>8、MySQL 内部优化器如果估计全表扫描比索引更快，将放弃索引</p>
+<h1 id="explain-命令"><a href="#explain-命令" class="headerlink" title="explain 命令"></a>explain 命令</h1><p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321090430025.png" alt="image-20210321090430025"></p>
 <p>说明：<br><strong>id：</strong>select识别符，这个是select的查询序列号。<br><strong>select_type：</strong>select类型。主要包括：1、simple（简单select）2、primary（最外面的select）3、union（union中第二个或后面的select语句）4、dependent union（union中的第二个或后面的SELECT语句，取决于外面的查询）5、union result（union的结果）6、subquery（子查询中的第一个select）7、dependent subquery（子查询中的第一个select，取决于外面的查询）8、derived（导出表的select）<br><strong>table：</strong>表名称<br><strong>partitions：</strong>这一列只有在EXPLAIN PARTITIONS 语法中才会出现<br><strong>type</strong>：联接类型。是SQL性能的非常重要的一个指标，结果值从好到坏依次是：system &gt; const &gt; eq_ref &gt; ref&gt;fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; range &gt; index &gt; ALL。<br><strong>possible_keys：</strong>possible_keys列指出MySQL能使用哪个索引在该表中找到行。<br><strong>key：</strong>key列显示MySQL实际决定使用的键(索引)。<br><strong>key_len：</strong>key_len列显示MySQL决定使用的键长度。<br><strong>ref：</strong>ref列显示使用哪个列或常数与key一起从表中选择行。<br><strong>rows：</strong>rows列显示MySQL认为它执行查询时必须检查的行数。<br><strong>filtered：</strong>符合某条件的记录数百分比。<br><strong>Extra：</strong>该列包含MySQL解决查询的详细信息。主要包括：1、Distinct（MySQL发现第1个匹配行后，停止为当前的行组合搜索更多的行）2、Not exists（MySQL能够对查询进行LEFT JOIN优化，发现1个匹配LEFT JOIN标准的行后，不再为前面的的行组合在该表内检查更多的行。）3、Using filesort（MySQL需要额外的一次传递，以找出如何按排序顺序检索行。）4、Using index（从只使用索引树中的信息而不需要进一步搜索读取实际的行来检索表中的列信息。）5、Using temporary（为了解决查询，MySQL需要创建一个临时表来容纳结果）6、Using where（WHERE子句用于限制哪一个行匹配下一个表或发送到客户）</p>
 <h1 id="慢查询优化步骤"><a href="#慢查询优化步骤" class="headerlink" title="慢查询优化步骤"></a>慢查询优化步骤</h1><p>1、查询日志找出耗时高的SQL<br>2、explain查看索引是否生效<br>3、查看表索引是否生效<br>4、对索引优化<br>5、常用SQL优化（避免使用select *；小表驱动大表；尽量使用链接代替子查询，因为使用join不会在内存创建临时表）</p>
 <h4 id="补充：表结构设计原则优化"><a href="#补充：表结构设计原则优化" class="headerlink" title="补充：表结构设计原则优化"></a>补充：表结构设计原则优化</h4><p>1、使用可以存下数据最小的数据类型<br>2、尽量使用tinyint、smallint、mediumint作为整数类型而非int<br>3、尽可能使用not null，因为null 占用4字节空间。数字默认可以设置为0，字符串默认为“”<br>4、尽量少用text类型，非用不可是最好独立出一张表<br>5、尽量使用timestamp，而非datetime<br>6、单表字段不要太多，建议在20个以内。</p>
 <h1 id="索引结构：B-树"><a href="#索引结构：B-树" class="headerlink" title="索引结构：B+树"></a>索引结构：B+树</h1><a href="/2021/01/30/B%E6%A0%91-B-%E6%A0%91/" title="B树&#x2F;B+树">B树&#x2F;B+树</a>
-<p>1、为什么不用B树？<br>用B+树不用B树考虑的是IO对性能的影响，B树的每个节点都存储数据，而B+树只有叶子节点才存储数据，所以查找相同数据量的情况下，B树的高度更高，IO更频繁。数据库索引是存储在磁盘上的，当数据量大时，就不能把整个索引全部加载到内存了，只能逐一加载每一个磁盘页（对应索引树的节点）。<br>2、红黑树应用场景<br>Java中TreeMap，jdk1.8的hashmap的实现.<br>3、B+树的优缺点<br>优点：单次请求涉及的磁盘IO次数少；查询效率稳定；遍历效率高<br>缺点：主键不是有序递增的，导致每次插入数据产生大量的数据迁移和空间碎片；即使主键是有序递增的，大量写请求的分布仍是随机的<br>4、B+树中的组合索引的实现方式<br>TODO<br>5、除了排序树还有那些有序数据结构<br>顺序表、链表、无序树、有序树、图形结构、集合、</p>
+<p>1、为什么不用B树？<br>用B+树不用B树考虑的是IO对性能的影响，B树的每个节点都存储数据，而B+树只有叶子节点才存储数据，所以查找相同数据量的情况下，B树的高度更高，IO更频繁。数据库索引是存储在磁盘上的，当数据量大时，就不能把整个索引全部加载到内存了，只能逐一加载每一个磁盘页（对应索引树的节点）。<br>总结来说B+树相比B-树的优势有三个：</p>
+<ul>
+<li>单一节点存储更多的元素，使得查询的IO次数更少。</li>
+<li>所有查询都要查找到叶子节点，查询性能稳定。</li>
+<li>所有叶子节点形成有序链表，便于范围查询。<br>2、红黑树应用场景<br>Java中TreeMap，jdk1.8的hashmap的实现.<br>3、B+树的优缺点<br>优点：单次请求涉及的磁盘IO次数少；查询效率稳定；遍历效率高<br>缺点：主键不是有序递增的，导致每次插入数据产生大量的数据迁移和空间碎片；即使主键是有序递增的，大量写请求的分布仍是随机的<br>4、B+树中的组合索引的实现方式<br>TODO<br>5、除了排序树还有那些有序数据结构<br>顺序表、链表、无序树、有序树、图形结构、集合、</li>
+</ul>
 <h1 id="扩展："><a href="#扩展：" class="headerlink" title="扩展："></a>扩展：</h1><h3 id="MyISAM和InnoDB实现BTree索引方式的区别"><a href="#MyISAM和InnoDB实现BTree索引方式的区别" class="headerlink" title="MyISAM和InnoDB实现BTree索引方式的区别"></a>MyISAM和InnoDB实现BTree索引方式的区别</h3><p>MyISAM索引文件和数据文件是分离的，索引文件仅保存记录所在页的指针（物理位置），通过这些地址来读取页，进而读取被索引的行。<br>第一个重大区别是InnoDB的数据文件本身就是索引文件。InnoDB 存储引擎采用“聚集索引”的数据存储方式实现B+Tree索引,所谓“聚集”，就是指数据行和相邻的键值紧凑地存储在一起，注意 InnoDB 只能聚集一个叶子页（16K）的记录（即聚集索引满足一定的范围的记录），因此包含相邻键值的记录可能会相距甚远。<br><strong>总结：</strong><br>一是主索引的区别，InnoDB的数据文件本身就是索引文件。而MyISAM的索引和数据是分开的。<br>二是辅助索引的区别：InnoDB的辅助索引data域存储相应记录主键的值而不是地址。而MyISAM的辅助索引和主索引没有多大区别。</p>
 <h3 id="主键和唯一索引的区别"><a href="#主键和唯一索引的区别" class="headerlink" title="主键和唯一索引的区别"></a>主键和唯一索引的区别</h3><ul>
 <li>本质：主键是一种约束、索引是一种数据结构</li>
@@ -202,12 +208,11 @@
 <li>执行速度：主键执行计划优先、聚集索引所以效率很高。需要回表查询，效率较低。</li>
 </ul>
 <p>这里补充一个关于外键的知识：<br>数据库设计中到底要不要使用数据库外键的问题？<br><code>外键</code>是用于建立和加强两个表数据之间的链接的一列或多列。通过将保存表中主键值的一列或多列添加到另一个表中，可创建两个表之间的链接。这个列就成为第二个表的外键。<br>使用外键的好处：1、增强表和关联表之间的数据完整性和数据一致性。2、可以提高系统的健壮性。3、可以实现开发和数据库设计的分工。<br>使用外键的缺点：1、数据库需要维护外键的内部管理。2、外键等于把数据的一致性事务实现，全部交给数据库服务器完成。3、最重要的还是涉及增删改的时候，为了保证数据一致性，变得更加复杂。<br>当然我们可以减少外键的使用，但是这样就要在逻辑层中自己实现相应的业务。这样无疑会加重服务器的消耗。而且这样业务层就会夹带持久层，产生耦合。<br>所以外键的选用要视情况而定。</p>
-<h3 id="索引失效场景"><a href="#索引失效场景" class="headerlink" title="索引失效场景"></a>索引失效场景</h3><p>1、索引列参与了计算<br>2、索引列使用了 MySQL 中的函数<br>3、使用了前置模糊查询，like ‘%hello’ 不走索引，like hello%’走索引<br>4、索引列使用了正则表达式<br>5、索引列进行了非等值查询，也就是范围查询(不满足最左匹配)<br>6、字符串与数字进行了比较<br>7、OR 条件连接时某些列没有加索引<br>8、MySQL 内部优化器如果估计全表扫描比索引更快，将放弃索引</p>
 <p>最后上一个猛图<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B4%A2%E5%BC%95%E8%84%91%E5%9B%BE.png"></p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p><a target="_blank" rel="noopener" href="https://raymond-zhao.top/campus-interview/#/Database/MySQL">感谢raymond的一路支持</a><br><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1615563">聚簇索引介绍</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/bigtree_3721/article/details/87478706">联合索引案例</a><br><a target="_blank" rel="noopener" href="https://tech.meituan.com/2014/06/30/mysql-index.html">美团技术团队</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/justry_deng/article/details/81458470">索引使用</a><br><a target="_blank" rel="noopener" href="https://www.jb51.net/article/80748.htm">query_cache</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012068483/article/details/105270813">key_len的计算</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013250861/article/details/109279131">索引结构参考</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36756682/article/details/114483362">索引脑图原文</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/fhdsece/article/details/104974697">创建表的几种行格式</a></p>
+<p><a target="_blank" rel="noopener" href="https://raymond-zhao.top/campus-interview/#/Database/MySQL">感谢raymond的一路支持</a><br><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1615563">聚簇索引介绍</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/bigtree_3721/article/details/87478706">联合索引案例</a><br><a target="_blank" rel="noopener" href="https://tech.meituan.com/2014/06/30/mysql-index.html">美团技术团队</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/justry_deng/article/details/81458470">索引使用</a><br><a target="_blank" rel="noopener" href="https://www.jb51.net/article/80748.htm">query_cache</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012068483/article/details/105270813">key_len的计算</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013250861/article/details/109279131">索引结构参考</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36756682/article/details/114483362">索引脑图原文</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/fhdsece/article/details/104974697">创建表的几种行格式</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903645125820424">索引和锁的一篇文章</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/kongmin_123/article/details/82055901">索引数据结构</a></p>
 
       
 
@@ -488,11 +493,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
