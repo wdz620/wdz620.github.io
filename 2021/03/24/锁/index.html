@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>锁 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="排它锁，共享锁，表锁，页锁，间隙锁，意向排它锁，意向共享锁，行锁，读锁，写锁，乐观锁，悲观锁，死锁。我不是知道你看到这些概念在想什么，反正我是一脸懵X。。。。。下面通过整理学习，不断去了解它，打败它。">
+  <meta name="description" content="首先明确锁是数据库系统区别于文件系统的一个重要特性。数据库使用锁是为了支持对共享资源进行并发访问，提供数据的完整性和一致性。排它锁，共享锁，表锁，页锁，间隙锁，意向排它锁，意向共享锁，行锁，读锁，写锁，乐观锁，悲观锁，死锁。我不是知道你看到这些概念在想什么，反正我是一脸懵X。。。。。下面通过整理学习，不断去了解它，打败它。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="锁">
 <meta property="og:url" content="http://example.com/2021/03/24/%E9%94%81/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="排它锁，共享锁，表锁，页锁，间隙锁，意向排它锁，意向共享锁，行锁，读锁，写锁，乐观锁，悲观锁，死锁。我不是知道你看到这些概念在想什么，反正我是一脸懵X。。。。。下面通过整理学习，不断去了解它，打败它。">
+<meta property="og:description" content="首先明确锁是数据库系统区别于文件系统的一个重要特性。数据库使用锁是为了支持对共享资源进行并发访问，提供数据的完整性和一致性。排它锁，共享锁，表锁，页锁，间隙锁，意向排它锁，意向共享锁，行锁，读锁，写锁，乐观锁，悲观锁，死锁。我不是知道你看到这些概念在想什么，反正我是一脸懵X。。。。。下面通过整理学习，不断去了解它，打败它。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210324081302178.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B9%90%E8%A7%82%E9%94%81.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/lock%E5%92%8Clatch.png">
 <meta property="article:published_time" content="2021-03-24T00:02:06.000Z">
-<meta property="article:modified_time" content="2021-03-24T01:16:44.691Z">
+<meta property="article:modified_time" content="2021-03-24T11:33:26.297Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -173,12 +173,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>排它锁，共享锁，表锁，页锁，间隙锁，意向排它锁，意向共享锁，行锁，读锁，写锁，乐观锁，悲观锁，死锁。我不是知道你看到这些概念在想什么，反正我是一脸懵X。。。。。<br>下面通过整理学习，不断去了解它，打败它。</p>
+        <p>首先明确锁是数据库系统区别于文件系统的一个重要特性。数据库使用锁是为了支持对共享资源进行并发访问，提供数据的完整性和一致性。<br>排它锁，共享锁，表锁，页锁，间隙锁，意向排它锁，意向共享锁，行锁，读锁，写锁，乐观锁，悲观锁，死锁。我不是知道你看到这些概念在想什么，反正我是一脸懵X。。。。。<br>下面通过整理学习，不断去了解它，打败它。</p>
 <a id="more"></a>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210324081302178.png" alt="image-20210324081302178"></p>
-<h1 id="表锁和行锁"><a href="#表锁和行锁" class="headerlink" title="表锁和行锁"></a>表锁和行锁</h1><p>按照锁的粒度分成：表锁和行锁</p>
-<p>表锁：开销小，加锁快；不会出现死锁；锁定力度大，发生锁冲突概率高，并发度最低。</p>
-<p>行锁：开销大，加锁慢；会出现死锁；锁定粒度小，发生锁冲突的概率低，并发度高。</p>
+<h1 id="表锁和行锁"><a href="#表锁和行锁" class="headerlink" title="表锁和行锁"></a>表锁和行锁</h1><p>按照锁的粒度分成：表锁和行锁<br>表锁：开销小，加锁快；不会出现死锁；锁定力度大，发生锁冲突概率高，并发度最低。<br>行锁：开销大，加锁慢；会出现死锁；锁定粒度小，发生锁冲突的概率低，并发度高。</p>
 <p>MyISAM和InnoDB，前者支持表锁，而后者则支持行锁和表锁。注意：InnoDB只有通过<strong>索引条件</strong>检索数据<strong>才使用行级锁</strong>，否则，InnoDB将使用<strong>表锁</strong>。换句话说InnoDB的行锁是基于索引的。</p>
 <p>表锁又分为以下两种模式</p>
 <h5 id="表写锁和表读锁"><a href="#表写锁和表读锁" class="headerlink" title="表写锁和表读锁"></a>表写锁和表读锁</h5><p><strong>读读不阻塞，读写阻塞，写写阻塞</strong></p>
@@ -187,67 +185,46 @@
 <li>读写阻塞：当前用户在读数据，其他的用户<strong>不能修改当前用户读的数据</strong>，会加锁！</li>
 <li>写写阻塞：当前用户在修改数据，其他的用户<strong>不能修改当前用户正在修改的数据</strong>，会加锁。</li>
 </ul>
-<p>注意：如果某个进程想要获取读锁，<strong>同时</strong>另外一个进程想要获取写锁。在mysql里边，<strong>写锁是优先于读锁的</strong>！</p>
-<p>InnoDB区别于MyISAM就是其支持事务和行锁。</p>
-<p>InnoDB支持两种类型的行锁：共享锁（S锁）、排他锁（X锁)。</p>
-<h5 id="行锁"><a href="#行锁" class="headerlink" title="行锁"></a>行锁</h5><p>共享锁（S锁）：允许一个事务去读一行，阻止其他事务获得相同数据集的排他锁。也叫做<strong>读锁</strong>：读锁是<strong>共享</strong>的，多个客户可以<strong>同时读取同一个</strong>资源，但<strong>不允许其他客户修改</strong>。</p>
-<p>排他锁（X锁)：允许获得排他锁的事务更新数据，阻止其他事务取得相同数据集的共享读锁和排他写锁。也叫做<strong>写锁</strong>：写锁是排他的，<strong>写锁会阻塞其他的写锁和读锁</strong>。</p>
-<p>为了让<em>行锁和表锁共同存在，实现多粒度锁机制</em>，InnoDB还有两个内部使用的意向锁。这两个锁都属于<strong>表锁</strong></p>
-<p>意向共享锁（IS）：事务打算给数据行加行共享锁，事务在给一个数据行加共享锁前必须先取得该表的IS锁。</p>
-<p>意向排他锁（IX）：事务打算给数据行加行排他锁，事务在给一个数据行加排他锁前必须先取得该表的IX锁。</p>
-<h1 id="MVVC这部分TODO-学习事务回看"><a href="#MVVC这部分TODO-学习事务回看" class="headerlink" title="MVVC这部分TODO 学习事务回看"></a>MVVC这部分TODO 学习事务回看</h1><h1 id="乐观锁和悲观锁"><a href="#乐观锁和悲观锁" class="headerlink" title="乐观锁和悲观锁"></a>乐观锁和悲观锁</h1><h5 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h5><p>乐观锁是对于数据冲突保持一种乐观态度，操作数据时不会对操作的数据进行加锁（这使得多个任务可以并行的对数据进行操作），只有到数据提交的时候才通过一种机制来验证数据是否存在冲突。</p>
-<p>特点：乐观锁是一种并发类型的锁，其本身不对数据进行加锁通而是通过业务实现锁的功能，不对数据进行加锁就意味着允许多个请求同时访问数据，同时也省掉了对数据加锁和解锁的过程，这种方式大大的提高了数据操作的性能。</p>
-<p>下面通过一个案例了解乐观锁：</p>
-<p>比如说有一张表，两个请求同时对其操作，当请求1先于请求2修改表，此时请求1先去查询version与现在version比对，版本相同即可进行提交。而当请求2修改的时候必然会失败，因为版本号的变换。盗个图，参考文末链接。</p>
+<p>注意：如果某个进程想要获取读锁，<strong>同时</strong>另外一个进程想要获取写锁。在mysql里边，<strong>写锁是优先于读锁的</strong>！<br>InnoDB区别于MyISAM就是其支持事务和行锁。<br>InnoDB支持两种类型的行锁：共享锁（S锁）、排他锁（X锁)。</p>
+<h5 id="行锁"><a href="#行锁" class="headerlink" title="行锁"></a>行锁</h5><p>共享锁（S锁）：允许一个事务去读一行，阻止其他事务获得相同数据集的排他锁。也叫做<strong>读锁</strong>：读锁是<strong>共享</strong>的，多个客户可以<strong>同时读取同一个</strong>资源，但<strong>不允许其他客户修改</strong>。<br>排他锁（X锁)：允许获得排他锁的事务更新数据，阻止其他事务取得相同数据集的共享读锁和排他写锁。也叫做<strong>写锁</strong>：写锁是排他的，<strong>写锁会阻塞其他的写锁和读锁</strong>。<br>为了让<em>行锁和表锁共同存在，实现多粒度锁机制</em>，InnoDB还有两个内部使用的意向锁。这两个锁都属于<strong>表锁</strong><br>意向共享锁（IS）：事务打算给数据行加行共享锁，事务在给一个数据行加共享锁前必须先取得该表的IS锁。<br>意向排他锁（IX）：事务打算给数据行加行排他锁，事务在给一个数据行加排他锁前必须先取得该表的IX锁。</p>
+<h1 id="MVVC这部分TODO-学习事务回看"><a href="#MVVC这部分TODO-学习事务回看" class="headerlink" title="MVVC这部分TODO 学习事务回看"></a>MVVC这部分TODO 学习事务回看</h1><h1 id="乐观锁和悲观锁"><a href="#乐观锁和悲观锁" class="headerlink" title="乐观锁和悲观锁"></a>乐观锁和悲观锁</h1><h5 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h5><p>乐观锁是对于数据冲突保持一种乐观态度，操作数据时不会对操作的数据进行加锁（这使得多个任务可以并行的对数据进行操作），只有到数据提交的时候才通过一种机制来验证数据是否存在冲突。<br>特点：乐观锁是一种并发类型的锁，其本身不对数据进行加锁通而是通过业务实现锁的功能，不对数据进行加锁就意味着允许多个请求同时访问数据，同时也省掉了对数据加锁和解锁的过程，这种方式大大的提高了数据操作的性能。<br>下面通过一个案例了解乐观锁：<br>比如说有一张表，两个请求同时对其操作，当请求1先于请求2修改表，此时请求1先去查询version与现在version比对，版本相同即可进行提交。而当请求2修改的时候必然会失败，因为版本号的变换。盗个图，参考文末链接。</p>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B9%90%E8%A7%82%E9%94%81.jpg"></p>
-<h5 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h5><p>悲观锁是基于一种悲观的态度类来防止一切数据冲突，它是以一种预防的姿态在修改数据之前把数据锁住，然后再对数据进行读写，在它释放锁之前任何人都不能对其数据进行操作，直到前面一个人把锁释放后下一个人数据加锁才可对数据进行加锁，然后才可以对数据进行操作，一般数据库本身锁的机制都是基于悲观锁的机制实现的。</p>
-<p>特点：可以完全保证数据的独占性和正确性，因为每次请求都会先对数据进行加锁， 然后进行数据操作，最后再解锁，而加锁释放锁的过程会造成消耗，所以性能不高。</p>
-<p>悲观锁的实现过程：</p>
-<p>1、开始事务begin;/begin work;/start transaction; (三者选一就可以)</p>
-<p>2、查询出商品信息select status from table where id=1 for update;</p>
-<p>3、根据商品信息生成订单insert into table111 (id,goods_id) values (null,1);</p>
-<p>4、修改商品status为2update table set status=2 where id=1;</p>
-<p>5、提交事务commit;/commit work; (任选一种释放锁)</p>
-<p>小结：1、实现悲观锁利用select … for update加锁, 操作完成后使用commit来释放锁；2、innodb引擎时, 默认行级锁, 当有明确字段时会锁一行, 如无查询条件或条件；字段不明确时, 会锁整个表，条件为范围时会锁整个表；3、查不到数据时, 则不会锁表</p>
-<h1 id="间隙锁"><a href="#间隙锁" class="headerlink" title="间隙锁"></a>间隙锁</h1><p>当我们<strong>用范围条件检索数据</strong>而不是相等条件检索数据，并请求共享或排他锁时，InnoDB会给<strong>符合范围条件的已有数据记录的索引项加锁</strong>；对于键值在条件范围内但并不存在的记录，叫做“间隙（GAP)”。InnoDB也会对这个“间隙”加锁，这种锁机制就是所谓的间隙锁。</p>
-<p>注意：间隙锁只会在<code>Repeatable read</code>隔离级别下使用~</p>
-<p>InnoDB使用间隙锁的两个目的：</p>
-<p>1、防止幻读（<code>Repeatable read</code>隔离级别下再通过GAP锁即可避免了幻读）</p>
-<p>2、满足恢复和复制的需要：MySQL的恢复机制要求：<strong>在一个事务未提交前，其他并发事务不能插入满足其锁定条件的任何记录，也就是不允许出现幻读</strong></p>
-<h1 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h1><p>并发的问题就少不了死锁，在MySQL中同样会存在死锁的问题。</p>
-<p>但一般来说MySQL通过回滚帮我们解决了不少死锁的问题了，但死锁是无法完全避免的，可以通过以下的经验参考，来尽可能少遇到死锁：</p>
-<p>1、以<strong>固定的顺序</strong>访问表和行。</p>
-<p>2、<strong>大事务拆小</strong></p>
-<p>3、在同一个事务中，尽可能做到<strong>一次锁定</strong>所需要的所有资源，减少死锁概率</p>
-<p>4、<strong>降低隔离级别</strong></p>
-<p>5、<strong>为表添加合理的索引</strong></p>
+<p>乐观锁的实现方式：一般会使用版本号机制或CAS算法实现。<br>其中版本号上面已经介绍，主要说明一下CAS。<br>CAS算法涉及到三个操作数：需要读写的内存值 V、进行比较的值 A、拟写入的新值 B<br>当且仅当 V 的值等于 A时，CAS通过原子方式用新值B来更新V的值，否则不会执行任何操作（比较和替换是一个原子操作）。一般情况下是一个自旋操作，即不断的重试。<br>自旋锁（spinlock）：是指当一个线程在获取锁的时候，如果锁已经被其它线程获取，那么该线程将循环等待，然后不断的判断锁是否能够被成功获取，直到获取到锁才会退出循环。</p>
+<h5 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h5><p>悲观锁是基于一种悲观的态度类来防止一切数据冲突，它是以一种预防的姿态在修改数据之前把数据锁住，然后再对数据进行读写，在它释放锁之前任何人都不能对其数据进行操作，直到前面一个人把锁释放后下一个人数据加锁才可对数据进行加锁，然后才可以对数据进行操作，一般数据库本身锁的机制都是基于悲观锁的机制实现的。<br>特点：可以完全保证数据的独占性和正确性，因为每次请求都会先对数据进行加锁， 然后进行数据操作，最后再解锁，而加锁释放锁的过程会造成消耗，所以性能不高。<br>悲观锁的实现过程：<br>1、开始事务begin;/begin work;/start transaction; (三者选一就可以)<br>2、查询出商品信息select status from table where id=1 for update;<br>3、根据商品信息生成订单insert into table111 (id,goods_id) values (null,1);<br>4、修改商品status为2update table set status=2 where id=1;<br>5、提交事务commit;/commit work; (任选一种释放锁)<br>小结：1、实现悲观锁利用select … for update加锁, 操作完成后使用commit来释放锁；2、innodb引擎时, 默认行级锁, 当有明确字段时会锁一行, 如无查询条件或条件；字段不明确时, 会锁整个表，条件为范围时会锁整个表；3、查不到数据时, 则不会锁表</p>
+<h1 id="间隙锁"><a href="#间隙锁" class="headerlink" title="间隙锁"></a>间隙锁</h1><p>当我们<strong>用范围条件检索数据</strong>而不是相等条件检索数据，并请求共享或排他锁时，InnoDB会给<strong>符合范围条件的已有数据记录的索引项加锁</strong>；对于键值在条件范围内但并不存在的记录，叫做“间隙（GAP)”。InnoDB也会对这个“间隙”加锁，这种锁机制就是所谓的间隙锁。<br>注意：间隙锁只会在<code>Repeatable read</code>隔离级别下使用~<br>InnoDB使用间隙锁的两个目的：<br>1、防止幻读（<code>Repeatable read</code>隔离级别下再通过GAP锁即可避免了幻读）<br>2、满足恢复和复制的需要：MySQL的恢复机制要求：<strong>在一个事务未提交前，其他并发事务不能插入满足其锁定条件的任何记录，也就是不允许出现幻读</strong></p>
+<h1 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h1><p>死锁是指两个或两个以上的事务在执行过程中，因争夺资源而造成的一种互相等待的现象。<br>并发的问题就少不了死锁，在MySQL中同样会存在死锁的问题。<br>但一般来说MySQL通过回滚帮我们解决了不少死锁的问题了，但死锁是无法完全避免的，可以通过以下的经验参考，来尽可能少遇到死锁：<br>1、以<strong>固定的顺序</strong>访问表和行。<br>2、<strong>大事务拆小</strong><br>3、在同一个事务中，尽可能做到<strong>一次锁定</strong>所需要的所有资源，减少死锁概率<br>4、<strong>降低隔离级别</strong><br>5、<strong>为表添加合理的索引</strong></p>
 <blockquote>
 <p>一些思考问题</p>
 </blockquote>
 <p>1、乐观锁和MVVC区别 <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/27876575">参考链接</a></p>
 <p>TODO</p>
+<blockquote>
 <p>2、了解过lock吗？</p>
-<p>lock和latch都可以被称为“锁”。</p>
-<p>latch一般称为闩锁，其目的是用来保证并发线程操作临界资源的正确性，并且通常没有死锁检测的机制。</p>
-<p>lock的对象是事务。用来锁定的是数据库中的对象，如表、页、行。并且一般lock的对象仅在事务commit和rollback后进行释放。lock具有死锁机制的。</p>
-<p>lock和latch的比较</p>
-<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/lock%E5%92%8Clatch.png"></p>
+</blockquote>
+<p>lock和latch都可以被称为“锁”。<br>latch一般称为闩锁，其目的是用来保证并发线程操作临界资源的正确性，并且通常没有死锁检测的机制。<br>lock的对象是事务。用来锁定的是数据库中的对象，如表、页、行。并且一般lock的对象仅在事务commit和rollback后进行释放。lock具有死锁机制的。<br>lock和latch的比较<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/lock%E5%92%8Clatch.png"></p>
+<blockquote>
 <p>3、间隙锁</p>
+</blockquote>
 <p>InnoDB存储引擎有3种行锁的算法：</p>
 <ul>
 <li>Record Lock：单个行记录上的锁</li>
 <li>Gap Lock：间隙锁，锁定一个范围，但不包含记录本身</li>
-<li>Next-Key Lock：前两个的组合，锁定一个范围并且锁定记录本身。</li>
+<li>Next-Key Lock：前两个的组合，锁定一个范围并且锁定记录本身。<br>间隙锁在InnoDB的唯一作用就是防止其它事务的插入操作，以此来达到防止幻读的发生，所以间隙锁不分什么共享锁与排它锁。<br>要禁止间隙锁的话，可以把隔离级别降为读已提交，或者开启参数innodb_locks_unsafe_for_binlog。</li>
 </ul>
-<p>间隙锁在InnoDB的唯一作用就是防止其它事务的插入操作，以此来达到防止幻读的发生，所以间隙锁不分什么共享锁与排它锁。</p>
-<p>要禁止间隙锁的话，可以把隔离级别降为读已提交，或者开启参数innodb_locks_unsafe_for_binlog。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 查看是否开启间隙锁：</span><br><span class="line"><span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;innodb_locks_unsafe_for_binlog&#x27;</span>;</span><br></pre></td></tr></table></figure>
-<p>innodb_locks_unsafe_for_binlog：默认值为0，即启用gap lock。</p>
-<p>关闭间隙锁(gap lock)方法: 在my.cnf里面的[mysqld]添加 innodb_locks_unsafe_for_binlog = 1 重启MySQL后生效.</p>
+<p>innodb_locks_unsafe_for_binlog：默认值为0，即启用gap lock。<br>关闭间隙锁(gap lock)方法: 在my.cnf里面的[mysqld]添加 innodb_locks_unsafe_for_binlog = 1 重启MySQL后生效.</p>
+<blockquote>
+<p>4、说一下乐观锁和CAS</p>
+</blockquote>
+<p>首先CAS可以说是乐观锁实现的一种方法，还有一种方法是版本号控制。<br>CAS主要通过三个变量去控制，需要读取的内存值V、进行比较的值A、拟写入的值B。当且仅当 V 的值等于 A时，CAS通过原子方式用新值B来更新V的值，否则不会执行任何操作（比较和替换是一个原子操作）。一般情况下是一个自旋操作，即不断的重试。<br>那么乐观锁使用有什么缺点？<br>1、ABA问题：如果一个变量V初次读取的时候是A值，并且在准备赋值的时候检查到它仍然是A值，那我们就能说明它的值没有被其他线程修改过了吗？很明显是不能的，因为在这段时间它的值可能被改为其他值，然后又改回A，那CAS操作就会误认为它从来没有被修改过。这个问题被称为CAS操作的 “ABA”问题。<br>ABA问题的解决思路就是使用版本号。在变量前面追加上版本号，每次变量更新的时候把版本号加一，那么A－B－A 就会变成1A-2B－3A。<br>2、循环时间长，开销大<br>3、只能保证一个共享变量的原子操作</p>
+<blockquote>
+<p>悲观锁和排他锁</p>
+</blockquote>
+<p>说白了就是排他锁。共享锁和排他锁都是悲观锁的不同的实现，它两都属于悲观锁的范畴。<br>共享锁用法：<code>SELECT ... LOCK IN SHARE MODE;</code><br>排他锁用法：<code>SELECT ... FOR UPDATE;</code><br>再简单提一句乐观锁，乐观锁不是数据库自带的。需要我们自己去实现。</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/31537871">乐观锁和悲观锁</a><br><a target="_blank" rel="noopener" href="https://www.php.cn/mysql-tutorials-453418.html">悲观锁的实现</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/31537871">索引和锁</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/31537871">乐观锁和悲观锁</a><br><a target="_blank" rel="noopener" href="https://www.php.cn/mysql-tutorials-453418.html">悲观锁的实现</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/31537871">索引和锁</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_19553501/article/details/90409745?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.control&dist_request_id=1328690.10572.16165834575068925&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.control">Java自旋锁</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_39538693/article/details/111365460">悲观锁与乐观锁</a></p>
 
       
 
@@ -330,6 +307,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2021/03/25/MySQL%E7%BC%93%E5%AD%98%E6%B1%A0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          MySQL缓存池
+        
+      </div>
+    </a>
   
   
     <a href="/2021/03/22/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BA%95%E5%B1%82%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/" id="article-nav-older" class="article-nav-link-wrap">
@@ -499,11 +485,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -511,11 +497,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
