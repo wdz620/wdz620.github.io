@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>事务 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="事务时数据库区别于文件系统的重要特性之一。事务的主要目的：事务会把数据库从一种一致状态转换成另一种一致状态。下面简单说一下数据库的四大特性：  原子性（Atomicity）：要么都做，要么都不做。原子性指整个数据库事务是不可分割的工作单位。 一致性（Consistency）：指事务将数据库从一种状态转变成下一种一致的状态。 隔离性（Isolation）：每个读写事务的对象对其他事务的操作对象能互相">
+  <meta name="description" content="事务是数据库区别于文件系统的重要特性之一。事务的主要目的：事务会把数据库从一种一致状态转换成另一种一致状态。下面简单说一下数据库的四大特性：  原子性（Atomicity）：要么都做，要么都不做。原子性指整个数据库事务是不可分割的工作单位。 一致性（Consistency）：指事务将数据库从一种状态转变成下一种一致的状态。 隔离性（Isolation）：每个读写事务的对象对其他事务的操作对象能互相">
 <meta property="og:type" content="article">
 <meta property="og:title" content="事务">
 <meta property="og:url" content="http://example.com/2021/03/27/%E4%BA%8B%E5%8A%A1/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="事务时数据库区别于文件系统的重要特性之一。事务的主要目的：事务会把数据库从一种一致状态转换成另一种一致状态。下面简单说一下数据库的四大特性：  原子性（Atomicity）：要么都做，要么都不做。原子性指整个数据库事务是不可分割的工作单位。 一致性（Consistency）：指事务将数据库从一种状态转变成下一种一致的状态。 隔离性（Isolation）：每个读写事务的对象对其他事务的操作对象能互相">
+<meta property="og:description" content="事务是数据库区别于文件系统的重要特性之一。事务的主要目的：事务会把数据库从一种一致状态转换成另一种一致状态。下面简单说一下数据库的四大特性：  原子性（Atomicity）：要么都做，要么都不做。原子性指整个数据库事务是不可分割的工作单位。 一致性（Consistency）：指事务将数据库从一种状态转变成下一种一致的状态。 隔离性（Isolation）：每个读写事务的对象对其他事务的操作对象能互相">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327131837231.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327134418898.png">
@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327134548550.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327122027317.png">
 <meta property="article:published_time" content="2021-03-27T03:07:36.000Z">
-<meta property="article:modified_time" content="2021-03-29T01:55:03.712Z">
+<meta property="article:modified_time" content="2021-03-29T05:59:25.389Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -175,7 +175,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>事务时数据库区别于文件系统的重要特性之一。事务的主要目的：事务会把数据库从一种一致状态转换成另一种一致状态。下面简单说一下数据库的四大特性：</p>
+        <p>事务是数据库区别于文件系统的重要特性之一。事务的主要目的：事务会把数据库从一种一致状态转换成另一种一致状态。下面简单说一下数据库的四大特性：</p>
 <ul>
 <li>原子性（Atomicity）：要么都做，要么都不做。原子性指整个数据库事务是不可分割的工作单位。</li>
 <li>一致性（Consistency）：指事务将数据库从一种状态转变成下一种一致的状态。</li>
@@ -187,17 +187,17 @@
 <blockquote>
 <p>小知识：undo并非是redo 的逆过程。它们两个都是为了恢复，redo恢复提交事务修改的页操作，而undo回滚行记录到某个特定版本。两者记录的内容是不同的，redo通常是物理日志，记录的是页的物理修改操作；undo是逻辑日志，根据每行记录进行记录。</p>
 </blockquote>
-<h2 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h2><p>明确redo log保证事务的持久性。(在MySQL技术内幕中说的是原子性和持久性，但是我个人更倾向于持久性)</p>
+<h2 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h2><p>明确redo log保证事务的原子性和持久性。(在MySQL技术内幕中说的是原子性和持久性，但是我个人更倾向于持久性)</p>
 <p>基本概念：<br>redo log用来实现事务的<strong>持久性</strong>，其由两部分组成：一是内存中的redo log缓冲(redo log buffer)，其是易失的；二是redo log文件(redo log file)，其是持久的。redo log基本都是顺序写的，在数据库运行时不需要对redo log的文件进行读取操作。</p>
 <blockquote>
 <p>那么数据库是怎么利用redo log保证事务的持久性呢？</p>
 </blockquote>
-<p>如何保证<code>持久性</code>呢？一个很简单的做法就是在事务提交完成之前把该事务所修改的所有页面都刷新到磁盘，但是这个简单粗暴的做法有些问题：1、刷新一个完整的数据页太浪费了 2、随机IO刷起来比较慢。<br>我们的初心就是想让已经提交了的事务对数据库中数据所做的修改永久生效，即使后来系统崩溃，在重启后也能把这种修改恢复出来。<br>所以我们其实没有必要在每次事务提交时就把该事务在内存中修改过的全部页面刷新到磁盘，只需要把修改了哪些东西记录一下就好。所以redo log就起到了这个作用，只将该事务执行过程中产生的<code>redo</code>日志刷新到磁盘。</p>
+<p>如何保证<code>持久性</code>呢？一个很简单的做法就是在事务提交完成之前把该事务所修改的所有页面都刷新到磁盘，但是这个简单粗暴的做法有些问题：1、刷新一个完整的数据页太浪费了 2、随机IO刷起来比较慢。(事务修改的这些页面可能并不相邻，这就意味着在将某个事务修改的Buffer Pool中的页面刷新到磁盘时，需要进行很多的随机IO)<br>我们的初心就是想让已经提交了的事务对数据库中数据所做的修改永久生效，即使后来系统崩溃，在重启后也能把这种修改恢复出来。<br>所以我们其实没有必要在每次事务提交时就把该事务在内存中修改过的全部页面刷新到磁盘，只需要把修改了哪些东西记录一下就好。所以redo log就起到了这个作用，只将该事务执行过程中产生的<code>redo</code>日志刷新到磁盘。</p>
 <p>与在事务提交时将所有修改过的内存中的页面刷新到磁盘中相比，只将该事务执行过程中产生的<code>redo log</code>刷新到磁盘的好处如下：<br>1、<code>redo log</code>占用的空间非常小<br>2、<code>redo log</code>是顺序写入磁盘的：在执行事务的过程中，每执行一条语句，就可能产生若干条<code>redo</code>日志，这些日志是按照产生的顺序写入磁盘的，也就是使用顺序IO。</p>
 <p>redo log格式<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327131837231.png" alt="image-20210327131837231"><br><code>type</code>：该条<code>redo</code>日志的类型。<code>space ID</code>：表空间ID。<code>page number</code>：页号。<code>data</code>：该条<code>redo</code>日志的具体内容。</p>
 <p><strong>redo log 写入过程</strong><br>在InnoDB存储引擎中，重做日志都是以512字节进行存储的。这意味着重做日志缓存、重做日志文件都是以块的方式进行保存的，称之为日志块（redo log block），每块大小为512字节。<br><strong>TODO</strong> 未细致分析</p>
 <hr>
-<h2 id="undo-log"><a href="#undo-log" class="headerlink" title="undo log"></a>undo log</h2><p>明确undo log保证事务的原子性。 (在MySQL技术内幕中说的是一致性，但是我个人更倾向于原子性)</p>
+<h2 id="undo-log"><a href="#undo-log" class="headerlink" title="undo log"></a>undo log</h2><p>明确undo log保证事务的一致性。 (在MySQL技术内幕中说的是一致性，但是我个人更倾向于原子性)</p>
 <p>基本概念：<br>redo log记录了事务的行为，可以很好地通过其对页进行“重做”操作。redo存放在重做日志文件中，与redo不同，undo存放在数据库内部的一个特殊段（segment）中，这个段称为segment段。undo段位于共享表空间中。但是需要注意，也是较为重要的一点：undo log会产生redo log，也就是undo log 的产生伴随着redo log的产生，这是因为undo log也需要持久化的保护。</p>
 <blockquote>
 <p>undo是用于将数据库物理地恢复到执行语句或事务之前的样子吗？</p>
@@ -236,7 +236,7 @@
 <p>一些思考问题</p>
 </blockquote>
 <h4 id="怎么解决脏读、不可重复读、幻读这些问题呢？其实有两种可选的解决方案"><a href="#怎么解决脏读、不可重复读、幻读这些问题呢？其实有两种可选的解决方案" class="headerlink" title="怎么解决脏读、不可重复读、幻读这些问题呢？其实有两种可选的解决方案"></a>怎么解决<code>脏读</code>、<code>不可重复读</code>、<code>幻读</code>这些问题呢？其实有两种可选的解决方案</h4><p>方案一：读操作利用多版本并发控制（<code>MVCC</code>），写操作进行<code>加锁</code>。</p>
-<p>所谓的<code>MVCC</code>我们在前一章有过详细的描述，就是通过生成一个<code>ReadView</code>，然后通过<code>ReadView</code>找到符合条件的记录版本（历史版本是由<code>undo日志</code>构建的），其实就像是在生成<code>ReadView</code>的那个时刻做了一次时间静止（就像用相机拍了一个快照），查询语句只能读到在生成<code>ReadView</code>之前已提交事务所做的更改，在生成<code>ReadView</code>之前未提交的事务或者之后才开启的事务所做的更改是看不到的。而写操作肯定针对的是最新版本的记录，读记录的历史版本和改动记录的最新版本本身并不冲突，也就是采用<code>MVCC</code>时，<code>读-写</code>操作并不冲突。</p>
+<p>所谓的<code>MVCC</code>我们在前面有过介绍，就是通过生成一个<code>ReadView</code>，然后通过<code>ReadView</code>找到符合条件的记录版本（历史版本是由<code>undo日志</code>构建的），其实就像是在生成<code>ReadView</code>的那个时刻做了一次时间静止（就像用相机拍了一个快照），查询语句只能读到在生成<code>ReadView</code>之前已提交事务所做的更改，在生成<code>ReadView</code>之前未提交的事务或者之后才开启的事务所做的更改是看不到的。而写操作肯定针对的是最新版本的记录，读记录的历史版本和改动记录的最新版本本身并不冲突，也就是采用<code>MVCC</code>时，<code>读-写</code>操作并不冲突。</p>
 <p>小贴士： 我们说过普通的SELECT语句在READ COMMITTED和REPEATABLE READ隔离级别下会使用到MVCC读取记录。在READ COMMITTED隔离级别下，一个事务在执行过程中每次执行SELECT操作时都会生成一个ReadView，ReadView的存在本身就保证了事务不可以读取到未提交的事务所做的更改，也就是避免了脏读现象；REPEATABLE READ隔离级别下，一个事务在执行过程中只有第一次执行SELECT操作才会生成一个ReadView，之后的SELECT操作都复用这个ReadView，这样也就避免了不可重复读和幻读的问题。</p>
 <p>方案二：读、写操作都采用<code>加锁</code>的方式。</p>
 <p>小贴士： 我们说脏读的产生是因为当前事务读取了另一个未提交事务写的一条记录，如果另一个事务在写记录的时候就给这条记录加锁，那么当前事务就无法继续读取该记录了，所以也就不会有脏读问题的产生了。不可重复读的产生是因为当前事务先读取一条记录，另外一个事务对该记录做了改动之后并提交之后，当前事务再次读取时会获得不同的值，如果在当前事务读取记录时就给该记录加锁，那么另一个事务就无法修改该记录，自然也不会发生不可重复读了。我们说幻读问题的产生是因为当前事务读取了一个范围的记录，然后另外的事务向该范围内插入了新记录，当前事务再次读取该范围的记录时发现了新插入的新记录，我们把新插入的那些记录称之为幻影记录。采用加锁的方式解决幻读问题就有那么一丢丢麻烦了，因为当前事务在第一次读取记录时那些幻影记录并不存在，所以读取的时候加锁就有点尴尬 </p>
@@ -506,15 +506,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
               </li>
              
               <li class="article-tag-list-item">
