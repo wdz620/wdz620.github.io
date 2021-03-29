@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327134548550.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327122027317.png">
 <meta property="article:published_time" content="2021-03-27T03:07:36.000Z">
-<meta property="article:modified_time" content="2021-03-28T03:02:23.556Z">
+<meta property="article:modified_time" content="2021-03-29T01:55:03.712Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -206,6 +206,7 @@
 <p><strong>undo 两大作用</strong></p>
 <p>一个是回滚，一个是MVCC。</p>
 <p>回滚上面已经简单介绍，下面简单介绍MVCC。即在InnoDB存储引擎中MVCC的实现是通过undo完成。当用户读取一行记录时，若该记录已经被其他事务占用，当前事务可以通过undo读取之前的行记录信息，以此实现非锁定读取。参考文末对问题分析。</p>
+<hr>
 <h2 id="bin-log"><a href="#bin-log" class="headerlink" title="bin log"></a>bin log</h2><p>二进制日志(bin log)，其用来进行POINT-IN-TIME的恢复及主从复制环境的建立。是mysql的逻辑日志，并且由Server层进行记录，使用任何存储引擎的mysql数据库都会记录binlog日志。</p>
 <p>bin log日志格式：<br><strong>STATMENT：</strong>每一条会修改数据的 SQL 语句会记录到 binlog 中。<br><strong>ROW：</strong>不记录每条 SQL 语句的上下文信息，需记录哪条数据被修改了。<br><strong>MIXED：</strong>一般的复制使用 STATEMENT 模式保存 binlog，对于 STATEMENT 模式无法复制的操作使用 ROW 模式保存 binlog。</p>
 <blockquote>
@@ -339,6 +340,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2021/03/28/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84MySQL/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          你不知道的MySQL
+        
+      </div>
+    </a>
   
   
     <a href="/2021/03/26/HashMap%E6%B7%B1%E7%A9%B6/" id="article-nav-older" class="article-nav-link-wrap">
@@ -496,10 +506,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
@@ -508,11 +514,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -528,11 +538,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -548,7 +558,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">分布式中间件</a>
+                <a href="javascript:void(0)" class="js-tag color4">中间件</a>
               </li>
             
             <div class="clearfix"></div>

@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321090430025.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B4%A2%E5%BC%95%E8%84%91%E5%9B%BE.png">
 <meta property="article:published_time" content="2021-03-21T02:09:14.000Z">
-<meta property="article:modified_time" content="2021-03-24T01:07:00.315Z">
+<meta property="article:modified_time" content="2021-03-29T01:51:23.620Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -182,14 +182,21 @@
 <p>非聚簇索引就是叶子节点并不包含行记录的全部数据，每张表上可以有多个非聚簇索引。当通过非聚簇索引来查找数据时，InnoDB存储引擎会遍历非聚簇索引并通过叶级别的指针获得指向主键索引的主键，然后通过主键索引来找到一个完整的行记录。</p>
 <h4 id="聚集索引的优点："><a href="#聚集索引的优点：" class="headerlink" title="聚集索引的优点："></a>聚集索引的优点：</h4><p>可以把相关数据保存在一起。<br>访问速度更快。<br>使用覆盖索引扫描的查询可以直接使用页节点中的主键值。</p>
 <h4 id="聚集索引的缺点："><a href="#聚集索引的缺点：" class="headerlink" title="聚集索引的缺点："></a>聚集索引的缺点：</h4><p>插入速度严重依赖插入顺序。<br>聚集索引做大限度的提高了I/O密集型应用的性能，但是如果数据全部都放在内存中，则访问顺序就没那么重要了，聚集索引也就没有什么优势可言了。<br>基于聚簇索引的表在插入新行，或者主键被更新导致需要移动行的时候，可能面临“页分裂”问题。（当行的主键值要求必须将这一行插入到某个已经满的页中时，存储引擎会将该页分裂成两个页面来容纳该行，页分裂操作，会导致表占用更多的磁盘空间）<br>当行比较稀疏的时候，聚簇索引可能导致全表扫描变慢。<br>最后二级索引的访问需要两次查找，而不是一次。（原因在于二级索引中保存的“行指针”，保存的不是指向行的物理位置的指针，而是行的主键值。这就要求存储引擎需要找到二级索引的叶子节点获取对应的主键值，然后根据这个值去聚集索引中找到对应的行，这里做了重复的工作。对于InnoDB，自适应哈希索引能够减少这样的重复性工作。）</p>
+<h4 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h4><p>指从辅助索引(非聚集索引)中就能获取到需要的记录，而不需要查找聚簇索引中的记录。使用覆盖索引的一个好处是因为辅助索引不包括一条记录的整行信息，所以数据量较聚集索引要少，可以减少大量io操作。</p>
+<blockquote>
+<p>为什么使用覆盖索引就能避免回表操作呢？首先说明，为什么使用了非聚集索引还要回表，因为非聚集索引的索引和数据是分开存储的，叶子节点中存储的是数据的主键，然后需要根据主键值去数据文件中去查询，这就是回表操作。那么回归正题，为什么覆盖索引能避免回表操作，因为覆盖的叶子节点就能满足查询要求，比如说查询一张表的name和age而现在只有name一个字段有索引，索引这个时候不能满足查询结果，这个时候就要回表。但是如果使用name和age的联合索引，叶子节点已经包含了需要的所有数据，无需根据主键在去回表查询。（这个时候你是不是在想你说啥呢？怎么扯到联合索引上来了，我个人回答两者没有区别，覆盖索引只是特定于具体select语录而言的联合索引。）所以联合索引的建立是需要仔细考虑的，回表就是需要你考虑的重点。覆盖索引更像一个指标。</p>
+</blockquote>
 <h1 id="最左匹配原则"><a href="#最左匹配原则" class="headerlink" title="最左匹配原则"></a>最左匹配原则</h1><p>假设某个表有一个联合索引（c1,c2,c3,c4）以下选项哪些字段使用了该索引：<br>A where c1=x and c2=x and c4&gt;x and c3=x<br>B where c1=x and c2=x and c4=x order by c3<br>C where c1=x and c4= x group by c3,c2<br>D where c1=? and c5=? order by c2,c3<br>E where c1=? and c2=? and c5=? order by c2,c3</p>
 <p>答：A使用了c1、c2、c3、c4索引。（其中注意c4这个，虽然是使用了范围查找，说明它右边的不会在被索引，但是c4这个字段还是可以被索引关联的）B使用了c1、c2两个字段的索引。C使用了c1一个字段的索引。D使用了c1一个字段的索引。E使用了c1、c2的索引。</p>
 <h1 id="MySQL什么样的值不能作为索引？"><a href="#MySQL什么样的值不能作为索引？" class="headerlink" title="MySQL什么样的值不能作为索引？"></a>MySQL什么样的值不能作为索引？</h1><p>1、表记录太少<br>2、经常插入、删除、修改的表<br>3、数据重复且分布平均的表字段<br>4、经常和主字段一块查询但主字段索引值比较多的字段</p>
-<h1 id="建立索引的几大原则"><a href="#建立索引的几大原则" class="headerlink" title="建立索引的几大原则"></a>建立索引的几大原则</h1><p>1、最左匹配原则(注意某些&gt;&lt;的时候，该字段也能被索引关联)<br>2、=和in可以乱序<br>3、尽量选择区分度高的列作为索引。(这里的区分度公式是<code>COUNT(DISTINCT col) / COUNT(*)</code>。表示字段不重复的比率，比率越大我们扫描的记录数就越少。)<br>4、索引列不能参与计算<br>5、尽量扩展索引、不要新建索引。<br>6、单个多列组合索引和多个单列索引的检索查询效果不同，因为在执行SQL时，MySQL只能使用一个索引，会从多个单列索引中选择一个限制最为严格的索引。</p>
+<h1 id="建立索引的几大原则"><a href="#建立索引的几大原则" class="headerlink" title="建立索引的几大原则"></a>建立索引的几大原则</h1><p>1、最左匹配原则(注意某些&gt;&lt;的时候，该字段也能被索引关联)<br>2、=和in可以乱序<br>3、尽量选择区分度高的列作为索引。(这里的区分度公式是<code>COUNT(DISTINCT col) / COUNT(*)</code>。表示字段不重复的比率，比率越大我们扫描的记录数就越少。当然还有一些方法，比如本来是<a target="_blank" rel="noopener" href="http://www.zhangsan@qq,com/">www.zhangsan@qq,com</a> 前面的www.没有任何区分度，这时候使用一个substring截取就很好，然后比如身份证，前面时按区域分的，可以使用reverse)<br>4、索引列不能参与计算<br>5、尽量扩展索引、不要新建索引。<br>6、单个多列组合索引和多个单列索引的检索查询效果不同，因为在执行SQL时，MySQL只能使用一个索引，会从多个单列索引中选择一个限制最为严格的索引。</p>
 <h1 id="索引失效"><a href="#索引失效" class="headerlink" title="索引失效"></a>索引失效</h1><p>1、索引列参与了计算<br>2、索引列使用了 MySQL 中的函数<br>3、使用了前置模糊查询，like ‘%hello’ 不走索引，like hello%’走索引<br>4、索引列使用了正则表达式<br>5、索引列进行了非等值查询，也就是范围查询(不满足最左匹配)<br>6、字符串与数字进行了比较<br>7、OR 条件连接时某些列没有加索引<br>8、MySQL 内部优化器如果估计全表扫描比索引更快，将放弃索引</p>
 <h1 id="explain-命令"><a href="#explain-命令" class="headerlink" title="explain 命令"></a>explain 命令</h1><p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321090430025.png" alt="image-20210321090430025"></p>
 <p>说明：<br><strong>id：</strong>select识别符，这个是select的查询序列号。<br><strong>select_type：</strong>select类型。主要包括：1、simple（简单select）2、primary（最外面的select）3、union（union中第二个或后面的select语句）4、dependent union（union中的第二个或后面的SELECT语句，取决于外面的查询）5、union result（union的结果）6、subquery（子查询中的第一个select）7、dependent subquery（子查询中的第一个select，取决于外面的查询）8、derived（导出表的select）<br><strong>table：</strong>表名称<br><strong>partitions：</strong>这一列只有在EXPLAIN PARTITIONS 语法中才会出现<br><strong>type</strong>：联接类型。是SQL性能的非常重要的一个指标，结果值从好到坏依次是：system &gt; const &gt; eq_ref &gt; ref&gt;fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; range &gt; index &gt; ALL。<br><strong>possible_keys：</strong>possible_keys列指出MySQL能使用哪个索引在该表中找到行。<br><strong>key：</strong>key列显示MySQL实际决定使用的键(索引)。<br><strong>key_len：</strong>key_len列显示MySQL决定使用的键长度。<br><strong>ref：</strong>ref列显示使用哪个列或常数与key一起从表中选择行。<br><strong>rows：</strong>rows列显示MySQL认为它执行查询时必须检查的行数。<br><strong>filtered：</strong>符合某条件的记录数百分比。<br><strong>Extra：</strong>该列包含MySQL解决查询的详细信息。主要包括：1、Distinct（MySQL发现第1个匹配行后，停止为当前的行组合搜索更多的行）2、Not exists（MySQL能够对查询进行LEFT JOIN优化，发现1个匹配LEFT JOIN标准的行后，不再为前面的的行组合在该表内检查更多的行。）3、Using filesort（MySQL需要额外的一次传递，以找出如何按排序顺序检索行。）4、Using index（从只使用索引树中的信息而不需要进一步搜索读取实际的行来检索表中的列信息。）5、Using temporary（为了解决查询，MySQL需要创建一个临时表来容纳结果）6、Using where（WHERE子句用于限制哪一个行匹配下一个表或发送到客户）</p>
-<h1 id="慢查询优化步骤"><a href="#慢查询优化步骤" class="headerlink" title="慢查询优化步骤"></a>慢查询优化步骤</h1><p>1、查询日志找出耗时高的SQL<br>2、explain查看索引是否生效<br>3、查看表索引是否生效<br>4、对索引优化<br>5、常用SQL优化（避免使用select *；小表驱动大表；尽量使用链接代替子查询，因为使用join不会在内存创建临时表）</p>
+<blockquote>
+<p>记录一个小知识点：explain分析出来的索引，它一定是最优的吗？这个是不一定的，因为它也可能会选错索引，因为我们在建立索引的时候，可能会涉及到一些回表操作还有一些排序差错 。</p>
+</blockquote>
+<h1 id="慢查询优化步骤"><a href="#慢查询优化步骤" class="headerlink" title="慢查询优化步骤"></a>慢查询优化步骤</h1><p>0、通过设置 SQL_NO_CACHE，不走缓存(8.0以上的版本就不用担心这个问题，如果是8.0之下的版本，记得排除缓存的干扰。)<br>1、查询日志找出耗时高的SQL<br>2、explain查看索引是否生效<br>3、查看表索引是否生效<br>4、对索引优化<br>5、常用SQL优化（避免使用select *；小表驱动大表；尽量使用链接代替子查询，因为使用join不会在内存创建临时表）</p>
 <h4 id="补充：表结构设计原则优化"><a href="#补充：表结构设计原则优化" class="headerlink" title="补充：表结构设计原则优化"></a>补充：表结构设计原则优化</h4><p>1、使用可以存下数据最小的数据类型<br>2、尽量使用tinyint、smallint、mediumint作为整数类型而非int<br>3、尽可能使用not null，因为null 占用4字节空间。数字默认可以设置为0，字符串默认为“”<br>4、尽量少用text类型，非用不可是最好独立出一张表<br>5、尽量使用timestamp，而非datetime<br>6、单表字段不要太多，建议在20个以内。</p>
 <h1 id="索引结构：B-树"><a href="#索引结构：B-树" class="headerlink" title="索引结构：B+树"></a>索引结构：B+树</h1><a href="/2021/01/30/B%E6%A0%91-B-%E6%A0%91/" title="B树&#x2F;B+树">B树&#x2F;B+树</a>
 <p>1、为什么不用B树？<br>用B+树不用B树考虑的是IO对性能的影响，B树的每个节点都存储数据，而B+树只有叶子节点才存储数据，所以查找相同数据量的情况下，B树的高度更高，IO更频繁。数据库索引是存储在磁盘上的，当数据量大时，就不能把整个索引全部加载到内存了，只能逐一加载每一个磁盘页（对应索引树的节点）。<br>总结来说B+树相比B-树的优势有三个：</p>
@@ -212,7 +219,7 @@
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p><a target="_blank" rel="noopener" href="https://raymond-zhao.top/campus-interview/#/Database/MySQL">感谢raymond的一路支持</a><br><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1615563">聚簇索引介绍</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/bigtree_3721/article/details/87478706">联合索引案例</a><br><a target="_blank" rel="noopener" href="https://tech.meituan.com/2014/06/30/mysql-index.html">美团技术团队</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/justry_deng/article/details/81458470">索引使用</a><br><a target="_blank" rel="noopener" href="https://www.jb51.net/article/80748.htm">query_cache</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012068483/article/details/105270813">key_len的计算</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013250861/article/details/109279131">索引结构参考</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36756682/article/details/114483362">索引脑图原文</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/fhdsece/article/details/104974697">创建表的几种行格式</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903645125820424">索引和锁的一篇文章</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/kongmin_123/article/details/82055901">索引数据结构</a></p>
+<p><a target="_blank" rel="noopener" href="https://raymond-zhao.top/campus-interview/#/Database/MySQL">感谢raymond的一路支持</a><br><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1615563">聚簇索引介绍</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/bigtree_3721/article/details/87478706">联合索引案例</a><br><a target="_blank" rel="noopener" href="https://tech.meituan.com/2014/06/30/mysql-index.html">美团技术团队</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/justry_deng/article/details/81458470">索引使用</a><br><a target="_blank" rel="noopener" href="https://www.jb51.net/article/80748.htm">query_cache</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012068483/article/details/105270813">key_len的计算</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013250861/article/details/109279131">索引结构参考</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36756682/article/details/114483362">索引脑图原文</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/fhdsece/article/details/104974697">创建表的几种行格式</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903645125820424">索引和锁的一篇文章</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/kongmin_123/article/details/82055901">索引数据结构</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/d0d3de6832b9">覆盖索引</a></p>
 
       
 
@@ -461,10 +468,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
@@ -473,11 +476,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -493,11 +500,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -513,7 +520,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">分布式中间件</a>
+                <a href="javascript:void(0)" class="js-tag color4">中间件</a>
               </li>
             
             <div class="clearfix"></div>

@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.gif">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.gif">
 <meta property="article:published_time" content="2021-03-10T12:01:41.000Z">
-<meta property="article:modified_time" content="2021-03-11T00:50:13.827Z">
+<meta property="article:modified_time" content="2021-03-28T08:37:29.836Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary">
@@ -233,7 +233,7 @@
 <ul>
 <li>第一次握手：客户什么都不能确认；服务器确认了对方发送正常，自己的接受正常。</li>
 <li>第二次握手：客户确定自己发送、接受都正常，对方的发送、接受正常；服务器还是上一个状态（对方发送正常，自己接受正常）</li>
-<li>第三次握手：客户确定自己发送、接受都正常，对方的发送、接受正常；服务器确认自己发送、接受正常，对方发送、接受正常<br>所以说为什么必须三次，如果两次的话，客户能确保自己和对方的接受发送正常，但是服务器不知道自己的发送以及对方的接受如何。</li>
+<li>第三次握手：客户确定自己发送、接受都正常，对方的发送、接受正常；服务器确认自己发送、接受正常，对方发送、接受正常<br>所以说为什么必须三次，如果两次的话，客户能确保自己和对方的接受发送正常，但是服务器不知道自己的发送以及对方的接受如何。那么为什么不是四次或者更多呢？因为协议没有100%可靠的，所以三次已经足够了，四次也不能保证是100%可靠的</li>
 </ul>
 <p>第2次握手传回了ACK，为什么还要传回SYN？<br>接收端传回发送端所发送的ACK是为了告诉客户端，我接收到的信息确实就是你所发送的信号了，这表明从客户端到服务端的通信是正常的。而回传SYN则是为了建立并确认从服务端到客户端的通信。</p>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.gif" alt="三次握手"></p>
@@ -525,10 +525,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
@@ -537,11 +533,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -557,11 +557,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -577,7 +577,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">分布式中间件</a>
+                <a href="javascript:void(0)" class="js-tag color4">中间件</a>
               </li>
             
             <div class="clearfix"></div>
