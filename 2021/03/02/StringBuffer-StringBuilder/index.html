@@ -16,7 +16,7 @@
 <meta property="og:description" content="StringBuilder和StringBuffer区别  区别1：线程安全性StringBuffer：线程安全，StringBuilder：线程不安全。因为 StringBuffer 的所有公开方法都是 synchronized 修饰的，为什么StringBuilder不是线程安全的？">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-02T08:46:17.000Z">
-<meta property="article:modified_time" content="2021-03-10T12:03:45.250Z">
+<meta property="article:modified_time" content="2021-03-30T08:04:04.727Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Java基础">
 <meta name="twitter:card" content="summary">
@@ -186,7 +186,10 @@
 <p>首先看到区别就是线程安全与否的关键：synchronized，之后调用的都是父类的append方法</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> AbstractStringBuilder <span class="title">append</span><span class="params">(String str)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (str == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> appendNull();</span><br><span class="line">    <span class="keyword">int</span> len = str.length();</span><br><span class="line">    ensureCapacityInternal(count + len);</span><br><span class="line">    str.getChars(<span class="number">0</span>, len, value, count);</span><br><span class="line">    count += len;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们先不管代码的第五行和第六行干了什么，直接看第七行，count += len不是一个原子操作。<br>假设这个时候count值为10，len值为1，两个线程同时执行到了第七行，拿到的count值都是10，执行完加法运算后将结果赋值给count，所以两个线程执行完后count值为11，而不是12。<br>这就是StringBuilder不安全的实例。</p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/javastack/p/12866878.html">参考链接</a></p>
+<blockquote>
+<p>参考链接</p>
+</blockquote>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/javastack/p/12866878.html">参考链接</a></p>
 
       
 
@@ -467,11 +470,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">

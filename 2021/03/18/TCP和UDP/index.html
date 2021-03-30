@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210318092419983.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B.gif">
 <meta property="article:published_time" content="2021-03-18T00:29:02.000Z">
-<meta property="article:modified_time" content="2021-03-20T01:25:37.517Z">
+<meta property="article:modified_time" content="2021-03-30T08:04:04.700Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary">
@@ -230,7 +230,7 @@
 <p>1、<code>面向无连接：</code>在发送端，应用层将数据传递到传输层的UDP协议，UDP只会给数据增加一个UDP头部标识，然后就直接传递给网络层。在接收端，网络层将数据传递给传输层，UDP只去除IP报文头就传递给应用层，不会任何拼接操作。</p>
 <p>2、<code>有单播、多播和广播的功能：</code>UDP 不止支持一对一的传输方式，同样支持一对多，多对多，多对一的方式，也就是说 UDP 提供了单播，多播，广播的功能。</p>
 <p>3、<code>UDP是面向报文的:</code>发送方的UDP对应用程序交下来的报文，在添加首部后就向下交付IP层。UDP对应用层交下来的报文，既不合并，也不拆分，而是保留这些报文的边界。</p>
-<p>4、<code>不可靠性：</code>首先是无连接，想发就发，这注定是不安全的。并且收到什么数据就传递什么数据，并且也不会备份数据，发送数据也不会关心对方是否已经正确接收到数据了。再者网络环境时好时坏，但是 UDP 因为没有拥塞控制，一直会以恒定的速度发送数据。即使网络条件不好，也不会对发送速率进行调整。这样实现的弊端就是在网络条件不好的情况下可能会导致丢包，但是优点也很明显，在某些实时性要求高的场景（比如电话会议）就需要使用 UDP 而不是 TCP。</p>
+<p>4、<code>不可靠性：</code>尽最大努力传输。(心中多有感触，本科老师经常提起的一句话！)首先是无连接，想发就发，这注定是不安全的。并且收到什么数据就传递什么数据，并且也不会备份数据，发送数据也不会关心对方是否已经正确接收到数据了。再者网络环境时好时坏，但是 UDP 因为没有拥塞控制，一直会以恒定的速度发送数据。即使网络条件不好，也不会对发送速率进行调整。这样实现的弊端就是在网络条件不好的情况下可能会导致丢包，但是优点也很明显，在某些实时性要求高的场景（比如电话会议）就需要使用 UDP 而不是 TCP。</p>
 <p>5、<code>头部开销小:</code>UDP 的头部开销小，只有八字节，相比 TCP 的至少二十字节要少得多，在传输数据报文时是很高效的。</p>
 <blockquote>
 <p>TCP</p>
@@ -251,13 +251,14 @@
 <li>TCP：FTP，HTTP，Telent，SMTP，POP3，HTTPS</li>
 <li>UDP：DNS，SNMP，NFS</li>
 </ul>
-<p>3、为什么TCP能保证可靠传输？</p>
+<p>3、为什么TCP能保证可靠传输？<br>参考下一篇博客 <a href="/2021/03/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3TCP/" title="深入理解TCP">深入理解TCP</a></p>
 <blockquote>
 <p>TCP和UDP</p>
 </blockquote>
-<p>1、为什么TCP是面向字节流的，UDP是面向报文的？<br>首先明确字节流和报文：<em>字节就是散乱的数据 报文就是添加了标记，封装后的数据。</em><br>就我个人理解而言：主要还是由于两者的传输过程不一致，TCP属于可靠传输，也就是说在连接持续的过程中，发送端只要确保自己传输的数据接收端有序接受到就可以了，至于接收端是一次全部接受还是分为多次接受，都是接收端的事情。唯一的作用就是确保双方的通信数据没有丢失即可。而UDP属于不可靠传输，采用无连接协议。应用层交给UDP多长的报文，UDP就照样发送，即一次发送一个报文。报文的长度也要合适，打个比方，IPA给服务器发送一个报文P1，此时IPB也给服务端发送一个报文P2，如果服务端一次读取超过一个报文的数据，那么将P1和P2的数据合并在一起，那么这样的数据也是毫无意义可言的。<br>其实就我感觉而言，还是因为两者的连接方式不同。无连接，不可靠，如果一次发送过多数据，将会导致分片重组或者丢失等问题。而连接可靠一般情况下不需要考虑这些问题。所以TCP使用字节流，UDP使用报文。</p>
-<p>2、简要介绍七层模型的各个作用？<br><code>应用层</code>是计算机网络与用户交互的接口或者界面，直接向用户提供服务。解决的问题就是如何为用户提供服务，以及提供高效、可靠、满意的服务。<br><code>传输层</code>负责端到端的通信，是面向网络通信的低三层和面向信息处理的高三层之间的中间一层，起到桥梁作用。解决的问题就是端到端的传输问题。<br><code>网络层</code>也被称为中转层，是网络体系结构中非常重要的一层，在技术上又是非常复杂的一层，因为它既要解决不同网络的节点间通信的路由和协议识别问题，又要通过路由选择策略解决网络拥塞问题，尽可能提高网络通信的可靠性。解决的主要问题是如何将分组从源端沿着网络路径传送到目的端。网络层主要是为了解决不同网络之间数据传输和转发问题。<br><code>数据链路层</code>是为了解决数据传输的控制作用。<br><code>物理层</code>主要负责在物理介质上为数据链路层提供原始比特流传输的物理链接。解决的问题就是数据传输。<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B.gif"></p>
-<p>3、为什么有了七层还有五层的概念?<br>首先七层模型包括：应用层、表现层、会话层、传输层、网络层、数据链路层、物理层。这个模型相当详细，如果在实际应用中使用未免过于复杂。在了解一下四层协议：应用层、传输层、网络层、物理链路层。而出于实际应用，使用五层：应用层、传输层、网络层、数据链路层、物理层。所谓的五层协议的网络体系结构其实是为了方便学习计算机网络原理而采用的，综合了OSI七层模型和TCP/IP的四层模型而得到的五层模型。</p>
+<p>1、UDP可以实现可靠传输吗？<br>UDP不属于连接协议，具有资源消耗少，处理速度快的优点。传输层无法保证数据的可靠传输，只能通过应用层来实现了。实现的方式可以参照tcp可靠性传输的方式，只是实现不在传输层，实现转移到了应用层。最简单的方式是在应用层模仿传输层TCP的可靠性传输。下面不考虑拥塞处理，可靠UDP的简单设计。<br>1、添加seq/ack机制，确保数据发送到对端<br>2、添加发送和接收缓冲区，主要用于用户超时重传。<br>3、添加超时重传机制。<br>详细说明：送端发送数据时，生成一个随机seq=x，然后每一片按照数据大小分配seq。数据到达接收端后接收端放入缓存，并发送一个ack=x+1的包，表示对方已经收到了数据。发送端收到了ack包后，删除缓冲区对应的数据。如果超过一定时间还没收到ack，那么重传数据。<br>目前有如下开源程序利用udp实现了可靠的数据传输。分别为RUDP、RTP、UDT。</p>
+<p>2、为什么TCP是面向字节流的，UDP是面向报文的？<br>首先明确字节流和报文：<em>字节就是散乱的数据 报文就是添加了标记，封装后的数据。</em><br>就我个人理解而言：主要还是由于两者的传输过程不一致，TCP属于可靠传输，也就是说在连接持续的过程中，发送端只要确保自己传输的数据接收端有序接受到就可以了，至于接收端是一次全部接受还是分为多次接受，都是接收端的事情。唯一的作用就是确保双方的通信数据没有丢失即可。而UDP属于不可靠传输，采用无连接协议。应用层交给UDP多长的报文，UDP就照样发送，即一次发送一个报文。报文的长度也要合适，打个比方，IPA给服务器发送一个报文P1，此时IPB也给服务端发送一个报文P2，如果服务端一次读取超过一个报文的数据，那么将P1和P2的数据合并在一起，那么这样的数据也是毫无意义可言的。<br>其实就我感觉而言，还是因为两者的连接方式不同。无连接，不可靠，如果一次发送过多数据，将会导致分片重组或者丢失等问题。而连接可靠一般情况下不需要考虑这些问题。所以TCP使用字节流，UDP使用报文。</p>
+<p>3、简要介绍七层模型的各个作用？<br><code>应用层</code>是计算机网络与用户交互的接口或者界面，直接向用户提供服务。解决的问题就是如何为用户提供服务，以及提供高效、可靠、满意的服务。<br><code>传输层</code>负责端到端的通信，是面向网络通信的低三层和面向信息处理的高三层之间的中间一层，起到桥梁作用。解决的问题就是端到端的传输问题。<br><code>网络层</code>也被称为中转层，是网络体系结构中非常重要的一层，在技术上又是非常复杂的一层，因为它既要解决不同网络的节点间通信的路由和协议识别问题，又要通过路由选择策略解决网络拥塞问题，尽可能提高网络通信的可靠性。解决的主要问题是如何将分组从源端沿着网络路径传送到目的端。网络层主要是为了解决不同网络之间数据传输和转发问题。<br><code>数据链路层</code>是为了解决数据传输的控制作用。<br><code>物理层</code>主要负责在物理介质上为数据链路层提供原始比特流传输的物理链接。解决的问题就是数据传输。<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B.gif"></p>
+<p>4、为什么有了七层还有五层的概念?<br>首先七层模型包括：应用层、表现层、会话层、传输层、网络层、数据链路层、物理层。这个模型相当详细，如果在实际应用中使用未免过于复杂。在了解一下四层协议：应用层、传输层、网络层、物理链路层。而出于实际应用，使用五层：应用层、传输层、网络层、数据链路层、物理层。所谓的五层协议的网络体系结构其实是为了方便学习计算机网络原理而采用的，综合了OSI七层模型和TCP/IP的四层模型而得到的五层模型。</p>
 <p>0、TCP和UDP编程过程<br>TCP：</p>
 <p>服务器端一般步骤：<br>　　1、创建一个socket，用函数socket()；<br>　　2、设置socket属性，用函数setsockopt(); * 可选<br>　　3、绑定IP地址、端口等信息到socket上，用函数bind();<br>　　4、开启监听，用函数listen()；<br>　　5、接收客户端上来的连接，用函数accept()；<br>　　6、收发数据，用函数send()和recv()，或者read()和write();<br>　　7、关闭网络连接；<br>　　8、关闭监听；</p>
 <p>客户端一般步骤：<br>　　1、创建一个socket，用函数socket()；<br>　　2、设置socket属性，用函数setsockopt();* 可选<br>　　3、绑定IP地址、端口等信息到socket上，用函数bind();* 可选<br>　　4、设置要连接的对方的IP地址和端口等属性；<br>　　5、连接服务器，用函数connect()；<br>　　6、收发数据，用函数send()和recv()，或者read()和write();<br>　　7、关闭网络连接；</p>
@@ -267,7 +268,7 @@
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/fundebug/p/differences-of-tcp-and-udp.html">TCP和UDP区别</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/williamjie/p/9390164.html">TCP和UDP最完整区别</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/coder-programming/p/12623319.html">说一说TCP和UDP</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/liuchenxia8/article/details/80428157">TCP如何确保可靠传输</a></p>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/fundebug/p/differences-of-tcp-and-udp.html">TCP和UDP区别</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/williamjie/p/9390164.html">TCP和UDP最完整区别</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/coder-programming/p/12623319.html">说一说TCP和UDP</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/liuchenxia8/article/details/80428157">TCP如何确保可靠传输</a></p>
 
       
 
@@ -548,11 +549,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">

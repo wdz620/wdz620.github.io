@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://image-static.segmentfault.com/837/555/837555812-5599cd9b494f7_articlex">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210302181336985.png">
 <meta property="article:published_time" content="2021-01-18T12:03:25.000Z">
-<meta property="article:modified_time" content="2021-03-14T01:45:59.213Z">
+<meta property="article:modified_time" content="2021-03-30T07:58:47.915Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Java基础">
 <meta name="twitter:card" content="summary">
@@ -263,7 +263,10 @@
 </ul>
 <p>final的四个作用参考之前的文章。<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210302181336985.png" alt="image-20210302181336985"><br>清楚的看到final修饰String，代表String的不可继承，final修饰的char[]代表了被存储的数据不可变更性。<br>注意：final代表了不可变，但仅是引用地址的不可变，并不代表数据不会变。<br>但是注意上图上还有private的修饰，两者共同保证了String的不可变性。<br>那么为什么保证String不可变呢？<font color=red>因为只有当字符串是不可变的，字符串池才有可能实现。</font><br>字符串池的实现：可以在运行时节约很多heap空间，因为不同的字符串变量都指向池中的同一个字符串。<br>小结：<br>因为字符串是不可变的，所以是多线程安全的，同一个字符串实例可以被多个线程共享。<br>这样便不用因为线程安全问题而使用同步。字符串自己便是线程安全的。<br>因为字符串是不可变的，所以在它创建的时候HashCode就被缓存了，不需要重新计算。这就使得字符串很适合作为Map中的键，字符串的处理速度要快过其它的键对象。这就是HashMap中的键往往都使用字符串。</p>
 <p>3、字符串有长度限制吗？是多少呢？<br>首先字符串的内容是由一个字符数组char[]来存储的，由于数组的长度及索引是整数，且String类中返回字符串的长度的方法length()的返回值也是int，所以通过Java源码中的类Integer我们知道Integer的最大范围是2^31 - 1，由于数组是从0开始的，所以数组的最大长度可以是[0, 2^31 - 1]，大概就是4GB<br>但是通过翻阅java虚拟机手册对class文件格式的定义以及常量池中对String类型的结构体定义我们可以知道对于索引定义了u2，就是无符号占2个字节，2个字节可以表示的最大范围是2^16 -1 = 65535。<br>其实是65535，但是由于JVM需要1个字节表示结束指令，所以这个范围就为65534了。超出这个范围在编译时期是会报错的，但是运行时拼接或者赋值的话范围是在整形的最大范围。</p>
-<p>参考链接：<br><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002683782">参考链接</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42509964/article/details/112190942">面试1参考</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/huzi-learnAll/p/13876281.html">面试2参考</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/juyss/p/14277460.html">字符串有长度限制吗</a></p>
+<blockquote>
+<p>参考链接：</p>
+</blockquote>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002683782">参考链接</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42509964/article/details/112190942">面试1参考</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/huzi-learnAll/p/13876281.html">面试2参考</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/juyss/p/14277460.html">字符串有长度限制吗</a></p>
 
       
 
@@ -544,11 +547,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">

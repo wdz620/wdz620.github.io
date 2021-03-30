@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRWdFd0hIQ0NKQjIzeTk0RTBQUzJ3QW96NEJhSWVYbGZKeGVVOEllNXhrQW51REo2Nlo2S3ZXUS82NDA?x-oss-process=image/format,png">
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRXg5RjhtMUllR2liYlM0MGlhV2t4a2liZGVZeXQzQ1N0bGtQcTdGVlFZNGJ6dDdNZnBxQ0hUQmxLQS82NDA?x-oss-process=image/format,png">
 <meta property="article:published_time" content="2021-01-16T10:23:46.000Z">
-<meta property="article:modified_time" content="2021-03-10T12:03:45.250Z">
+<meta property="article:modified_time" content="2021-03-30T08:04:04.700Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Java集合">
 <meta name="twitter:card" content="summary">
@@ -221,7 +221,10 @@
 <p>JDK1.7和JDK1.8源码分析</p>
 </blockquote>
 <p>可以参看这个博主：<a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/104586114/">https://blog.csdn.net/singwhatiwanna/article/details/104586114/</a><br>总结：<br>虽然 HashMap 在多线程环境下操作不安全，但是在 java.util.concurrent 包下，java 为我们提供了 ConcurrentHashMap 类，保证在多线程下 HashMap 操作安全！<br>在 JDK1.7 中，ConcurrentHashMap 采用了分段锁策略，将一个 HashMap 切割成 Segment 数组，其中 Segment 可以看成一个 HashMap， 不同点是 Segment 继承自 ReentrantLock，在操作的时候给 Segment 赋予了一个对象锁，从而保证多线程环境下并发操作安全。<br>但是 JDK1.7 中，HashMap 容易因为冲突链表过长，造成查询效率低，所以在 JDK1.8 中，HashMap 引入了红黑树特性，当冲突链表长度大于 8 时，会将链表转化成红黑二叉树结构。<br>在 JDK1.8 中，与此对应的 ConcurrentHashMap 也是采用了与 HashMap 类似的存储结构，但是 JDK1.8 中 ConcurrentHashMap 并没有采用分段锁的策略，而是在元素的节点上采用 CAS + synchronized 操作来保证并发的安全性，源码的实现比 JDK1.7 要复杂的多。</p>
-<p>参考链接：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/104586114/">参考</a></p>
+<blockquote>
+<p>参考链接：</p>
+</blockquote>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/104586114/">参考</a></p>
 
       
 
@@ -502,11 +505,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">

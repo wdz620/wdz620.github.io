@@ -146,6 +146,85 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-深入理解TCP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3TCP/">深入理解TCP</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3TCP/" class="archive-article-date">
+  	<time datetime="2021-03-30T05:33:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>1、TCP 协议如何保证可靠传输<br><strong>1、校验和 2、序列号 3、确认应答  4、超时重传 5、连接管理 6、流量控制 7、拥塞控制</strong></p>
+<p>2、简单记录一下TCP粘包</p>
+<p>3、滑动窗口</p>
+<p>4、ARQ 协议</p>
+        
+          <a class="article-more-a" href="/2021/03/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3TCP/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机网络</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3TCP/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-你不知道的MySQL" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -166,7 +245,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>主要是搜集网上的一些关于MySQL的问题，然后尝试通过自己浅薄的知识进行回答，如有错误，请您谅解。当然非常欢迎在文末进行交流~</p>
+        <p>主要是搜集网上的一些关于MySQL的问题，然后尝试通过自己浅薄的知识进行回答，如有错误，请您谅解。当然非常欢迎在文末进行交流~<br>仅供个人学习回顾使用，如有侵权留言联系删除！</p>
         
           <a class="article-more-a" href="/2021/03/28/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84MySQL/#more">more >></a>
         
@@ -845,129 +924,9 @@
 
 
   
-    <article id="post-TCP和UDP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/18/TCP%E5%92%8CUDP/">TCP和UDP</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/18/TCP%E5%92%8CUDP/" class="archive-article-date">
-  	<time datetime="2021-03-18T00:29:02.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>还是从一个大家耳熟能详的表格开始</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>TCP</th>
-<th>UDP</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>是否连接</td>
-<td>面向连接</td>
-<td>无连接</td>
-</tr>
-<tr>
-<td>是否可靠</td>
-<td>可靠传输，使用后流量控制和拥塞控制</td>
-<td>不可靠传输</td>
-</tr>
-<tr>
-<td>连接对象个数</td>
-<td>只能是一对一通信</td>
-<td>支持一对一、一对多、多对一和多对多通信</td>
-</tr>
-<tr>
-<td>传输方式</td>
-<td>面向字节流</td>
-<td>面向报文</td>
-</tr>
-<tr>
-<td>首部开销</td>
-<td>首部最少20字节，最大60字节</td>
-<td>首部开销仅仅8字节</td>
-</tr>
-<tr>
-<td>适用场景</td>
-<td>要求可靠传输的应用，比如文件传输</td>
-<td>适用实时应用（电话、视频会议、直播等）</td>
-</tr>
-<tr>
-<td>速度</td>
-<td>慢</td>
-<td>快</td>
-</tr>
-</tbody></table>
-        
-          <a class="article-more-a" href="/2021/03/18/TCP%E5%92%8CUDP/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机网络</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/18/TCP%E5%92%8CUDP/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -1094,11 +1053,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
