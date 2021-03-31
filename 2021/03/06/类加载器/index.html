@@ -16,8 +16,9 @@
 <meta property="og:description" content="类加载器所有的类都由类加载器加载，加载的作用就是将 .class 文件加载到内存中。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/tomcat%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE.jpg">
 <meta property="article:published_time" content="2021-03-06T05:23:56.000Z">
-<meta property="article:modified_time" content="2021-03-30T08:04:04.699Z">
+<meta property="article:modified_time" content="2021-03-31T09:09:38.019Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -171,7 +172,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h4 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h4><p>所有的类都由类加载器加载，加载的作用就是将 .class 文件加载到内存中。</p>
+        <h1 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h1><p>所有的类都由类加载器加载，加载的作用就是将 .class 文件加载到内存中。</p>
 <a id="more"></a>
 <blockquote>
 <p>分类</p>
@@ -188,22 +189,16 @@
 <li>应用程序类加载器(Application ClassLoader)  直接面向我们用户的加载器</li>
 </ul>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B.png"></p>
+<h2 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h2><p>上图展示的各个类加载器之间的<strong>层次关系</strong>被称为类加载器的<strong>双亲委派模型</strong></p>
 <blockquote>
-<p>双亲委派模型</p>
-</blockquote>
-<p>上图展示的各个类加载器之间的层次关系被称为类加载器的<strong>“双亲委派模型”</strong></p>
 <p>注意：这里的类加载器之间的父子关系一般不是继承的关系实现的，而是通常使用组合关系来复用父加载器的代码。</p>
-<p>双亲委派模型的工作过程：</p>
-<p>​        如果一个类加载收到了类加载的请求，他首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成，每个层次的类加载器都是这样，因此所有的请求委派最终都应该传达到最顶层的启动类加载器中，只有父加载器反馈自己无法完成这个请求时，子加载器才会去尝试自己去完成加载。</p>
-<p>双亲委派模型的好处：</p>
-<p>​            双亲委派模型保证了Java程序的稳定运行，可以避免类的重复加载（JVM 区分不同类的方式不仅仅根据类名，相同的类文件被不同的类加载器加载产生的是两个不同的类），也保证了 Java 的核心 API 不被篡改。如果没有使用双亲委派模型，而是每个类加载器加载自己的话就会出现一些问题，比如我们编写一个称为 <code>java.lang.Object</code> 类的话，那么程序运行的时候，系统就会出现多个不同的 <code>Object</code> 类。</p>
-<blockquote>
-<p>破坏双亲委派模型</p>
 </blockquote>
-<p>在Java的世界中大部分的类加载器都遵循上述模型，但是也有例外的情况，知道Java模块化出现为止，双亲委派模型主要出现过三次较大规模的“被破坏”情况。</p>
+<p><strong>双亲委派模型的工作过程：</strong><br>​如果一个类加载收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成，每个层次的类加载器都是这样，因此所有的请求委派最终都应该传达到最顶层的启动类加载器中，只有父加载器反馈自己无法完成这个请求时，子加载器才会去尝试自己去完成加载。</p>
+<p><strong>双亲委派模型的好处：</strong><br>双亲委派模型保证了Java程序的稳定运行，可以避免类的重复加载（JVM 区分不同类的方式不仅仅根据类名，相同的类文件被不同的类加载器加载产生的是两个不同的类），也保证了 Java 的核心 API 不被篡改。如果没有使用双亲委派模型，而是每个类加载器加载自己的话就会出现一些问题，比如我们编写一个称为 <code>java.lang.Object</code> 类的话，那么程序运行的时候，系统就会出现多个不同的 <code>Object</code> 类。</p>
+<h2 id="破坏双亲委派模型"><a href="#破坏双亲委派模型" class="headerlink" title="破坏双亲委派模型"></a>破坏双亲委派模型</h2><p>在Java的世界中大部分的类加载器都遵循上述模型，但是也有例外的情况，知道Java模块化出现为止，双亲委派模型主要出现过三次较大规模的”<strong>被破坏</strong>“情况。</p>
 <ul>
 <li>JDK1.2 面世以前的“远古”时代。</li>
-<li>模型自身缺陷，不太优雅的设计：线程上下文加载器</li>
+<li>模型自身缺陷，不太优雅的设计：<strong>线程上下文加载器</strong></li>
 <li>用户对程序动态性追求</li>
 </ul>
 <p>如何做到不破坏双亲委派机制？<br>双亲委派机制原则在loadclass方法中。只需要绕开loadclass方法中即可。</p>
@@ -211,13 +206,26 @@
 <blockquote>
 <p>面试题</p>
 </blockquote>
-<p><em>JVM在搜索类的时候，又是如何判定两个class是相同的呢？</em></p>
+<p><strong>JVM在搜索类的时候，又是如何判定两个class是相同的呢？</strong></p>
 <p>​        JVM在判定两个class是否相同时，不仅要判断两个类名是否相同，而且要判断是否由同一个类加载器实例加载的。只有两者同时满足的情况下，JVM才认为这两个class是相同的。就算两个class是同一份class字节码，如果被两个不同的ClassLoader实例所加载，JVM也会认为它们是两个不同class。比如网络上的一个Java类org.classloader.simple.NetClassLoaderSimple，javac编译之后生成字节码文件NetClassLoaderSimple.class，ClassLoaderA和ClassLoaderB这两个类加载器并读取了NetClassLoaderSimple.class文件，并分别定义出了java.lang.Class实例来表示这个类，对于JVM来说，它们是两个不同的实例对象，但它们确实是同一份字节码文件，如果试图将这个Class实例生成具体的对象进行转换时，就会抛运行时异常java.lang.ClassCaseException，提示这是两个不同的类型。</p>
-<p><em>classLoader里的方法</em><br>ClassLoader 里面有三个重要的方法 loadClass()、findClass() 和 defineClass()。<br>loadClass() 方法是加载目标类的入口，它首先会查找当前 ClassLoader 以及它的双亲里面是否已经加载了目标类，如果没有找到就会让双亲尝试加载，如果双亲都加载不了，就会调用 findClass() 让自定义加载器自己来加载目标类。ClassLoader 的 findClass() 方法是需要子类来覆盖的，不同的加载器将使用不同的逻辑来获取目标类的字节码。拿到这个字节码之后再调用 defineClass() 方法将字节码转换成 Class 对象</p>
+<p><strong>classLoader里的方法</strong><br>ClassLoader 里面有三个重要的方法 loadClass()、findClass() 和 defineClass()。<br>loadClass() 方法是加载目标类的入口，它首先会查找当前 ClassLoader 以及它的双亲里面是否已经加载了目标类，如果没有找到就会让双亲尝试加载，如果双亲都加载不了，就会调用 findClass() 让自定义加载器自己来加载目标类。ClassLoader 的 findClass() 方法是需要子类来覆盖的，不同的加载器将使用不同的逻辑来获取目标类的字节码。拿到这个字节码之后再调用 defineClass() 方法将字节码转换成 Class 对象</p>
+<p><strong>如何实现自己的类加载器</strong><br>继承java.lang.ClassLoader类；<br>如果想打破双亲委派模型的话，重写loadClass()类；如果不想打破双亲委派模型的话，重写findClass()类</p>
+<p><strong>Tomcat 是如何违背双亲委派模型的</strong><br>首先说说Tomcat解决了什么问题：<br>Tomcat作为一个web容器，主要解决了以下几个问题：<br>1、一个web容器可能需要部署两个应用程序，不同的应用程序可能会依赖同一个第三方类库的不同版本，不能要求同一个类库在同一个服务器只有一份，因此要保证每个应用程序的类库都是独立的，保证相互隔离。<br>2、部署在同一个web容器中相同的类库相同的版本可以共享。<br>3、web容器也有自己依赖的类库，不能于应用程序的类库混淆。<br>4、web容器需要支持 jsp 修改后不用重启。(热部署)</p>
+<blockquote>
+<p>Tomcat 可不可以使用默认的类加载机制</p>
+</blockquote>
+<p>答案是不可以的，根据上面的几个问题进行分析：<br>1、如果使用默认的类加载器机制，那么是无法加载两个相同类库的不同版本的，默认的累加器是不管你是什么版本的，只在乎你的全限定类名，并且只有一份。<br>2、相同类库的相同版本是可以共享的，这个默认加载是可以实现的。<br>3、和第一个基本相同。<br>4、jsp 文件其实也就是class文件，那么如果修改了，但类名还是一样，类加载器会直接取方法区中已经存在的，修改后的jsp是不会重新加载的。那么怎么办呢？我们可以直接卸载掉这jsp文件的类加载器，所以你应该想到了，每个jsp文件对应一个唯一的类加载器，当一个jsp文件修改了，就直接卸载这个jsp类加载器。重新创建类加载器，重新加载jsp文件。<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/tomcat%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE.jpg"></p>
+<blockquote>
+<p>双亲委派模型要求除了顶层的启动类加载器之外，其余的类加载器都应当由自己的父类加载器加载。<br>tomcat 不是这样实现，tomcat 为了实现隔离性，没有遵守这个约定，每个webappClassLoader加载自己的目录下的class文件，不会传递给父类加载器。</p>
+</blockquote>
+<blockquote>
+<p>如果tomcat 的 Common ClassLoader 想加载 WebApp ClassLoader 中的类，该怎么办？</p>
+</blockquote>
+<p>看了前面的关于破坏双亲委派模型的内容，我们心里有数了，我们可以使用线程上下文类加载器实现，使用线程上下文加载器，可以让父类加载器请求子类加载器去完成类加载的动作</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/xyang81/article/details/7292380">参考链接</a><br><a target="_blank" rel="noopener" href="http://gityuan.com/2016/01/24/java-classloader/">参考应用</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/a6984021/article/details/84825005">参考链接</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/lioncatch/article/details/106013246?utm_term=%E6%80%8E%E4%B9%88%E5%86%99%E8%87%AA%E5%B7%B1%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8&utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~all~sobaiduweb~default-1-106013246&spm=3001.4430">自定义类加载器</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/briblue/article/details/54973413">非常详细的一篇介绍</a></p>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/xyang81/article/details/7292380">参考链接</a><br><a target="_blank" rel="noopener" href="http://gityuan.com/2016/01/24/java-classloader/">参考应用</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/a6984021/article/details/84825005">参考链接</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/lioncatch/article/details/106013246?utm_term=%E6%80%8E%E4%B9%88%E5%86%99%E8%87%AA%E5%B7%B1%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8&utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~all~sobaiduweb~default-1-106013246&spm=3001.4430">自定义类加载器</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/briblue/article/details/54973413">非常详细的一篇介绍</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38182963/article/details/78660779">深入理解 Tomcat</a></p>
 
       
 
@@ -478,11 +486,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
