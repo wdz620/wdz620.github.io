@@ -15,11 +15,13 @@
 <meta property="og:site_name" content="无雨无晴">
 <meta property="og:description" content="GC（Garbage Collection）垃圾收集进入了“自动化”时代，为什么我们还要去了解垃圾收集和内存分配呢？当需要排查各种内存溢出、内存泄漏问题时，当垃圾收集成为系统达到更高并发量的瓶颈时，我们必须对这些“自动化”技术实施必要的监控和调节。本文跟着三个疑问去学习整理：1、哪些内存需要回收？2、什么时候回收？3、怎么回收？">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210331102348842.png">
 <meta property="article:published_time" content="2021-03-19T00:58:10.000Z">
-<meta property="article:modified_time" content="2021-03-30T08:04:04.699Z">
+<meta property="article:modified_time" content="2021-03-31T03:00:41.874Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210331102348842.png">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -171,23 +173,18 @@
       
         <p>GC（Garbage Collection）垃圾收集<br>进入了“自动化”时代，为什么我们还要去了解垃圾收集和内存分配呢？<br>当需要排查各种内存溢出、内存泄漏问题时，当垃圾收集成为系统达到更高并发量的瓶颈时，我们必须对这些“自动化”技术实施必要的监控和调节。<br>本文跟着三个疑问去学习整理：<br>1、哪些内存需要回收？<br>2、什么时候回收？<br>3、怎么回收？ </p>
 <a id="more"></a>
-<p>首先从之前的内存运行时区域了解到，一共分为五大区域：<code>程序计数器、虚拟机栈、本地方法栈、Java堆和方法区</code>。前三个区域随着<code>线程而生，随着线程而亡</code>，栈中的栈帧随着方法的进入和推出有序执行出栈和入栈操作。每一个栈帧中分配多少内存基本上实在类结构确定下来就已知的，因此这几个区域的内存分配和回收都具备确定性，这里就不用过多考虑如何回收的问题，<code>当方法结束或者线程结束</code>，内存自然就随着回收。</p>
+<p>首先从之前的内存运行时区域了解到，一共分为五大区域：<code>程序计数器、虚拟机栈、本地方法栈、Java堆和方法区</code>。前三个区域随着<code>线程而生，随着线程而亡</code>，栈中的栈帧随着方法的进入和退出有序执行出栈和入栈操作。每一个栈帧中分配多少内存基本上是在类结构确定下来就已知的，因此这几个区域的内存分配和回收都具备确定性，这里就不用过多考虑如何回收的问题，<code>当方法结束或者线程结束</code>，内存自然就随着回收。</p>
 <p>而Java堆和方法区有着很明显的<code>不确定性</code>：首先一个接口的多个实现类需要的内存可能会不一样，一个方法执行的不同条件分支所需要的内存也是不一样的。只有处于<code>运行阶段</code>才能明确程序究竟会创建哪些对象，创建多少个对象，这部分内存的<code>分配和回收时动态</code>的。而这一部分的内存该如何去管理也是收集器主要的工作。</p>
-<blockquote>
-<p>对象的存活与否</p>
-</blockquote>
-<p>无论使用什么算法判断对象的存活，都离不开引用。下面说明一下JDK1.2之后的引用：</p>
+<h1 id="对象的存活与否"><a href="#对象的存活与否" class="headerlink" title="对象的存活与否"></a>对象的存活与否</h1><h2 id="四大引用"><a href="#四大引用" class="headerlink" title="四大引用"></a>四大引用</h2><p>无论使用什么算法判断对象的存活，都离不开引用。下面说明一下JDK1.2之后的引用：</p>
 <ul>
-<li><code>强引用</code>：类似“Object o = new Object();”无论什么情况下，只要强引用关系还存在，垃圾收集器就<code>永远不会</code>回收掉被引用的对象。</li>
-<li><code>软引用</code>：用来描述一些还有用，但非必须的对象。只要软引用关联着的对象，在系统将要发生内存溢出异常前，会把这些对象列入回收进行<code>二次回收</code>，如果还没有足够的内存，才会抛出内存溢出异常。</li>
-<li><code>弱引用</code>：也是用来描述那些非必须的对象，但是它的强度比软引用还要更弱一点，被其关联的对象只能<code>生存到下次垃圾收集发生</code>为止。当垃圾收集器开始工作的时候，无论当前内存是否足够，都会回收被弱引用关联的对象。</li>
-<li><code>虚引用</code>：最弱的引用关系。为一个对象设置虚引用的唯一目的就是为了能在这个对象被收集器回收时<code>收到一个系统通知</code>。</li>
+<li>**<code>强引用</code>**：主要是指程序中普遍存在的引用赋值。类似“Object o = new Object();”无论什么情况下，只要强引用关系还存在，垃圾收集器就<code>永远不会</code>回收掉被引用的对象。</li>
+<li>**<code>软引用</code>**：用来描述一些还有用，但非必须的对象。只要软引用关联着的对象，在系统将要发生内存溢出异常前，会把这些对象列入回收进行<code>二次回收</code>，如果还没有足够的内存，才会抛出内存溢出异常。在JDK1.2 之后提供了SoftReference类来实现软引用。</li>
+<li>**<code>弱引用</code>**：也是用来描述那些非必须的对象，但是它的强度比软引用还要更弱一点，被其关联的对象只能<code>生存到下次垃圾收集发生</code>为止。当垃圾收集器开始工作的时候，无论当前内存是否足够，都会回收被弱引用关联的对象。在JDK1.2 之后提供了WeakReference类来实现软引用。</li>
+<li>**<code>虚引用</code>**：最弱的引用关系。为一个对象设置虚引用的唯一目的就是为了能在这个对象被收集器回收时<code>收到一个系统通知</code>。</li>
 </ul>
 <p>在堆里面存放这Java世界中几乎所有的对象实例，垃圾收集器在对堆进行回收前，第一件事情就是要确定哪些对象还“存活”，哪些对象“死去”。</p>
-<p>1、引用计数算法：</p>
-<p>​        在对象中添加一个引用计数器，每当有一个地方引用它，计数器的值就加一；当引用失效时，计数器值就减一。任何时刻当计数器为零的对象就是不可能在被引用的对象。虽然原理简单，判断效率也很高，但是Java虚拟机并不是用这个方法去判断对象的存活与否，因为该算法有个明显的缺陷，比如很难去解决对象之间的相互循环引用的问题。</p>
-<p>2、可达性分析算法：</p>
-<p>​        通过一系列成为“GC Roots”的跟对象作为起始节点集，从这些起点开始，根据引用关系向下搜索，搜索过程所走的路径称为“引用链”，如果某个对象到GCRoots间没有任何引用链相连，或者用图论中的话说就是GCRoots到这个对象不可达，则证明这个对象不可能在使用。</p>
+<h2 id="引用计数算法"><a href="#引用计数算法" class="headerlink" title="引用计数算法"></a>引用计数算法</h2><p>在对象中添加一个引用计数器，每当有一个地方引用它，计数器的值就加一；当引用失效时，计数器值就减一。任何时刻当计数器为零的对象就是不可能在被引用的对象。虽然原理简单，判断效率也很高，但是Java虚拟机并不是用这个方法去判断对象的存活与否。<br>因为该算法有个明显的缺陷，比如很难去解决对象之间的<strong>相互循环</strong>引用的问题。</p>
+<h2 id="可达性分析算法"><a href="#可达性分析算法" class="headerlink" title="可达性分析算法"></a>可达性分析算法</h2><p>​通过一系列称为“GC Roots”的跟对象作为起始节点集，从这些起点开始，根据引用关系向下搜索，搜索过程所走的路径称为“引用链”，如果某个对象到GCRoots间没有任何引用链相连，或者用图论中的话说就是GCRoots到这个对象不可达，则证明这个对象不可能在使用。</p>
 <p>在Java技术体系中可以作为GC Roots的对象包括：</p>
 <ul>
 <li>在虚拟机栈中引用的对象</li>
@@ -196,51 +193,89 @@
 <li>Java虚拟机内部的引用</li>
 <li>所有被同步锁（synchronized）持有的对象</li>
 </ul>
-<blockquote>
-<p>垃圾收集算法</p>
-</blockquote>
-<p>1、标记-清除算法</p>
-<p>算法分为“标记”和“清除”两个阶段：首先标记出所有需要回收的对象，然后统一回收掉所有被标记的对象。也可以反过来考虑，标记所有不需要回收的对象，然后回收未被标记的对象。</p>
+<h1 id="垃圾收集算法"><a href="#垃圾收集算法" class="headerlink" title="垃圾收集算法"></a>垃圾收集算法</h1><h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h3><p>算法分为“标记”和“清除”两个阶段：首先标记出所有需要回收的对象，然后统一回收掉所有被标记的对象。也可以反过来考虑，标记所有不需要回收的对象，然后回收未被标记的对象。</p>
 <p>缺点：第一、执行效率不稳定，如果Java堆中包含了大量对象，而且其中大部分都需要回收。这时就需要大量的标记和清除，导致标记和清除的执行效率随着对象数量的增加而降低。第二、内存空间碎片化的问题。标记清除后产生大量不连续的内存碎片，空间碎片太多可能导致程序运行过程中需要分配较大对象时找不到足够的连续内存而不得不提前触发另一次收集动作。</p>
-<p>2、标记-复制算法</p>
-<p>为了解决标记清除算法的第一个问题，出现了标记复制算法。</p>
+<h3 id="标记-复制算法"><a href="#标记-复制算法" class="headerlink" title="标记-复制算法"></a>标记-复制算法</h3><p>为了解决标记清除算法的第一个问题，出现了标记复制算法。</p>
 <p>算法的主要过程就将内存按容量大小分成大小相等的两个部分，每次只使用其中的一个部分。当这一块的内存使用完毕之后，就将还存活着的对象复制到另一个内存中，然后再把已经使用过的那块内存空间一次清理掉。</p>
 <p>缺点：如果内存中多数对象都是存活的，这种算法将会产生大量的内存间复制的开销（变相说明没有空间碎片化的问题）。第二、这种算法将可用内存缩小为原来的一半，浪费空间。</p>
-<p>3、标记-整理算法</p>
-<p>由于老年代的对象大部分都将存活，所以在老年代一半不会使用标记-复制算法。针对老年代对象的存亡特征，提出了一种具有针对性的“标记整理算法”。</p>
+<h3 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h3><p>由于老年代的对象大部分都将存活，所以在老年代一半不会使用标记-复制算法。针对老年代对象的存亡特征，提出了一种具有针对性的“标记整理算法”。</p>
 <p>具体过程还是以标记清除为基础，但是区别在于在标记之后不是直接堆可回收对象进行清理，而是将所有存活对象都向内存空间一端移动，然后直接清理掉边界以外的内存。标记清除算法和标记整理算法的本质区别在于前者是一种非移动式的回收算法，而后则会是一种移动式的。</p>
 <p>缺点：标记整理算法解决了内存碎片问题，也不存在空间的浪费问题，看上去挺美好的。但是，当内存中存活对象多，并且都是一些微小对象，而垃圾对象少时，要移动大量的存活对象才能换取少量的内存空间。而且在其中的对象移动过程操作中必须全程暂停用户应用程序才能进行(Stop The World)。</p>
-<blockquote>
-<p>经典垃圾收集器</p>
-</blockquote>
-<p>如果说收集算法是内存回收的<code>方法论</code>，那么垃圾收集器就是内存回收的<code>实践者</code>。</p>
-<p><strong>Serial收集器</strong></p>
-<p>采用标记复制算法，单线程</p>
+<h1 id="经典垃圾收集器"><a href="#经典垃圾收集器" class="headerlink" title="经典垃圾收集器"></a>经典垃圾收集器</h1><p>如果说收集算法是内存回收的<code>方法论</code>，那么垃圾收集器就是内存回收的<code>实践者</code>。</p>
+<h3 id="Serial收集器"><a href="#Serial收集器" class="headerlink" title="Serial收集器"></a>Serial收集器</h3><p>采用<strong>标记复制算法，单线程</strong></p>
 <p>Serial是最基础、历史最悠久的收集器，它是一个单线程收集器。意味着它只会使用一个CPU 或一条收集线程去完成收集工作，并且在进行垃圾回收时必须暂停其它所有的工作线程直到收集结束。</p>
-<p><strong>ParNew收集器</strong></p>
-<p>采用标记复制算法，多线程</p>
+<h3 id="ParNew收集器"><a href="#ParNew收集器" class="headerlink" title="ParNew收集器"></a>ParNew收集器</h3><p>采用<strong>标记复制算法，多线程</strong></p>
 <p>ParNew收集器实质上是Serial收集器的多线程并行版本，除了使用多线程进行垃圾收集外，其他行为和之前的Serial完全一致。</p>
 <p>特点：除了Serial收集器外，目前只有它能与CMS收集器配合工作。</p>
-<p><strong>Parallel Scavenge收集器</strong></p>
-<p>采用标记复制算法，多线程</p>
+<h3 id="Parallel-Scavenge收集器"><a href="#Parallel-Scavenge收集器" class="headerlink" title="Parallel Scavenge收集器"></a>Parallel Scavenge收集器</h3><p>采用<strong>标记复制算法，多线程</strong></p>
 <p><em>吞吐量优先收集器</em>：特点是它的关注点与其他收集器不同（其他收集器关注尽可能缩短垃圾收集时用户线程的停顿时间），Parallel Scavenge收集器的目标则是达到一个可控制的吞吐量（处理器用于运行用户代码的时间与处理器总消耗时间的比值）。</p>
-<p><strong>Serial Old收集器</strong></p>
-<p>采用标记整理算法，单线程</p>
+<h3 id="Serial-Old收集器"><a href="#Serial-Old收集器" class="headerlink" title="Serial Old收集器"></a>Serial Old收集器</h3><p>采用<strong>标记整理算法，单线程</strong></p>
 <p>主要用途：1、在JDK1.5以及之前的版本中与Parallel Scavenge收集器搭配使用。2、作为CMS收集器发生失败时的后备预案。</p>
-<p><strong>Parallel Old收集器</strong></p>
-<p>采用标记整理算法，多线程</p>
+<h3 id="Parallel-Old收集器"><a href="#Parallel-Old收集器" class="headerlink" title="Parallel Old收集器"></a>Parallel Old收集器</h3><p>采用<strong>标记整理算法，多线程</strong></p>
 <p>主要是当时新生代选择Parallel Scavenge收集器，老年代只能选择Serial Old收集器，其他良好的老年代收集器无法与之配合。而且为了达到“吞吐量优先”发挥最大化，Parallel Old出现了。</p>
-<p><strong>CMS收集器</strong></p>
-<p>采用标记清除算法，多线程</p>
-<p>整个过程文伟四个步骤：1、初始标记 2、并发标记 3、重新标记 4、并发清除</p>
+<h3 id="CMS收集器"><a href="#CMS收集器" class="headerlink" title="CMS收集器"></a>CMS收集器</h3><p>采用<strong>标记清除算法，多线程</strong></p>
+<p>整个过程分为四个步骤：1、初始标记 2、并发标记 3、重新标记 4、并发清除</p>
 <p>缺点：1、CMS收集器堆处理器资源非常敏感。2、无法处理“浮动垃圾”，可能导致stop the world。3、由于采用标记清除算法，回收结束的时候将导致出现大量碎片化空间。</p>
-<p><strong>Garbage First收集器</strong></p>
-<p>从整体来看是基于标记整理算法，从局部来看是基于标记复制算法，多线程。</p>
+<h3 id="Garbage-First收集器"><a href="#Garbage-First收集器" class="headerlink" title="Garbage First收集器"></a>Garbage First收集器</h3><p>从整体来看是基于标记整理算法，从局部来看是基于标记复制算法，多线程。</p>
 <p>G1是一块主要面向<code>服务端</code>应用的垃圾收集器。</p>
+<blockquote>
+<p>一些问题汇总</p>
+</blockquote>
+<p><strong>JVM在Java8中有什么变化？</strong><br>在jdk1.8之前的版本，我们通常把堆分为新生代，老年代和永久代（方法区）（我们通常认为方法区也是属于堆的），新生代又包含了eden，from和to（survivor），当对象存活了超过两个survivor的时候（在To里面通常由个年龄阈值作为晋升判断）会被转移到老年代中，这时候这个对象的数据就会存储在方法区内（GC在方法区的收益甚微），当这边的内存不够时就会报OOMError：PermGen，这时候就可能会发生内存泄露问题。为了解决这个问题，jdk1.8完全把存放元数据的永久内存从堆内存转到了本地内存。</p>
+<hr>
+<p><strong>怎么查看自己的JDK版本对应的垃圾收集器</strong></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+PrintCommandLineFlags -version</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210331102348842.png" alt="image-20210331102348842"></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>UseSerialGC</td>
+<td>虚拟机运行再Client模式下的默认值，打开此开关后，使用Serial+Serial Old的收集器组合进行内存回收</td>
+</tr>
+<tr>
+<td>UseParNewGC</td>
+<td>打开此开关后，使用ParNew+Serial Old的收集器组合进行内存回收</td>
+</tr>
+<tr>
+<td>UseConcMarkSweepGC</td>
+<td>打开此开关后，使用ParNew+CMS+Serial Old的收集器组合进行内存</td>
+</tr>
+<tr>
+<td>UseParallelGC</td>
+<td>虚拟机运行在Server模式下的默认值，打开此开关后，使用ParallelSeavenge+ParallelOld的收集器组合进行内存回收</td>
+</tr>
+<tr>
+<td>UseParallelOldGC</td>
+<td>打开此开关后，使用ParallelSeavenge+ParallelOld的收集器组合进行内存回收</td>
+</tr>
+<tr>
+<td>SurvivorRatio</td>
+<td>新生代中Eden区域与Survivor区域的容量比值，默认为8，代表Eden：Survivor=8：1</td>
+</tr>
+<tr>
+<td>PretenureSizeThreshold</td>
+<td>直接晋升到老年代的对象大小，设置这个参数后，大于这个參数的对象将直接在老年代分配</td>
+</tr>
+<tr>
+<td>MaxTenuringThreshold</td>
+<td>晋升到老年代的对象年龄。每个对象在坚持过一次MinorGC之后，年龄就增加1，当超过这个参数值时就进人老年代</td>
+</tr>
+</tbody></table>
+<p>JDK1.7 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）<br>JDK1.8 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）<br>JDK1.9 默认垃圾收集器G1</p>
+<hr>
+<p><strong>如何减少GC的次数</strong><br>1、对象不用时最好显示置为NULL。（为NULL的对象都会被作为垃圾处理，所以将不用的对象置为NULL，有利于GC收集器判定垃圾，从而提高了GC的效率。）<br>2、尽量少使用System,gc()  （此函数建议JVM进行主GC，会增加主GC的频率，增加了间接性停顿的次数。）<br>3、尽量少使用静态变量（静态变量属于全局变量，不会被GC回收，他们会一直占用内存）<br>4、尽量使用StringBuffer,而不使用String来累加字符串<br>5、分散对象创建或删除的时间<br>6、尽量少用finalize函数<br>7、如果有需要使用经常用到的图片，可以使用软引用类型，将图片保存在内存中，而不引起outofmemory<br>8、能用基本类型入INT就不用对象Integer<br>9、增大-Xmx的值</p>
+<hr>
+<p><strong>finalize方法回收对象的两次标记过程</strong><br>finalize的工作原理应该是这样的：一旦垃圾收集器准备好释放对象占用的存储空间，它首先调用finalize()，而且只有在下一次垃圾收集过程中，才会真正回收对象的内存.所以如果使用finalize()，就可以在垃圾收集期间进行一些重要的清除或清扫工作。<br>finalize()在什么时候被调用?<br>1.所有对象被Garbage Collection时自动调用,比如运行System.gc()的时候.<br>2.程序退出时为每个对象调用一次finalize方法。<br>3.显式的调用finalize方法<br>这个方法的用途就是：在该对象被回收之前，该对象的finalize()方法会被调用。这里的回收之前指的就是被标记之后，问题就出在这里，有没有一种情况就是原本一个对象开始不再上一章所讲的“关系网”（引用链）中，但是当开发者重写了finalize()后，并且将该对象重新加入到了“关系网”中，也就是说该对象对我们还有用，不应该被回收，但是已经被标记啦，怎么办呢？<br>针对这个问题，虚拟机的做法是进行两次标记，即第一次标记不在“关系网”中的对象。第二次的话就要先判断该对象有没有实现finalize()方法了，如果没有实现就直接判断该对象可回收；如果实现了就会先放在一个队列中，并由虚拟机建立的一个低优先级的线程去执行它，随后就会进行第二次的小规模标记，在这次被标记的对象就会真正的被回收了。<br>总结：简单说，对象先进行第一次标记，在下一次GC之前会执行对象的finalize（）方法。在执行finalize（）方法的时候判断对象是否实现了finalize（）方法，没有实现直接清除；实现了，将对象放在一个队列中执行finalize方法，进行第二次标记。<br>在java根搜索算法中判断对象的可达性，对于不可达的对象，也并不一定是必须清理。这个时候有一个缓刑期，真正的判断一个对象死亡，至少要经过俩次标记过程：如果对象在进行根搜索后发现没有与GC roots相关联的引用链，那他将会第一次标记并且进行一次筛选，筛选的条件是此对象是否有必要执行finalize（）方法，当对象没有覆盖finalize（）方法，或者finalize（）方法已经被虚拟机调用过，虚拟机将这俩种情况都视为“没有必要执行”。<br>即当一个对象重写了finalize（）方法的时候，这个对象被判定为有必要执行finalize（）方法，那么这个对象被放置在F-Queue队列之中，并在稍后由一条由虚拟机自动建立的、低优先级的Finalizer线程去执行。这里所谓的执行是指虚拟机会出发这个方法，但不承诺会等待它运行结束。这样做的原因：如果一个对象在finalize()方法中执行缓慢，或者发生了死循环（极端的情况下），将可能会导致F-Queue队列中的其他对象永久处于等待状态，甚至导致整个内存回收系统崩溃。finalize（）方法是对象逃脱死亡命运的最后一次机会，稍后GC将对F-Queue中的对象进行第二次小规模的标记，如果对象要在finalize（）中成功拯救自己—-只要重新与引用链上的任何建立关联即可，那么在第二次标记时它将会被移出“即将回收”的集合；如果对象这时候没有逃脱，就会被回收。</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p>JVM第三章主要内容<br>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！</p>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！  </p>
+<p>JVM第三章主要内容<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43710551/article/details/88971365">如何减少GC的次数</a><br><a target="_blank" rel="noopener" href="https://www.jb51.net/article/125383.htm">浅谈Java回收对象的标记和对象的二次标记过程</a></p>
 
       
 
@@ -501,11 +536,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -521,11 +556,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">

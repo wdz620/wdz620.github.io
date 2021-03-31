@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313082249695.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313085454760.png">
 <meta property="article:published_time" content="2021-03-12T11:39:00.000Z">
-<meta property="article:modified_time" content="2021-03-30T08:04:04.700Z">
+<meta property="article:modified_time" content="2021-03-31T00:48:47.402Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -183,20 +183,17 @@
 <li>方法区</li>
 </ul>
 <a id="more"></a>
-<p>首先明确一个概念：线程私有-&gt;由于Java虚拟机的多线程是通过程序轮流切换、分配处理器执行时间的方式来实现的，在任何一个确定的时刻，一个处理器都只会执行一条程序中的指令。因此为了线程切换后能恢复到正确的执行位置，每条线程都需要有一个独立的程序计数器，各条线程之间计数器互不影响，独立存储，我们称这类内存区域为“线程私有”的内存。</p>
-<p><strong>程序计数器：</strong>是一块较小的内存空间，可以被看作是当前线程所执行的字节码的行号指示器。字节码解释器的工作就是通过这个计数器的值来选取下一个条需要执行的字节码指令，它是程序控制流的指示器，分支、循环、跳转、异常处理等基础的功能都靠这个计数器去完成。此外该内存区域是唯一一个在《Java虚拟机规范》中没有规定任何OutOfMemoryError情况的区域。</p>
-<p><strong>Java虚拟机栈：</strong>主要描述的是Java方法执行的线程内存模型：每个方法被执行的时候，Java虚拟机都会同步创建一个栈帧用于存储<strong>局部变量表、操作数栈、动态连接、方法出口等信息</strong>。其中每个方法被调用直至完成的过程，就意味着一个战阵在虚拟机栈中从入栈到出栈的过程。其中最受关注的就是局部变量表，其中存放了编译期间可知的各种虚拟机基本数据类型、对象引用和returnAddress类型。在内存区域中规定了两类异常情况：</p>
+<h1 id="运行时数据区域"><a href="#运行时数据区域" class="headerlink" title="运行时数据区域"></a>运行时数据区域</h1><p>首先明确一个概念：线程私有-&gt;由于Java虚拟机的多线程是通过程序轮流切换、分配处理器执行时间的方式来实现的，在任何一个确定的时刻，一个处理器都只会执行一条程序中的指令。因此为了线程切换后能恢复到正确的执行位置，每条线程都需要有一个独立的程序计数器，各条线程之间计数器互不影响，独立存储，我们称这类内存区域为“线程私有”的内存。<br>线程私有的区域为虚拟机栈、本地方法栈、程序计数器，而线程共享的区域为堆，方法区。</p>
+<h2 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h2><p>是一块较小的内存空间，可以被看作是当前线程所执行的字节码的行号指示器。字节码解释器的工作就是通过这个计数器的值来选取下一个条需要执行的字节码指令，它是程序控制流的指示器，<strong>分支、循环、跳转、异常处理等基础的功能</strong>都靠这个计数器去完成。此外该内存区域是唯一一个在《Java虚拟机规范》中没有规定任何OutOfMemoryError情况的区域。</p>
+<h2 id="Java虚拟机栈"><a href="#Java虚拟机栈" class="headerlink" title="Java虚拟机栈"></a>Java虚拟机栈</h2><p>主要描述的是Java方法执行的线程内存模型：每个方法被执行的时候，Java虚拟机都会同步创建一个栈帧用于存储<strong>局部变量表、操作数栈、动态连接、方法出口等信息</strong>。其中每个方法被调用直至完成的过程，就意味着一个战阵在虚拟机栈中从入栈到出栈的过程。其中最受关注的就是局部变量表，其中存放了编译期间可知的各种虚拟机基本数据类型、对象引用和returnAddress类型。在内存区域中规定了两类异常情况：</p>
 <ul>
 <li>StackOverFlowError：线程请求深度大于虚拟机所允许的深度</li>
 <li>OutOfMemoryError：Java虚拟机容量可以动态扩展，当栈扩展时无法申请到足够的内存就会抛出OOM异常</li>
 </ul>
-<p><strong>本地方法栈：</strong>作用与上述的虚拟机栈作用非常相似，区别在于虚拟机栈为虚拟机执行Java方法（字节码）服务，而本地方法栈则是为虚拟机使用本地（Native）方法服务</p>
-<p><strong>Java堆：</strong>首先明确Java堆（Java Heap）是虚拟机所管理的内存中最大的一块。Java堆是被所有线程共享的一块内存区域，在虚拟机启动时创建。此内存区域存在的唯一目的就是存放对象实例。Java堆是垃圾收集器管理的内存区域，将Java堆细分的主要目的就是为了更好的回收内存，或者说更快地分配内存。Java堆可以处于物理上不连续的内存空间，但在逻辑上它应该被视为连续的。</p>
-<p><strong>方法区：</strong>与Java堆一样，是各个线程共享的内存区域，它用于存储已被虚拟机加载的类型信息、常量、静态变量、即时编译器编译后的代码缓存等数据。</p>
-<blockquote>
-<p>对象的创建</p>
-</blockquote>
-<p>首先了解Java创建对象的五种方法：</p>
+<h2 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h2><p>作用与上述的虚拟机栈作用非常相似，区别在于虚拟机栈为虚拟机执行Java方法（字节码）服务，而本地方法栈则是为虚拟机使用本地（Native）方法服务</p>
+<h2 id="Java堆："><a href="#Java堆：" class="headerlink" title="Java堆："></a>Java堆：</h2><p>首先明确Java堆（Java Heap）是虚拟机所管理的内存中最大的一块。Java堆是被所有线程共享的一块内存区域，在虚拟机启动时创建。此内存区域存在的唯一目的就是存放对象实例。Java堆是垃圾收集器管理的内存区域，将Java堆细分的<strong>主要目的就是为了更好的回收内存，或者说更快地分配内存。</strong>Java堆可以处于物理上不连续的内存空间，但在逻辑上它应该被视为连续的。</p>
+<h2 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h2><p>与Java堆一样，是各个线程共享的内存区域，它用于存储已被虚拟机加载的类型信息、常量、静态变量、即时编译器编译后的代码缓存等数据。该区域的内存回收目标主要是针对常量池的回收和对类型的卸载。如果方法区无法满足新的内存分配需求时，将抛出OutOfMemoryError异常。</p>
+<h1 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h1><p>首先了解Java创建对象的五种方法：</p>
 <ul>
 <li>使用new关键字</li>
 <li>使用Class类的newInstance()方法</li>
@@ -208,6 +205,7 @@
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313082249695.png" alt="image-20210313082249695"></p>
 <p>下面再来说说对象的创建过程？以new为例</p>
 <p>Java虚拟机遇到一条new指令时，首先将去检查这个指令的参数是否能在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已被加载解析和初始化。如果没有必须先去执行相应的类加载过程。在类加载检查通过后，接下来虚拟机将为新生对象分配内存，内存的大小在类加载完成的时候便可以确定。（这里说明一下，关于内存的分配大致分为两种方式。第一种是“碰撞指针”，另一种是“空闲列表”，两者的区别在于要进行分配的内存空间是否规整确定，而是否规整又是由于垃圾收集器自身是否带有空间压缩整理的能力决定的。常用的Serial、ParNew等带有压缩功能，所以分配算法属于碰撞指针，简单高效。而当使用CMS这种基于清除算法的收集器时，理论上采用较为复杂的空间列表来分配内存）。内存分配完毕之后，虚拟机需要将分配到的内存空间都初始化为零值（不包括对象头），这一步操作保证了对象的实例字段在 Java 代码中可以不赋初始值就直接使用，程序能访问到这些字段的数据类型所对应的零值。初始化零值完成之后，虚拟机要对对象进行必要的设置，例如这个对象是哪个类的实例、如何才能找到类的元数据信息、对象的哈希码、对象的 GC 分代年龄等信息。 这些信息存放在对象头中。 另外，根据虚拟机当前运行状态的不同，如是否启用偏向锁等，对象头会有不同的设置方式。在上面工作都完成之后，从虚拟机的视角来看，一个新的对象已经产生了，但从 Java 程序的视角来看，对象创建才刚开始，<init> 方法还没有执行，所有的字段都还为零。所以一般来说，执行 new 指令之后会接着执行 <init> 方法，把对象按照程序员的意愿进行初始化，这样一个真正可用的对象才算完全产生出来。</p>
+<p>总结来说分为五个基本步骤：<br>1、类加载检查<br>2、分配相应的内存<br>3、分配内存初始化<br>4、设置对象头<br>5、执行Class文件中的<init>方法</p>
 <blockquote>
 <p>上述过程的小疑问</p>
 </blockquote>
@@ -317,8 +315,9 @@
 <li>jhat：JDK自带的java heap analyze tool，可以将堆中的对象以html的形式显示出来，包括对象的数量，大小等等，并支持对象查询语言OQL，分析相关的应用后，可以通过<a href="http://localhost:7000来访问分析结果。不推荐使用，因为在实际的排查过程中，一般是先在生产环境">http://localhost:7000来访问分析结果。不推荐使用，因为在实际的排查过程中，一般是先在生产环境</a> dump出文件来，然后拉到自己的开发机器上分析，所以，不如采用高级的分析工具比如前面的mat来的高效。</li>
 </ul>
 <blockquote>
-<p>参考链接<br>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br>深入理解JVM第二章<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/hqGmtNvRburVHHp6O0WlyA">moom聊技术</a><br><a target="_blank" rel="noopener" href="https://www.nowcoder.com/ta/review-test/review?page=108">牛客讨论区</a></p>
+<p>参考链接</p>
 </blockquote>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br>深入理解JVM第二章<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/hqGmtNvRburVHHp6O0WlyA">moom聊技术</a><br><a target="_blank" rel="noopener" href="https://www.nowcoder.com/ta/review-test/review?page=108">牛客讨论区</a></p>
 
       
 
@@ -579,11 +578,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -599,11 +598,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">
