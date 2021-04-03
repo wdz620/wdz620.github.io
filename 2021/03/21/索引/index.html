@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321090430025.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B4%A2%E5%BC%95%E8%84%91%E5%9B%BE.png">
 <meta property="article:published_time" content="2021-03-21T02:09:14.000Z">
-<meta property="article:modified_time" content="2021-03-30T08:04:04.700Z">
+<meta property="article:modified_time" content="2021-04-03T02:42:42.113Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -186,6 +186,36 @@
 <blockquote>
 <p>为什么使用覆盖索引就能避免回表操作呢？首先说明，为什么使用了非聚集索引还要回表，因为非聚集索引的索引和数据是分开存储的，叶子节点中存储的是数据的主键，然后需要根据主键值去数据文件中去查询，这就是回表操作。那么回归正题，为什么覆盖索引能避免回表操作，因为覆盖的叶子节点就能满足查询要求，比如说查询一张表的name和age而现在只有name一个字段有索引，索引这个时候不能满足查询结果，这个时候就要回表。但是如果使用name和age的联合索引，叶子节点已经包含了需要的所有数据，无需根据主键在去回表查询。（这个时候你是不是在想你说啥呢？怎么扯到联合索引上来了，我个人回答两者没有区别，覆盖索引只是特定于具体select语录而言的联合索引。）所以联合索引的建立是需要仔细考虑的，回表就是需要你考虑的重点。覆盖索引更像一个指标。</p>
 </blockquote>
+<h4 id="唯一索引和普通索引的取舍"><a href="#唯一索引和普通索引的取舍" class="headerlink" title="唯一索引和普通索引的取舍"></a>唯一索引和普通索引的取舍</h4><table>
+<thead>
+<tr>
+<th></th>
+<th>普通索引</th>
+<th>唯一索引</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>创建方式</td>
+<td>ALTER TABLE a ADD INDEX ids_age(age);</td>
+<td>ALTER TABLE a ADD UNIQUE INDEX ids_age(age);</td>
+</tr>
+<tr>
+<td>查询过程</td>
+<td>查询数据判断一下是否满足返回</td>
+<td>没必要判断直接返回</td>
+</tr>
+<tr>
+<td>更新过程</td>
+<td>记录到change buffer 上写入磁盘</td>
+<td>直接更新到磁盘</td>
+</tr>
+</tbody></table>
+<p>说明：<strong>change buffer **也会数据持久化将数据更新到磁盘中。而更新到磁盘中得(也就是原始数据页)这个动作称作</strong>merge**。除了访问这个数据页会触发merge外，系统有后台线程会定期merge。在数据库正常关闭（shutdown）的过程中，也会执行merge操作。</p>
+<p><strong>什么条件下可以使用change buffer呢？</strong><br>对于唯一索引来说，所有的更新操作都要先判断这个操作是否违反唯一性约束。<br>要判断表中是否存在这个数据，而这必须要将数据页读入内存才能判断，如果都已经读入到内存了，那直接更新内存会更快，就没必要使用change buffer了。<br>因此，唯一索引的更新就不能使用change buffer，实际上也只有普通索引可以使用。<br>change buffer用的是buffer pool里的内存，因此不能无限增大，change buffer的大小，可以通过参数innodb_change_buffer_max_size来动态设置，这个参数设置为50的时候，表示change buffer的大小最多只能占用buffer pool的50%。<br>将数据从磁盘读入内存涉及随机IO的访问，是数据库里面成本最高的操作之一，change buffer因为减少了随机磁盘访问，所以对更新性能的提升是会很明显的。</p>
+<p><strong>change buffer 使用场景</strong><br>写多读少</p>
+<blockquote>
+<p>redo log 主要节省的是<strong>随机写磁盘的 IO 消耗（转成顺序写）</strong>，而 change buffer 主要节省的是<strong>随机读磁盘的IO消耗</strong>。</p>
+</blockquote>
 <h1 id="最左匹配原则"><a href="#最左匹配原则" class="headerlink" title="最左匹配原则"></a>最左匹配原则</h1><p>假设某个表有一个联合索引（c1,c2,c3,c4）以下选项哪些字段使用了该索引：<br>A where c1=x and c2=x and c4&gt;x and c3=x<br>B where c1=x and c2=x and c4=x order by c3<br>C where c1=x and c4= x group by c3,c2<br>D where c1=? and c5=? order by c2,c3<br>E where c1=? and c2=? and c5=? order by c2,c3</p>
 <p>答：A使用了c1、c2、c3、c4索引。（其中注意c4这个，虽然是使用了范围查找，说明它右边的不会在被索引，但是c4这个字段还是可以被索引关联的）B使用了c1、c2两个字段的索引。C使用了c1一个字段的索引。D使用了c1一个字段的索引。E使用了c1、c2的索引。</p>
 <h1 id="MySQL什么样的值不能作为索引？"><a href="#MySQL什么样的值不能作为索引？" class="headerlink" title="MySQL什么样的值不能作为索引？"></a>MySQL什么样的值不能作为索引？</h1><p>1、表记录太少<br>2、经常插入、删除、修改的表<br>3、数据重复且分布平均的表字段<br>4、经常和主字段一块查询但主字段索引值比较多的字段</p>
@@ -194,7 +224,7 @@
 <h1 id="explain-命令"><a href="#explain-命令" class="headerlink" title="explain 命令"></a>explain 命令</h1><p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321090430025.png" alt="image-20210321090430025"></p>
 <p>说明：<br><strong>id：</strong>select识别符，这个是select的查询序列号。<br><strong>select_type：</strong>select类型。主要包括：1、simple（简单select）2、primary（最外面的select）3、union（union中第二个或后面的select语句）4、dependent union（union中的第二个或后面的SELECT语句，取决于外面的查询）5、union result（union的结果）6、subquery（子查询中的第一个select）7、dependent subquery（子查询中的第一个select，取决于外面的查询）8、derived（导出表的select）<br><strong>table：</strong>表名称<br><strong>partitions：</strong>这一列只有在EXPLAIN PARTITIONS 语法中才会出现<br><strong>type</strong>：联接类型。是SQL性能的非常重要的一个指标，结果值从好到坏依次是：system &gt; const &gt; eq_ref &gt; ref&gt;fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; range &gt; index &gt; ALL。<br><strong>possible_keys：</strong>possible_keys列指出MySQL能使用哪个索引在该表中找到行。<br><strong>key：</strong>key列显示MySQL实际决定使用的键(索引)。<br><strong>key_len：</strong>key_len列显示MySQL决定使用的键长度。<br><strong>ref：</strong>ref列显示使用哪个列或常数与key一起从表中选择行。<br><strong>rows：</strong>rows列显示MySQL认为它执行查询时必须检查的行数。<br><strong>filtered：</strong>符合某条件的记录数百分比。<br><strong>Extra：</strong>该列包含MySQL解决查询的详细信息。主要包括：1、Distinct（MySQL发现第1个匹配行后，停止为当前的行组合搜索更多的行）2、Not exists（MySQL能够对查询进行LEFT JOIN优化，发现1个匹配LEFT JOIN标准的行后，不再为前面的的行组合在该表内检查更多的行。）3、Using filesort（MySQL需要额外的一次传递，以找出如何按排序顺序检索行。）4、Using index（从只使用索引树中的信息而不需要进一步搜索读取实际的行来检索表中的列信息。）5、Using temporary（为了解决查询，MySQL需要创建一个临时表来容纳结果）6、Using where（WHERE子句用于限制哪一个行匹配下一个表或发送到客户）</p>
 <blockquote>
-<p>记录一个小知识点：explain分析出来的索引，它一定是最优的吗？这个是不一定的，因为它也可能会选错索引，因为我们在建立索引的时候，可能会涉及到一些回表操作还有一些排序差错 。</p>
+<p>记录一个小知识点：explain分析出来的索引，它一定是最优的吗？这个是不一定的，因为它也可能会选错索引，因为我们在建立索引的时候，可能会涉及到一些回表操作还有一些排序差错 。<br>举个例子:如果走A索引要扫描100行，B所有只要20行，可能选择走A索引。一般走错都是因为优化器在选择的时候发现，走A索引没有额外的代价，比如走B索引并不能直接拿到我们的值，还需要回到主键索引才可以拿到，多了一次回表的过程，这个也是会被优化器考虑进去的。发现走A索引不需要回表，没有额外的开销，所有选错了。</p>
 </blockquote>
 <h1 id="慢查询优化步骤"><a href="#慢查询优化步骤" class="headerlink" title="慢查询优化步骤"></a>慢查询优化步骤</h1><p>0、通过设置 SQL_NO_CACHE，不走缓存(8.0以上的版本就不用担心这个问题，如果是8.0之下的版本，记得排除缓存的干扰。)<br>1、查询日志找出耗时高的SQL<br>2、explain查看索引是否生效<br>3、查看表索引是否生效<br>4、对索引优化<br>5、常用SQL优化（避免使用select *；小表驱动大表；尽量使用链接代替子查询，因为使用join不会在内存创建临时表）</p>
 <h4 id="补充：表结构设计原则优化"><a href="#补充：表结构设计原则优化" class="headerlink" title="补充：表结构设计原则优化"></a>补充：表结构设计原则优化</h4><p>1、使用可以存下数据最小的数据类型<br>2、尽量使用tinyint、smallint、mediumint作为整数类型而非int<br>3、尽可能使用not null，因为null 占用4字节空间。数字默认可以设置为0，字符串默认为“”<br>4、尽量少用text类型，非用不可是最好独立出一张表<br>5、尽量使用timestamp，而非datetime<br>6、单表字段不要太多，建议在20个以内。</p>
@@ -480,11 +510,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -492,11 +522,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
