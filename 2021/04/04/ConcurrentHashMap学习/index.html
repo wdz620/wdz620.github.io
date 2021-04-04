@@ -6,26 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>事务 | 无雨无晴</title>
+  <title>ConcurrentHashMap学习 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="事务是数据库区别于文件系统的重要特性之一。事务的主要目的：事务会把数据库从一种一致状态转换成另一种一致状态。下面简单说一下数据库的四大特性：  原子性（Atomicity）：要么都做，要么都不做。原子性指整个数据库事务是不可分割的工作单位。 一致性（Consistency）：指事务将数据库从一种状态转变成下一种一致的状态。 隔离性（Isolation）：每个读写事务的对象对其他事务的操作对象能互相">
-<meta property="og:type" content="article">
-<meta property="og:title" content="事务">
-<meta property="og:url" content="http://example.com/2021/03/27/%E4%BA%8B%E5%8A%A1/index.html">
+  <meta property="og:type" content="article">
+<meta property="og:title" content="ConcurrentHashMap学习">
+<meta property="og:url" content="http://example.com/2021/04/04/ConcurrentHashMap%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="事务是数据库区别于文件系统的重要特性之一。事务的主要目的：事务会把数据库从一种一致状态转换成另一种一致状态。下面简单说一下数据库的四大特性：  原子性（Atomicity）：要么都做，要么都不做。原子性指整个数据库事务是不可分割的工作单位。 一致性（Consistency）：指事务将数据库从一种状态转变成下一种一致的状态。 隔离性（Isolation）：每个读写事务的对象对其他事务的操作对象能互相">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327131837231.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327134418898.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327134504203.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327134548550.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327122027317.png">
-<meta property="article:published_time" content="2021-03-27T03:07:36.000Z">
-<meta property="article:modified_time" content="2021-04-03T02:39:40.399Z">
+<meta property="article:published_time" content="2021-04-04T02:35:56.000Z">
+<meta property="article:modified_time" content="2021-04-04T02:36:19.568Z">
 <meta property="article:author" content="一直默默潜行的修行者">
-<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="Java集合">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327131837231.png">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -155,113 +147,27 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-事务" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-ConcurrentHashMap学习" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      事务
+      ConcurrentHashMap学习
     </h1>
   
 
         
-        <a href="/2021/03/27/%E4%BA%8B%E5%8A%A1/" class="archive-article-date">
-  	<time datetime="2021-03-27T03:07:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-27</time>
+        <a href="/2021/04/04/ConcurrentHashMap%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
+  	<time datetime="2021-04-04T02:35:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-04</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>事务是数据库区别于文件系统的重要特性之一。事务的主要目的：事务会把数据库从一种一致状态转换成另一种一致状态。下面简单说一下数据库的四大特性：</p>
-<ul>
-<li>原子性（Atomicity）：要么都做，要么都不做。原子性指整个数据库事务是不可分割的工作单位。</li>
-<li>一致性（Consistency）：指事务将数据库从一种状态转变成下一种一致的状态。</li>
-<li>隔离性（Isolation）：每个读写事务的对象对其他事务的操作对象能互相分离。</li>
-<li>持久性（Durability）：事务一旦提交，结果就是永久性的。</li>
-</ul>
-<a id="more"></a>
-<h1 id="事务的实现"><a href="#事务的实现" class="headerlink" title="事务的实现"></a>事务的实现</h1><p>事务的隔离性由锁来实现，其他的三个特性，都是需要通过数据库的redo log和undo log来完成。<strong>其中redo log叫做重做日志，用来保证事务的原子性和持久性。undo log用来保证事务的一致性。</strong></p>
-<blockquote>
-<p>小知识：undo并非是redo 的逆过程。它们两个都是为了恢复，redo恢复提交事务修改的页操作，而undo回滚行记录到某个特定版本。两者记录的内容是不同的，redo通常是物理日志，记录的是页的物理修改操作；undo是逻辑日志，根据每行记录进行记录。</p>
-</blockquote>
-<h2 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h2><p>明确redo log保证事务的原子性和持久性。(在MySQL技术内幕中说的是原子性和持久性，但是我个人更倾向于持久性)</p>
-<p>基本概念：<br>redo log用来实现事务的<strong>持久性</strong>，其由两部分组成：一是内存中的redo log缓冲(redo log buffer)，其是易失的；二是redo log文件(redo log file)，其是持久的。redo log基本都是顺序写的，在数据库运行时不需要对redo log的文件进行读取操作。</p>
-<blockquote>
-<p>那么数据库是怎么利用redo log保证事务的持久性呢？</p>
-</blockquote>
-<p>如何保证<code>持久性</code>呢？一个很简单的做法就是在事务提交完成之前把该事务所修改的所有页面都刷新到磁盘，但是这个简单粗暴的做法有些问题：1、刷新一个完整的数据页太浪费了 2、随机IO刷起来比较慢。(事务修改的这些页面可能并不相邻，这就意味着在将某个事务修改的Buffer Pool中的页面刷新到磁盘时，需要进行很多的随机IO)<br>我们的初心就是想让已经提交了的事务对数据库中数据所做的修改永久生效，即使后来系统崩溃，在重启后也能把这种修改恢复出来。<br>所以我们其实没有必要在每次事务提交时就把该事务在内存中修改过的全部页面刷新到磁盘，只需要把修改了哪些东西记录一下就好。所以redo log就起到了这个作用，只将该事务执行过程中产生的<code>redo</code>日志刷新到磁盘。</p>
-<p>与在事务提交时将所有修改过的内存中的页面刷新到磁盘中相比，只将该事务执行过程中产生的<code>redo log</code>刷新到磁盘的好处如下：<br>1、<code>redo log</code>占用的空间非常小<br>2、<code>redo log</code>是顺序写入磁盘的：在执行事务的过程中，每执行一条语句，就可能产生若干条<code>redo</code>日志，这些日志是按照产生的顺序写入磁盘的，也就是使用顺序IO。</p>
-<p>redo log格式<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327131837231.png" alt="image-20210327131837231"><br><code>type</code>：该条<code>redo</code>日志的类型。<code>space ID</code>：表空间ID。<code>page number</code>：页号。<code>data</code>：该条<code>redo</code>日志的具体内容。</p>
-<p><strong>redo log 写入过程</strong><br>在InnoDB存储引擎中，重做日志都是以512字节进行存储的。这意味着重做日志缓存、重做日志文件都是以块的方式进行保存的，称之为日志块（redo log block），每块大小为512字节。<br><strong>TODO</strong> 二阶段提交<br>简单记录：redo log分为两个提交，首先redo log临时准备，然后bin log记录，临时redo log提交。<br>如果不这样呢？<br>比如先提交binlog后提交readlog ——&gt; 在写完binlog服务宕了。而后重启我们发现库里面的数据是3而binlog里面是5这就造成数据不一致了。<br>先提交readlog后提交binlog ——&gt; 假设在 redo log 写完，binlog 还没有写完的时候，MySQL 进程异常重启。edo log写完之后，系统即使崩溃，仍然能够把数据恢复回来，所以恢复后这一行 c 的值是 5。而binlog未写完为3数据前后也不一致。</p>
-<blockquote>
-<p>MySQL 采用了什么方式提高更新效率呢？<br>MySQL 采用 WAL 技术，Write Ahead Loging,关键点是先写日志再写磁盘，具体执行如下：当有一条记录需要更新的时候，InnoDB 引擎会先把记录写到 redo log里，并更新内存，这个时候更新就算完事了。 当 InnoDB 引擎会在适当的时候，将这个操作记录更新到磁盘里面，这个更新一般是在空闲的时候做。</p>
-</blockquote>
-<hr>
-<h2 id="undo-log"><a href="#undo-log" class="headerlink" title="undo log"></a>undo log</h2><p>明确undo log保证事务的一致性。 (在MySQL技术内幕中说的是一致性，但是我个人更倾向于原子性)</p>
-<p>基本概念：<br>redo log记录了事务的行为，可以很好地通过其对页进行“重做”操作。redo存放在重做日志文件中，与redo不同，undo存放在数据库内部的一个特殊段（segment）中，这个段称为segment段。undo段位于共享表空间中。但是需要注意，也是较为重要的一点：undo log会产生redo log，也就是undo log 的产生伴随着redo log的产生，这是因为undo log也需要持久化的保护。</p>
-<blockquote>
-<p>undo是用于将数据库物理地恢复到执行语句或事务之前的样子吗？</p>
-</blockquote>
-<p>事实并非如此。undo是逻辑日志，因此只是将数据库逻辑地恢复到原本的样子。所有修改都被逻辑地取消了，但是数据结构和页本身在回滚之后可能大不相同。因为在多用户并发系统中，可能会有数十、数百甚至数千并发事务。数据库的主要任务就是协调对数据记录的并发访问。比如说，一个事务修改当前一个页的某几个数据，同时还有别的事务再对同一个页中另外几条数据进行修改。因此不能将一个页回滚到事务开始的样子，这样会影响到其他事务正在进行的工作。因此当InnoDB存储引擎回滚时，它实际上做的是<strong>与先前相反的工作</strong>。对于每一个Insert，InnoDB存储引擎都会完成一个delete；对于delete，InnoDB存储引擎会执行一个Insert；对于每个update，InnoDB存储引擎会执行一个相反的update，将修改前的行放回去。</p>
-<p><strong>undo 两大作用</strong></p>
-<p>一个是回滚，一个是MVCC。</p>
-<p>回滚上面已经简单介绍，下面简单介绍MVCC。即在InnoDB存储引擎中MVCC的实现是通过undo完成。当用户读取一行记录时，若该记录已经被其他事务占用，当前事务可以通过undo读取之前的行记录信息，以此实现非锁定读取。参考文末对问题分析。</p>
-<hr>
-<h2 id="bin-log"><a href="#bin-log" class="headerlink" title="bin log"></a>bin log</h2><p>二进制日志(bin log)，其用来进行POINT-IN-TIME的恢复及主从复制环境的建立。是mysql的逻辑日志，并且由Server层进行记录，使用任何存储引擎的mysql数据库都会记录binlog日志。</p>
-<p>bin log日志格式：<br><strong>STATMENT：</strong>每一条会修改数据的 SQL 语句会记录到 binlog 中。<br><strong>ROW：</strong>不记录每条 SQL 语句的上下文信息，需记录哪条数据被修改了。<br><strong>MIXED：</strong>一般的复制使用 STATEMENT 模式保存 binlog，对于 STATEMENT 模式无法复制的操作使用 ROW 模式保存 binlog。</p>
-<blockquote>
-<p>bin log 与 redo log 的区别<br>redo log 是在InnoDB存储引擎层产生，而二进制日志是在MySQL数据库的上层产生的，并且二进制日志不仅仅针对于InnoDB存储引擎，MySQL数据库中的任何存储引擎对于数据库的更改都会产生二进制日志。<br>其次，两者日志的内容形式不同。MySQL数据库上层的二进制日志是一种逻辑日志，其记录的是对应的SQL语句。而InnoDB存储引擎层面的重做日志是物理格式日志，其记录的是对于每个页的修改。<br>此外两种日志记录写入磁盘的时间点不同，二进制日志只在事务提交完成后进行一次写入。而InnoDB存储引擎的重做日志在事务进行中不断被写入，这表现位日志并不是随事务提交的顺序进行写入的。<br>二级制日志仅在事务提交时记录，并且对于每一个事务，仅包含对应事务的一个日志。而对于InnoDB存储引擎的重做日志，由于其记录的是物理操作日志，因此每个事务对应多个日志条目，并且十五点重做日志写入是并发的，并非事务提交时写入，故其在文件中记录的顺序并非是事务开始的顺序。</p>
-</blockquote>
-<h1 id="事务并发执行遇到的问题"><a href="#事务并发执行遇到的问题" class="headerlink" title="事务并发执行遇到的问题"></a>事务并发执行遇到的问题</h1><p><strong>脏读</strong>：如果一个事务读到了另一个未提交事务修改过的数据，那就意味着发生了<code>脏读</code><br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327134418898.png" alt="image-20210327134418898"><br>如上图，<code>Session A</code>和<code>Session B</code>各开启了一个事务，<code>Session B</code>中的事务先将<code>number</code>列为<code>1</code>的记录的<code>name</code>列更新为<code>&#39;关羽&#39;</code>，然后<code>Session A</code>中的事务再去查询这条<code>number</code>为<code>1</code>的记录，如果读到列<code>name</code>的值为<code>&#39;关羽&#39;</code>，而<code>Session B</code>中的事务稍后进行了回滚，那么<code>Session A</code>中的事务相当于读到了一个不存在的数据，这种现象就称之为<code>脏读</code>。</p>
-<p><strong>不可重复读</strong>：如果一个事务只能读到另一个已经提交的事务修改过的数据，并且其他事务每对该数据进行一次修改并提交后，该事务都能查询得到最新值，那就意味着发生了<code>不可重复读</code><br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327134504203.png" alt="image-20210327134504203"><br>如上图，我们在<code>Session B</code>中提交了几个隐式事务（注意是隐式事务，意味着语句结束事务就提交了），这些事务都修改了<code>number</code>列为<code>1</code>的记录的列<code>name</code>的值，每次事务提交之后，如果<code>Session A</code>中的事务都可以查看到最新的值，这种现象也被称之为<code>不可重复读</code>。</p>
-<p><strong>幻读</strong>：如果一个事务先根据某些条件查询出一些记录，之后另一个事务又向表中插入了符合这些条件的记录，原先的事务再次按照该条件查询时，能把另一个事务插入的记录也读出来，那就意味着发生了<code>幻读</code><br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327134548550.png" alt="image-20210327134548550"><br>如上图，<code>Session A</code>中的事务先根据条件<code>number &gt; 0</code>这个条件查询表<code>hero</code>，得到了<code>name</code>列值为<code>&#39;刘备&#39;</code>的记录；之后<code>Session B</code>中提交了一个隐式事务，该事务向表<code>hero</code>中插入了一条新记录；之后<code>Session A</code>中的事务再根据相同的条件<code>number &gt; 0</code>查询表<code>hero</code>，得到的结果集中包含<code>Session B</code>中的事务新插入的那条记录，这种现象也被称之为<code>幻读</code>。<code>幻读</code>强调的是一个事务按照某个相同条件多次读取记录时，后读取时读到了之前没有读到的记录。</p>
-<blockquote>
-<p>不可重复读和幻读的区别</p>
-</blockquote>
-<p>不可重复读的重点更在于修改。同一个事务，两次读取的数据不一样。<br>幻读的重点在于新增和删除。同一个事务，两次读取的数量发生变化。</p>
-<hr>
-<h1 id="四种隔离级别"><a href="#四种隔离级别" class="headerlink" title="四种隔离级别"></a>四种隔离级别</h1><p>Read Uncommitted未提交读：允许脏读，也就是可能读取到其他会话中未提交事务修改的数据<br>Read Committed提交读：只能读取到已经提交的数据。Oracle等多数数据库默认都是该级别 (不重复读)<br>Repeatable Read可重复读：可重复读。在同一个事务内的查询都是事务开始时刻一致的，InnoDB默认级别。在SQL标准中，该隔离级别消除了不可重复读，但是还存在幻象读<br>Serializable串行读：完全串行化的读，每次读都需要获得表级共享锁，读写相互都会阻塞</p>
-<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327122027317.png" alt="image-20210327122027317"></p>
-<h1 id="MVVC原理"><a href="#MVVC原理" class="headerlink" title="MVVC原理"></a>MVVC原理</h1><p>MVVC是一种基于多版本的并发控制协议，只有在InnoDB引擎下存在。MVCC是为了实现事务的隔离性，通过版本号，避免同一数据在不同事务间的竞争，你可以把它当成基于多版本号的一种乐观锁。MVCC最大的好处：<strong>读不加锁，读写不冲突。</strong></p>
-<p><strong>MVCC 只在 READ COMMITTED 和 REPEATABLE READ 两个隔离级别下工作。</strong></p>
-<h2 id="ReadView"><a href="#ReadView" class="headerlink" title="ReadView"></a>ReadView</h2><p>首先回顾RU隔离级别的事务，由于可以读到未提交事务修改过的记录，所以直接读取记录的最新版本就可以了。<code>SERIALIZABLE</code>隔离级别的事务来说，设计者规定使用加锁的方式来访问记录。对于使用 R C 和 R R 隔离级别的事务来说，都必须保证读到已经提交了的事务修改过的记录，也就是说假如另一个事务已经修改了记录但是尚未提交，是不能直接读取最新版本的记录的，核心问题就是：需要判断一下版本链中的哪个版本是当前事务可见的。这就是引入ReadView的原因。ReadView主要包括四个重要内容：</p>
-<p>1、<code>m_ids</code>：表示在生成<code>ReadView</code>时当前系统中活跃的读写事务的<code>事务id</code>列表。<br>2、<code>min_trx_id</code>：表示在生成<code>ReadView</code>时当前系统中活跃的读写事务中最小的<code>事务id</code>，也就是<code>m_ids</code>中的最小值。<br>3、<code>max_trx_id</code>：表示生成<code>ReadView</code>时系统中应该分配给下一个事务的<code>id</code>值。<br>4、<code>creator_trx_id</code>：表示生成该<code>ReadView</code>的事务的<code>事务id</code>。</p>
-<p>使用ReadView去判断记录的某个版本是否可见的主要使用流程：<br>1、如果被访问版本的<code>trx_id</code>属性值与<code>ReadView</code>中的<code>creator_trx_id</code>值相同，意味着当前事务在访问它自己修改过的记录，所以该版本可以被当前事务访问。<br>2、如果被访问版本的<code>trx_id</code>属性值小于<code>ReadView</code>中的<code>min_trx_id</code>值，表明生成该版本的事务在当前事务生成<code>ReadView</code>前已经提交，所以该版本可以被当前事务访问。<br>3、如果被访问版本的<code>trx_id</code>属性值大于或等于<code>ReadView</code>中的<code>max_trx_id</code>值，表明生成该版本的事务在当前事务生成<code>ReadView</code>后才开启，所以该版本不可以被当前事务访问。<br>4、如果被访问版本的<code>trx_id</code>属性值在<code>ReadView</code>的<code>min_trx_id</code>和<code>max_trx_id</code>之间，那就需要判断一下<code>trx_id</code>属性值是不是在<code>m_ids</code>列表中，如果在，说明创建<code>ReadView</code>时生成该版本的事务还是活跃的，该版本不可以被访问；如果不在，说明创建<code>ReadView</code>时生成该版本的事务已经被提交，该版本可以被访问。</p>
-<p>如果某个版本的数据对当前事务不可见的话，那就顺着版本链找到下一个版本的数据，继续按照上边的步骤判断可见性，依此类推，直到版本链中的最后一个版本。如果最后一个版本也不可见的话，那么就意味着该条记录对该事务完全不可见，查询结果就不包含该记录。</p>
-<p><strong>RC和RR生成ReadView不同</strong></p>
-<p>RC —— 每次读取数据前都生成一个ReadView<br>RR —— 在第一次读取数据时生成一个ReadView</p>
-<p>小结MVVC：</p>
-<p>所谓的<code>MVCC</code>（Multi-Version Concurrency Control ，多版本并发控制）指的就是在使用<code>READ COMMITTD</code>、<code>REPEATABLE READ</code>这两种隔离级别的事务在执行普通的<code>SELECT</code>操作时访问记录的版本链的过程，这样子可以使不同事务的<code>读-写</code>、<code>写-读</code>操作并发执行，从而提升系统性能。<code>READ COMMITTD</code>、<code>REPEATABLE READ</code>这两个隔离级别的一个很大不同就是：生成ReadView的时机不同，READ COMMITTD在每一次进行普通SELECT操作前都会生成一个ReadView，而REPEATABLE READ只在第一次进行普通SELECT操作前生成一个ReadView，之后的查询操作都重复使用这个ReadView就好了。</p>
-<blockquote>
-<p>一些思考问题</p>
-</blockquote>
-<h4 id="怎么解决脏读、不可重复读、幻读这些问题呢？其实有两种可选的解决方案"><a href="#怎么解决脏读、不可重复读、幻读这些问题呢？其实有两种可选的解决方案" class="headerlink" title="怎么解决脏读、不可重复读、幻读这些问题呢？其实有两种可选的解决方案"></a>怎么解决<code>脏读</code>、<code>不可重复读</code>、<code>幻读</code>这些问题呢？其实有两种可选的解决方案</h4><p>方案一：读操作利用多版本并发控制（<code>MVCC</code>），写操作进行<code>加锁</code>。</p>
-<p>所谓的<code>MVCC</code>我们在前面有过介绍，就是通过生成一个<code>ReadView</code>，然后通过<code>ReadView</code>找到符合条件的记录版本（历史版本是由<code>undo日志</code>构建的），其实就像是在生成<code>ReadView</code>的那个时刻做了一次时间静止（就像用相机拍了一个快照），查询语句只能读到在生成<code>ReadView</code>之前已提交事务所做的更改，在生成<code>ReadView</code>之前未提交的事务或者之后才开启的事务所做的更改是看不到的。而写操作肯定针对的是最新版本的记录，读记录的历史版本和改动记录的最新版本本身并不冲突，也就是采用<code>MVCC</code>时，<code>读-写</code>操作并不冲突。</p>
-<p>小贴士： 我们说过普通的SELECT语句在READ COMMITTED和REPEATABLE READ隔离级别下会使用到MVCC读取记录。在READ COMMITTED隔离级别下，一个事务在执行过程中每次执行SELECT操作时都会生成一个ReadView，ReadView的存在本身就保证了事务不可以读取到未提交的事务所做的更改，也就是避免了脏读现象；REPEATABLE READ隔离级别下，一个事务在执行过程中只有第一次执行SELECT操作才会生成一个ReadView，之后的SELECT操作都复用这个ReadView，这样也就避免了不可重复读和幻读的问题。</p>
-<p>方案二：读、写操作都采用<code>加锁</code>的方式。</p>
-<p>小贴士： 我们说脏读的产生是因为当前事务读取了另一个未提交事务写的一条记录，如果另一个事务在写记录的时候就给这条记录加锁，那么当前事务就无法继续读取该记录了，所以也就不会有脏读问题的产生了。不可重复读的产生是因为当前事务先读取一条记录，另外一个事务对该记录做了改动之后并提交之后，当前事务再次读取时会获得不同的值，如果在当前事务读取记录时就给该记录加锁，那么另一个事务就无法修改该记录，自然也不会发生不可重复读了。我们说幻读问题的产生是因为当前事务读取了一个范围的记录，然后另外的事务向该范围内插入了新记录，当前事务再次读取该范围的记录时发现了新插入的新记录，我们把新插入的那些记录称之为幻影记录。采用加锁的方式解决幻读问题就有那么一丢丢麻烦了，因为当前事务在第一次读取记录时那些幻影记录并不存在，所以读取的时候加锁就有点尴尬 </p>
-<h4 id="MVCC-是为了解决什么呢？MVCC是干什么的？"><a href="#MVCC-是为了解决什么呢？MVCC是干什么的？" class="headerlink" title="MVCC 是为了解决什么呢？MVCC是干什么的？"></a>MVCC 是为了解决什么呢？MVCC是干什么的？</h4><ul>
-<li>大多数的MySQL事务型存储引擎,如,InnoDB都不使用一种简单的行锁机制.事实上,他们都和MVCC–多版本并发控制来一起使用.</li>
-<li>锁机制可以控制并发操作,但是其系统开销较大,而MVCC可以在大多数情况下代替行级锁,使用MVCC,能降低其系统开销.</li>
-</ul>
-<h4 id="MVVC实现说一下？"><a href="#MVVC实现说一下？" class="headerlink" title="MVVC实现说一下？"></a>MVVC实现说一下？</h4><p>MVCC是通过保存数据在某个时间点的快照来实现的。不同存储引擎的MVCC实现是不同的,典型的有乐观并发控制和悲观并发控制。我目前只了解一些关于InnoDB的MVVC,MVCC其实是通过undo log和readview来实现的。（undo log中记录的是数据表记录行的多个版本，也就是事务执行过程中的回滚段,其实就是MVCC 中的一行原始数据的多个版本镜像数据。read view: 主要用来判断当前版本数据的可见性。）通过在每行记录后面保存两个隐藏的列来实现的,这两个列，分别保存了这个行的创建时间，另一个保存的是行的删除时间。这里存储的并不是实际的时间值,而是系统版本号(可以理解为事务的ID)，每开始一个新的事务，系统版本号都会自动递增。事务开始时刻的系统版本号会作为事务的版本号，用来和査询到的每行记录的版本号进行比较。<br>主要通过以下的几个原则进行比较：<br>select：<br>InnoDB只会查找版本早于当前事务版本的数据行，这样可以确保事务读取的行，要么是在事务开始前已经存在的，要么是事务自身插入或者修改过的。<br>行的删除版本要么未定义,要么大于当前事务版本号。<br>delete：<br>InnoDB会为删除的每一行保存当前系统的版本号(事务的ID)作为删除标识。<br>update：<br>InnoDB执行UPDATE，实际上是新插入了一行记录，并保存其创建时间为当前事务的ID，同时保存当前事务ID到要UPDATE的行的删除时间。<br>insert：<br>造成幻读。 参考文末链接[MVVC解决幻读了吗？]</p>
-<h4 id="MVCC-解决幻读问题了吗？"><a href="#MVCC-解决幻读问题了吗？" class="headerlink" title="MVCC 解决幻读问题了吗？"></a>MVCC 解决幻读问题了吗？</h4><p>在一定程度上解决了幻读问题(<code>select</code>)，但是没有彻底解决幻读问题(<code>update</code>)。在 InnoDB 的 RR 级别下，通过 MVCC 虽然让数据变得可重复读，但是读到的数据是历史数据(事务开始前的快照，同一个事务内可重复读。)，而不是数据库最新的数据。读取历史数据的方式叫做<strong>快照读</strong>，而读取最新版本数据的方式，叫做<strong>当前读</strong>。<br>在快照读中确实解决了幻读，但是在当前读中还没有解决幻读的问题。<br>比如下面这个场景：<br>1.a事务先select，b事务insert确实会加一个gap锁，但是如果b事务commit，这个gap锁就会释放（释放后a事务可以随意操作），<br>2.a事务再select出来的结果在MVCC下还和第一次select一样，<br>3.接着a事务不加条件地update，这个update会作用在所有行上（包括b事务新加的），<br>4.a事务再次select就会出现b事务中的新行，并且这个新行已经被update修改了.<br>上面这样，事务2提交之后，事务1再次执行update，因为这个是当前读，他会读取最新的数据，包括别的事务已经提交的，所以就会导致此时前后读取的数据不一致，出现幻读。</p>
-<h4 id="什么是当前读和快照读"><a href="#什么是当前读和快照读" class="headerlink" title="什么是当前读和快照读"></a>什么是当前读和快照读</h4><p><strong>当前读</strong>就是它读取的是记录的最新版本，读取时还要保证其他并发事务不能修改当前记录，会对读取的记录进行加锁。</p>
-<p><strong>快照读</strong>的前提是隔离级别不是串行级别，串行级别下的快照读会退化成当前读；之所以出现快照读的情况，是基于提高并发性能的考虑，快照读的实现是基于多版本并发控制，即MVCC,可以认为MVCC是行锁的一个变种，但它在很多情况下，避免了加锁操作，降低了开销；既然是基于多版本，即快照读可能读到的并不一定是数据的最新版本，而有可能是之前的历史版本</p>
-<h4 id="undo-log和redo-log在MVCC中的作用"><a href="#undo-log和redo-log在MVCC中的作用" class="headerlink" title="undo log和redo log在MVCC中的作用"></a>undo log和redo log在MVCC中的作用</h4><p>MVCC在mysql中的实现依赖的是undo log与read view<br>undo log :undo log 中记录某行数据的多个版本的数据。<br>read view :用来判断当前版本数据的可见性<br>在我理解的范围内：事务的四大特性<br>A：事务的原子性通过undo log实现<br>C：事务的一致性通过redo log实现<br>I：事务的隔离性通过锁和MVCC实现<br>D：事务的一致性通过前面的一些操作来实现<br>原子性的实现，要么成功，要么失败，而undo log主要就是通过回滚进行操作，这里的undo log是逻辑日志，就像之前说的，只是做了相反的工作，而非物理地恢复到执行语句或事务之前的样子。<br>为了提升性能InnoDB提供了缓冲池(Buffer Pool)，Buffer Pool中包含了磁盘数据页的映射，可以当做缓存来使用。但是它也带来了新的问题，当MySQL系统宕机，断电的时候可能会丢数据。而且避免性能上的缺陷（每次将所有数据页都刷新、随机IO）,引入了redo log。<br>隔离性：使用锁以及MVCC,运用的优化思想有读写分离，读读并行，读写并行<br>一致性：通过回滚，以及恢复，和在并发环境下的隔离做到一致性。</p>
-<h4 id="关于MVCC的一些反思"><a href="#关于MVCC的一些反思" class="headerlink" title="关于MVCC的一些反思"></a>关于MVCC的一些反思</h4><p>理想的MVCC真的难以实现，当事务仅修改一行记录使用理想的MVCC一点问题都没有，可以通过版本号进行回滚。但是当事务影响到多行的时候，理想就被击碎。<br>比如：事务1修改row1成功，在修改row2时失败，此时回滚row1，但是row1此时没有进行锁定，可能被row2修改，如果此时回滚row1的内容，就会破坏row2的修改结果。导致row2违背ACID原则。<br>理想MVCC难以实现的根本原因在于企图通过乐观锁代替二段提交。修改两行数据，但为了保证其一致性，与修改两个分布式系统中的数据并无区别，而二段提交是目前这种场景保证一致性的唯一手段。二段提交的本质是锁定，乐观锁的本质是消除锁定，二者矛盾，故理想的MVCC难以真正在实际中被应用，Innodb只是借了MVCC这个名字，提供了读的非阻塞而已。</p>
-<h4 id="InnoDB-RR级别下如何避免幻读"><a href="#InnoDB-RR级别下如何避免幻读" class="headerlink" title="InnoDB RR级别下如何避免幻读"></a>InnoDB RR级别下如何避免幻读</h4><p>在快照读读的情况下，使用MVCC能够避免幻读，这一点没什么问题。但是在MVCC模式下解决不了当前读读的问题也是确实存在的。<br>为此我查看官方文档的资料中发现，作者说可以通过next-key lock (record locks(索引加锁) 和 gap locks(间隙锁，每次锁住的不光是需要使用的数据，还会锁住这些数据附近的数据)。) 去解决当前读读的问题。具体是否还有例外，自己没有证实过，不敢妄下断言。<br><a target="_blank" rel="noopener" href="https://github.com/Yhzhtk/note/issues/42">讨论社区</a></p>
-<h4 id="RC、RR级别下的InnoDB的非阻塞读如何实现-TODO"><a href="#RC、RR级别下的InnoDB的非阻塞读如何实现-TODO" class="headerlink" title="RC、RR级别下的InnoDB的非阻塞读如何实现 TODO"></a>RC、RR级别下的InnoDB的非阻塞读如何实现 TODO</h4><p>其实两者都是用的MVCC技术实现的非阻塞读。<br>先谈谈RC级别<br><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/66320138">https://www.zhihu.com/question/66320138</a></p>
-<p><a target="_blank" rel="noopener" href="http://m.imooc.com/article/details?article_id=17290">http://m.imooc.com/article/details?article_id=17290</a></p>
-<h4 id="MySQL-为什么选用-RR-做默认隔离级别？TODO"><a href="#MySQL-为什么选用-RR-做默认隔离级别？TODO" class="headerlink" title="MySQL 为什么选用 RR 做默认隔离级别？TODO"></a><a target="_blank" rel="noopener" href="https://raymond-zhao.top/campus-interview/#/Database/MySQL?id=mysql-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E7%94%A8-rr-%E5%81%9A%E9%BB%98%E8%AE%A4%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%9F">MySQL 为什么选用 RR 做默认隔离级别？</a>TODO</h4><p><a target="_blank" rel="noopener" href="https://raymond-zhao.top/campus-interview/#/Database/MySQL?id=mysql-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E7%94%A8-rr-%E5%81%9A%E9%BB%98%E8%AE%A4%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%9F">https://raymond-zhao.top/campus-interview/#/Database/MySQL?id=mysql-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E7%94%A8-rr-%E5%81%9A%E9%BB%98%E8%AE%A4%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%9F</a></p>
-<blockquote>
-<p>参考链接</p>
-</blockquote>
-<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://raymond-zhao.top/campus-interview/#/Database/MySQL?id=mysql-%e4%b8%89%e5%a4%a7%e6%97%a5%e5%bf%97">感谢raymond-zhao</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/d75fcdeb07a3">非常友好的一篇文章，含实操</a><br><a target="_blank" rel="noopener" href="https://tech.meituan.com/2014/08/20/innodb-lock.html">Innodb中的事务隔离级别和锁的关系</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI4Njc5NjM1NQ==&mid=2247495901&idx=2&sn=1e02ebaebcc3e6a420c267beb260e97b&chksm=ebd5cff1dca246e7cb17386d00f79ba92d5a7d68cd329ad5e9a9b710c7e614b0b21e16f8f5fc&mpshare=1&scene=24&srcid=0820BOU74VHoJGesRWPD6ykC&sharer_sharetime=1597917853827&sharer_shareid=459d60cb1cece625a6a0b23694c741b3#rd">Java知音</a><br><a target="_blank" rel="noopener" href="http://blog.itpub.net/15498/viewspace-2140089/">二段提交</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/cef49aeff36b">MVVC能解决幻读吗？</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/book/6844733769996304392/section/6844733770071801870">掘金小册：从根儿上理解MySQL</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/kyle_wu_/article/details/113287187?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.control&dist_request_id=1328740.12396.16168259592262299&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.control">问题列表</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhangkaixuan456/article/details/108493845">MySQL事务,MVCC,undo log,redo log</a></p>
-
+        
       
 
       
@@ -274,7 +180,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
         		</li>
       		
 		</ul>
@@ -330,7 +236,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/03/27/%E4%BA%8B%E5%8A%A1/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/04/04/ConcurrentHashMap%E5%AD%A6%E4%B9%A0/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -344,18 +250,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/03/28/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84MySQL/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2021/04/04/Redis%E5%AD%A6%E4%B9%A0/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          你不知道的MySQL
+          Redis学习
         
       </div>
     </a>
   
   
-    <a href="/2021/03/26/HashMap%E6%B7%B1%E7%A9%B6/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">HashMap深究</div>
+    <a href="/2021/04/04/cookie%E3%80%81session%E5%92%8Ctoken/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">cookie、session和token</div>
       <i class="icon-circle-right"></i>
     </a>
   
