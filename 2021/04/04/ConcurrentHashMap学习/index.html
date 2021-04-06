@@ -8,16 +8,21 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>ConcurrentHashMap学习 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
+  <meta name="description" content="学习技术针对是一门任重道远的，也是一场长久赛，而不是即时的满足，需要你不断的重复、重复、重复。终有一刻， 你会到达哪里。我们要做的就是耐心等待，保持自我，坚守本心。那么美梦终将成真，希望如此吧。通过之前的学习，我们知道HashMap的一些特性，知道它并非是线程安全的，接下来我们学习一下ConcurrentHashMap。">
+<meta property="og:type" content="article">
 <meta property="og:title" content="ConcurrentHashMap学习">
 <meta property="og:url" content="http://example.com/2021/04/04/ConcurrentHashMap%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="无雨无晴">
+<meta property="og:description" content="学习技术针对是一门任重道远的，也是一场长久赛，而不是即时的满足，需要你不断的重复、重复、重复。终有一刻， 你会到达哪里。我们要做的就是耐心等待，保持自我，坚守本心。那么美梦终将成真，希望如此吧。通过之前的学习，我们知道HashMap的一些特性，知道它并非是线程安全的，接下来我们学习一下ConcurrentHashMap。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRWdFd0hIQ0NKQjIzeTk0RTBQUzJ3QW96NEJhSWVYbGZKeGVVOEllNXhrQW51REo2Nlo2S3ZXUS82NDA?x-oss-process=image/format,png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRXg5RjhtMUllR2liYlM0MGlhV2t4a2liZGVZeXQzQ1N0bGtQcTdGVlFZNGJ6dDdNZnBxQ0hUQmxLQS82NDA?x-oss-process=image/format,png">
 <meta property="article:published_time" content="2021-04-04T02:35:56.000Z">
-<meta property="article:modified_time" content="2021-04-04T02:36:19.568Z">
+<meta property="article:modified_time" content="2021-04-06T06:54:29.765Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Java集合">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRWdFd0hIQ0NKQjIzeTk0RTBQUzJ3QW96NEJhSWVYbGZKeGVVOEllNXhrQW51REo2Nlo2S3ZXUS82NDA?x-oss-process=image/format,png">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -167,7 +172,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>学习技术针对是一门任重道远的，也是一场长久赛，而不是即时的满足，需要你不断的重复、重复、重复。终有一刻， 你会到达哪里。我们要做的就是耐心等待，保持自我，坚守本心。那么美梦终将成真，希望如此吧。<br>通过之前的学习，我们知道HashMap的一些特性，知道它并非是线程安全的，接下来我们学习一下ConcurrentHashMap。</p>
+<a id="more"></a>
+
+<p>首先还是来复习一下，如何才能保证HashMap线程安全的几种方式？  </p>
+<h4 id="如何保证HashMap线程安全？"><a href="#如何保证HashMap线程安全？" class="headerlink" title="如何保证HashMap线程安全？"></a><strong>如何保证HashMap线程安全？</strong></h4><p>我们都知道HashMap不是线程安全的，一般有三个方式能替换原生的线程不安全的<code>hashMap</code><br>1、使用 java.util.Collections 类的 synchronizedMap 方法包装一下 HashMap，得到线程安全的 HashMap，其原理就是对所有的修改操作都加上 synchronized。方法如下：  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;K,V&gt; <span class="function">Map&lt;K,V&gt; <span class="title">synchronizedMap</span><span class="params">(Map&lt;K,V&gt; m)</span> </span></span><br></pre></td></tr></table></figure>
+<p>2、使用线程安全的 Hashtable 类代替，该类在对数据操作的时候都会上锁，也就是加上 synchronized<br>3、使用线程安全的 ConcurrentHashMap 类代替，该类在 JDK 1.7 和 JDK 1.8 的底层原理有所不同，JDK 1.7 采用数组 + 链表存储数据，使用分段锁 Segment 保证线程安全；JDK 1.8 采用数组 + 链表/红黑树存储数据，使用 CAS + synchronized 保证线程安全。  </p>
+<p>不过前两者的线程并发度并不高，容易发生大规模阻塞，所以一般使用的都是 ConcurrentHashMap，他的性能和效率明显高于前两者。  </p>
+<p>具体回看请参考 <a href="/2021/01/16/HashMap%E5%92%8CHashTable/" title="HashMap和HashTable">HashMap和HashTable</a>，本文主要学习ConcurrentHashMap</p>
+<h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/111713858?spm=1001.2014.3001.5501">https://blog.csdn.net/singwhatiwanna/article/details/111713858?spm=1001.2014.3001.5501</a></p>
+<h2 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a>synchronized</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/111713858?spm=1001.2014.3001.5501">https://blog.csdn.net/singwhatiwanna/article/details/111713858?spm=1001.2014.3001.5501</a></p>
+<h2 id="ConcurrentHashMap开整"><a href="#ConcurrentHashMap开整" class="headerlink" title="ConcurrentHashMap开整"></a>ConcurrentHashMap开整</h2><p>主要通过学习<a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/104586114/">singwhatiwanna</a>  整理。(仅供自己学习使用)<br>ConcurrentHashMap类所采用的方法就是分段锁的思想，将HashMap进行切割，把HashMap中的哈希数组切分成小数组，每个小数组由n个HashEntry组成，其中小数组继承字ReentrantLock(可重入锁)，这个小数组名叫Segment，如图：<br><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRWdFd0hIQ0NKQjIzeTk0RTBQUzJ3QW96NEJhSWVYbGZKeGVVOEllNXhrQW51REo2Nlo2S3ZXUS82NDA?x-oss-process=image/format,png" alt="ConcurrentMap整体结构图JDK1.7"></p>
+<p>这里的ConcurrentMap也是区分JDK1.7和JDK1.8的！<br>因为JDK1.8对HashMap做了变动，<strong>当冲突链表长度大于8，会将链表转变成红黑树结构。</strong><br>上图是JDK1.7。在下图展示的是ConcurrentHashMap在JDK1.8的整体结构，内容如下：<br><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRXg5RjhtMUllR2liYlM0MGlhV2t4a2liZGVZeXQzQ1N0bGtQcTdGVlFZNGJ6dDdNZnBxQ0hUQmxLQS82NDA?x-oss-process=image/format,png" alt="ConcurrentMap整体结构图JDK1.8"><br>在JDK1.8中ConcurrentHashMap类取消了Segment分段锁，采用CAS + synchronized来保证并发安全，数据结构JDK1.8中的HashMap结构类似，都是数组+链表(长度大于8，变成红黑树)结构。<br><strong>ConcurrentHashMap 中 synchronized 只锁定当前链表或红黑二叉树的首节点</strong>，只要节点 hash 不冲突，就不会产生并发，相比 JDK1.7 的 ConcurrentHashMap 效率又提升了 N 倍！</p>
+<h2 id="JDK1-7和JDK1-8源码分析"><a href="#JDK1-7和JDK1-8源码分析" class="headerlink" title="JDK1.7和JDK1.8源码分析"></a>JDK1.7和JDK1.8源码分析</h2><p><em>TODO 学习volatile和synchronized之后再来慢慢消化源码</em><br>可以参看这个博主：<a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/104586114/">https://blog.csdn.net/singwhatiwanna/article/details/104586114/</a><br>总结：<br>虽然 HashMap 在多线程环境下操作不安全，但是在 java.util.concurrent 包下，java 为我们提供了 ConcurrentHashMap 类，保证在多线程下 HashMap 操作安全！<br>在 JDK1.7 中，ConcurrentHashMap 采用了分段锁策略，将一个 HashMap 切割成 Segment 数组，其中 Segment 可以看成一个 HashMap， 不同点是 Segment 继承自 ReentrantLock，在操作的时候给 Segment 赋予了一个对象锁，从而保证多线程环境下并发操作安全。<br>但是 JDK1.7 中，HashMap 容易因为冲突链表过长，造成查询效率低，所以在 JDK1.8 中，HashMap 引入了红黑树特性，当冲突链表长度大于 8 时，会将链表转化成红黑二叉树结构。<br>在 JDK1.8 中，与此对应的 ConcurrentHashMap 也是采用了与 HashMap 类似的存储结构，但是 JDK1.8 中 ConcurrentHashMap 并没有采用分段锁的策略，而是在元素的节点上采用 CAS + synchronized 操作来保证并发的安全性，源码的实现比 JDK1.7 要复杂的多。</p>
+<blockquote>
+<p>参考链接</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/104586114/">https://blog.csdn.net/singwhatiwanna/article/details/104586114/</a></p>
+
       
 
       
