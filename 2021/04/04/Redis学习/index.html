@@ -15,6 +15,8 @@
 <meta property="og:site_name" content="无雨无晴">
 <meta property="og:description" content="主要记录自己学习Redis的过程。工欲善其事，必先利其器。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210408143922758.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210408143948186.png">
 <meta property="og:image" content="https://nyimapicture.oss-cn-beijing.aliyuncs.com/img/20201204191457.png">
 <meta property="og:image" content="https://nyimapicture.oss-cn-beijing.aliyuncs.com/img/20201204191637.png">
 <meta property="og:image" content="https://nyimapicture.oss-cn-beijing.aliyuncs.com/img/20201204191725.png">
@@ -22,11 +24,11 @@
 <meta property="og:image" content="https://nyimapicture.oss-cn-beijing.aliyuncs.com/img/20201204192628.png">
 <meta property="og:image" content="https://nyimapicture.oss-cn-beijing.aliyuncs.com/img/20201204192741.png">
 <meta property="article:published_time" content="2021-04-04T02:38:10.000Z">
-<meta property="article:modified_time" content="2021-04-07T08:22:02.496Z">
+<meta property="article:modified_time" content="2021-04-08T06:40:24.928Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Redis">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://nyimapicture.oss-cn-beijing.aliyuncs.com/img/20201204191457.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210408143922758.png">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -230,20 +232,51 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 移除rem中的元素</span><br><span class="line">zrem salary xiaohong # 移除有序集合中的指定元素</span><br><span class="line">zcard salary # 获取有序集合中的个数</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zcount myset 1 3 # 获取指定区间的成员数量！</span><br></pre></td></tr></table></figure>
 <p>小结：<br>set 排序 存储班级成绩表，工资表排序！<br>普通消息，1， 重要消息 2，带权重进行判断！<br>排行榜应用实现，取Top N 测试！  </p>
-<h1 id="Redis缓存穿透、雪崩和击穿"><a href="#Redis缓存穿透、雪崩和击穿" class="headerlink" title="Redis缓存穿透、雪崩和击穿"></a>Redis缓存穿透、雪崩和击穿</h1><h3 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h3><p>缓存穿透的概念很简单，用户想要查询一个数据，发现redis内存数据库没有，也就是缓存没有命中，于<br>是向持久层数据库查询。发现也没有，于是本次查询失败。当用户很多的时候，缓存都没有命中（秒<br>杀！），于是都去请求了持久层数据库。这会给持久层数据库造成很大的压力，这时候就相当于出现了<br>缓存穿透。</p>
+<h1 id="Redis-持久化"><a href="#Redis-持久化" class="headerlink" title="Redis 持久化"></a>Redis 持久化</h1><p>主要有两种形式 RDB 和 AOF<br>将当前数据状态进行保存，快照形式，存储数据结果，存储格式简单，关注点在数据<br>将数据的操作过程进行保存，日志形式，存储操作过程，存储格式复杂，关注点在数据的操作过程<br>一定程度上可以说RDB就是快照， AOF就是日志</p>
+<h2 id="RDB-Redis-DataBase"><a href="#RDB-Redis-DataBase" class="headerlink" title="RDB(Redis DataBase)"></a>RDB(Redis DataBase)</h2><p>RDB持久化是指在指定的时间间隔内将内存中的数据集快照写入磁盘，实际操作过程是fork一个子进程，先将数据集写入临时文件，写入成功后，再替换之前的文件，用二进制压缩存储。<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210408143922758.png" alt="image-20210408143922758"></p>
+<p>RDB优缺点：<br>优点：<br>1、RDB是一个紧凑压缩的二进制文件，存储效率较高。<br>2、RDB内部存储的是redis在某个时间点的数据快照，非常适合用于数据备份，全量复制等场景<br>3、RDB恢复数据的速度要比AOF快很多<br>4、应用：服务器中每X小时执行bgsave备份，并将RDB文件拷贝到远程机器中，用于灾难恢复<br>缺点：<br>1、RDB方式无论是执行指令还是利用配置，无法做到实时持久化，具有较大的可能性丢失数据<br>2、bgsave指令每次运行要执行fork操作创建子进程，要牺牲掉一些性能<br>3、Redis的众多版本中未进行RDB文件格式的版本统一，有可能出现各版本服务之间数据格式无法兼容现象。</p>
+<h2 id="AOF-Append-Only-File"><a href="#AOF-Append-Only-File" class="headerlink" title="AOF(Append Only File)"></a>AOF(Append Only File)</h2><p>AOF持久化以日志的形式记录服务器所处理的每一个写、删除操作，查询操作不会记录，以文本的方式记录，可以打开文件看到详细的操作记录。<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210408143948186.png" alt="image-20210408143948186"></p>
+<p>AOF优缺点：<br>优点：<br>1、每一次修改都同步，文件的完整会更加好！<br>2、每秒同步一次，可能会丢失一秒的数据<br>3、从不同步，效率最高的！<br>缺点：<br>1、相对于数据文件来说，aof远远大于 rdb，修复的速度也比 rdb慢！<br>2、Aof 运行效率也要比 rdb 慢，所以我们redis默认的配置就是RDB持久化！  </p>
+<h3 id="持久化补充"><a href="#持久化补充" class="headerlink" title="持久化补充"></a>持久化补充</h3><p>1、RDB 持久化方式能够在指定的时间间隔内对你的数据进行快照存储。</p>
+<p>2、AOF 持久化方式记录每次对服务器写的操作，当服务器重启的时候会重新执行这些命令来恢复原始<br>的数据，AOF命令以Redis 协议追加保存每次写的操作到文件末尾，Redis还能对AOF文件进行后台重写，使得AOF文件的体积不至于过大。  </p>
+<p>3、只做缓存，如果你只希望你的数据在服务器运行的时候存在，你也可以不使用任何持久化。    </p>
+<p>4、同时开启两种持久化方式<br>在这种情况下，当redis重启的时候会优先载入AOF文件来恢复原始的数据，因为在通常情况下AOF<br>文件保存的数据集要比RDB文件保存的数据集要完整。<br>RDB 的数据不实时，同时使用两者时服务器重启也只会找AOF文件，那要不要只使用AOF呢？建议不要，因为RDB更适合用于备份数据库（AOF在不断变化不好备份），快速重启，而且不会有AOF可能潜在的Bug，留着作为一个万一的手段。  </p>
+<p>5、性能建议<br>因为RDB文件只用作后备用途，建议只在Slave上持久化RDB文件，而且只要15分钟备份一次就够了，只保留<code>save 900 1</code>这条规则。  </p>
+<p>如果Enable AOF ，好处是在最恶劣情况下也只会丢失不超过两秒数据，启动脚本较简单只load自己的AOF文件就可以了，代价一是带来了持续的IO，二是AOF rewrite 的最后将 rewrite 过程中产生的新数据写到新文件造成的阻塞几乎是不可避免的。只要硬盘许可，应该尽量减少AOF rewrite的频率，AOF重写的基础大小默认值64M太小了，可以设到5G以上，默认超过原大小100%大小重写可以改到适当的数值。  </p>
+<p>如果不Enable AOF ，仅靠 Master-Slave Repllcation 实现高可用性也可以，能省掉一大笔IO，也<br>减少了rewrite时带来的系统波动。代价是如果Master/Slave 同时倒掉，会丢失十几分钟的数据，启动脚本也要比较两个 Master/Slave 中的 RDB文件，载入较新的那个，微博就是这种架构。  </p>
+<h1 id="Redis事务"><a href="#Redis事务" class="headerlink" title="Redis事务"></a>Redis事务</h1><p>TODO</p>
+<h1 id="Redis缓存穿透、雪崩和击穿"><a href="#Redis缓存穿透、雪崩和击穿" class="headerlink" title="Redis缓存穿透、雪崩和击穿"></a>Redis缓存穿透、雪崩和击穿</h1><h2 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h2><p>缓存雪崩，是指在某一个时间段，缓存集中过期失效。Redis 宕机！  </p>
+<blockquote>
+<p>两大原因 </p>
+</blockquote>
+<p>产生雪崩的原因之一，比如在写本文的时候，马上就要到双十二零点，很快就会迎来一波抢购，这波商品时间比较集中的放入了缓存，假设缓存一个小时。那么到了凌晨一点钟的时候，这批商品的缓存就都过期了。而对这批商品的访问查询，都落到了数据库上，对于数据库而言，就会产生周期性的压力波峰。于是所有的请求都会达到存储层，存储层的调用量会暴增，造成存储层也会挂掉的情况。  </p>
+<p>其实集中过期，倒不是非常致命，比较致命的缓存雪崩，是缓存服务器某个节点宕机或断网。因为自然形成的缓存雪崩，一定是在某个时间段集中创建缓存，这个时候，数据库也是可以顶住压力的。无非就是对数据库产生周期性的压力而已。而缓存服务节点的宕机，对数据库服务器造成的压力是不可预知的，很有可能瞬间就把数据库压垮。</p>
 <blockquote>
 <p>解决办法</p>
 </blockquote>
-<p>在程序中进行数据的合法性检验，如果不合法直接返回.<br>使用布隆过滤器</p>
+<p>1、数据预热:数据加热的含义就是在正式部署之前，我先把可能的数据先预先访问一遍，这样部分可能大量访问的数据就会加载到缓存中。在即将发生大并发访问前手动触发加载缓存不同的key，设置不同的过期时间，让缓存失效的时间点尽量均匀。<br>2、缓存数据的过期时间设置随机，避免同一时间大量数据过期现象的发生。<br>3、互斥锁。<br>4、redis高可用:既然redis有可能挂掉，那我多增设几台redis，这样一台挂掉之后其他的还可以继续工作，其实就是搭建的集群。<br>5、限流降级:在缓存失效后，通过加锁或者队列来控制读数据库写缓存的线程数量。比如对某个key只允许一个线程查询数据和写缓存，其他线程等待。  </p>
+<blockquote>
+<p>总结</p>
+</blockquote>
+<p>缓存雪崩就是瞬间过期数据量太大，导致对数据库服务器造成压力。如能够有效避免过期时间集中，可以有效解决雪崩现象的出现 （约40%），配合其他策略一起使用，并监控服务器的运行数据，根据运行记录做快速调整。  </p>
+<h2 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h2><p>首先明确穿透和击穿的区别：穿透就是缓存和数据库都没有数据，击穿是指缓存中没有数据库中存在。<br>缓存穿透的概念很简单，用户想要查询一个数据，发现redis内存数据库没有，也就是缓存没有命中，于是向持久层数据库查询。发现也没有，于是本次查询失败。当用户很多的时候，缓存都没有命中（秒杀！），于是都去请求了持久层数据库。这会给持久层数据库造成很大的压力，这时候就相当于出现了缓存穿透。</p>
+<blockquote>
+<p>解决办法</p>
+</blockquote>
+<p>1、在程序中进行数据的合法性检验，如果不合法直接返回。<br>2、使用布隆过滤器。</p>
 <h4 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h4><p>想要尽量避免缓存穿透，一个办法就是对数据进行预校验，在对Redis和数据库进行操作前，先检查数据是否存在，如果不存在就直接返回。如果我们想要查询一个元素是否存在，要保证查询效率，可以选择HashSet，但是如果有10亿个数据，都用HashSet进行存储，内存肯定是无法容纳的。这时就需要布隆过滤器了。  </p>
 <p>布隆过滤器（英语：Bloom Filter）是1970年由布隆提出的。它实际上是一个很长的二进制向量（bit数组）和一系列随机映射函数（hash）。布隆过滤器可以用于检索一个元素是否在一个集合中。 </p>
 <p>因为是基于位数组和hash函数的，所以它的优点是空间效率和查询时间都远远超过一般的算法。但缺点也很明显，那就是有一定的误识别率和删除困难。但是可以通过增加位数组的大小和增加hash函数个数来降低误识别率（只能降低，没法避免）。<br><strong>放入过程</strong><br>布隆过滤器初始化后，位数组中的值都为0。当一个变量将要放入布隆过滤器时，会通过多个hash函数映射到位数组的各个位上，然后将对应位置为1。<br>图解：比如我们的布隆过滤器位一个8位的位数组，并且有3个hash函数对元素进行计算，映射到数组中的各个位上。<br><img src="https://nyimapicture.oss-cn-beijing.aliyuncs.com/img/20201204191457.png" alt="参考原文博主"><br>我们将字符串”Nyima”放入布隆过滤器中.<br><img src="https://nyimapicture.oss-cn-beijing.aliyuncs.com/img/20201204191637.png" alt="参考原文博主"><br>接下来将字符串”Cpower”放入布隆过滤器中<br><img src="https://nyimapicture.oss-cn-beijing.aliyuncs.com/img/20201204191725.png" alt="参考原文博主">  </p>
 <p><strong>查询过程</strong><br>查询依然是通过多个hash函数映射到位数组的各个位上，如果各个位都为1，说明该元素<strong>可能存在，注意是可能存在</strong>！！。但是如果通过映射后，位数组对应位上<strong>不为1，那么该元素肯定不存在。</strong><br>图解：比如我们要查询字符串”Cpower”是否存在，通过3个hash函数映射到了位数组的三个位置上， 三个位置都为1，那么该字符串可能存在。<br><img src="https://nyimapicture.oss-cn-beijing.aliyuncs.com/img/20201204191725.png"><br>比如我们要查询字符串”SWPU”是否存在，通过3个hash函数映射到了位数组的三个位置，发现有一个位置不为1，那么该字符串肯定不存在<br><img src="https://nyimapicture.oss-cn-beijing.aliyuncs.com/img/20201204192628.png"><br>比如我们要查询字符串”Hulu”是否存在，通过3个hash函数映射到了位数组的三个位置，发现所有位置都为1，但是我们前面并没有将字符串”Hulu”放入布隆过滤器中，所以这里发生了误判<br><img src="https://nyimapicture.oss-cn-beijing.aliyuncs.com/img/20201204192741.png"><br><strong>增加位数组的大小和hash函数个数可以降低误判率，但是无法避免误判</strong></p>
-<h3 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h3><p>TODO</p>
+<h2 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h2><p>缓存击穿就是单个高热数据过期的瞬间，数据访问量较大，未命中redis后，发起了大量对同一数据的数据库问，导致对数据库服务器造成压力。应对策略应该在业务数据分析与预防方面进行，配合运行监控测试与即时调整策略，毕竟单个key的过期监控难度较高，配合雪崩处理策略即可。<br>缓存击穿和缓存雪崩的区别在于，缓存击穿指并发查同一条数据，缓存雪崩是不同数据都过期了，很多数据都查不到从而去查数据库。  </p>
+<blockquote>
+<p>解决方法</p>
+</blockquote>
+<p>1、设置热点数据永不过期<br>2、加互斥锁</p>
 <h1 id="SpringBoot整合"><a href="#SpringBoot整合" class="headerlink" title="SpringBoot整合"></a>SpringBoot整合</h1><blockquote>
 <p>参考链接 </p>
 </blockquote>
-<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://nyimac.gitee.io/2020/06/07/Redis%E5%AD%A6%E4%B9%A0%E6%96%87%E6%A1%A3/#Redis%E5%AD%A6%E4%B9%A0">Redis基础</a><br><a target="_blank" rel="noopener" href="https://nyimac.gitee.io/2020/11/08/Redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/#%E4%B8%80%E3%80%81%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2">Redis设计</a></p>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://nyimac.gitee.io/2020/06/07/Redis%E5%AD%A6%E4%B9%A0%E6%96%87%E6%A1%A3/#Redis%E5%AD%A6%E4%B9%A0">Redis基础</a><br><a target="_blank" rel="noopener" href="https://nyimac.gitee.io/2020/11/08/Redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/#%E4%B8%80%E3%80%81%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2">Redis设计</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zxs117/p/11242026.html">RDB和AOF</a></p>
 
       
 
@@ -504,15 +537,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -549,6 +578,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">中间件</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
               </li>
              
               <li class="article-tag-list-item">
