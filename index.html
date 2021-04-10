@@ -146,6 +146,163 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-二分法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/10/%E4%BA%8C%E5%88%86%E6%B3%95/">二分法</a>
+    </h1>
+  
+
+        
+        <a href="/2021/04/10/%E4%BA%8C%E5%88%86%E6%B3%95/" class="archive-article-date">
+  	<time datetime="2021-04-10T06:03:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="标准形式"><a href="#标准形式" class="headerlink" title="标准形式"></a>标准形式</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">b1</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> low = <span class="number">0</span>, high = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (low &lt;= high) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = low + (high - low) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            high = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            low = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="查找第一个值等于给定值的元素"><a href="#查找第一个值等于给定值的元素" class="headerlink" title="查找第一个值等于给定值的元素"></a>查找第一个值等于给定值的元素</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">b1</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> low = <span class="number">0</span>, high = nums.length - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (low &lt;= high) &#123;</span><br><span class="line">            <span class="keyword">int</span> mid = low + (high - low) / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">                high = mid - <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">                low = mid + <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 只需要在这多加一步判断，如果前面没有了或者前面的值不是target，返回</span></span><br><span class="line">                <span class="keyword">if</span> (mid == <span class="number">0</span> || nums[mid - <span class="number">1</span>] != target) &#123;</span><br><span class="line">                    <span class="keyword">return</span> mid;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    high = mid - <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="查找最后一个值等于给定值的元素"><a href="#查找最后一个值等于给定值的元素" class="headerlink" title="查找最后一个值等于给定值的元素"></a>查找最后一个值等于给定值的元素</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">b1</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> low = <span class="number">0</span>, high = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (low &lt;= high) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = low + (high - low) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            high = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            low = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (mid == nums.length - <span class="number">1</span> || nums[mid + <span class="number">1</span>] != target) &#123;</span><br><span class="line">                <span class="keyword">return</span> mid;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                low = mid + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="查找最后一个大于给定值的元素"><a href="#查找最后一个大于给定值的元素" class="headerlink" title="查找最后一个大于给定值的元素"></a>查找最后一个大于给定值的元素</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">b1</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> low = <span class="number">0</span>, high = nums.length - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (low &lt;= high) &#123;</span><br><span class="line">            <span class="keyword">int</span> mid = low + (high - low) / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">                high = mid - <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">                low = mid + <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (mid == <span class="number">0</span> || nums[mid - <span class="number">1</span>] &lt; target) &#123;</span><br><span class="line">                    <span class="keyword">return</span> mid - <span class="number">1</span>; <span class="comment">// 效法找到第一个等于的情况，然后在-1即可</span></span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    high = mid - <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="查找第一个大于给定值的元素"><a href="#查找第一个大于给定值的元素" class="headerlink" title="查找第一个大于给定值的元素"></a>查找第一个大于给定值的元素</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">b1</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> low = <span class="number">0</span>, high = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (low &lt;= high) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = low + (high - low) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            high = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            low = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (mid == nums.length - <span class="number">1</span> || nums[mid + <span class="number">1</span>] != target) &#123;</span><br><span class="line">                <span class="keyword">return</span> mid + <span class="number">1</span>; <span class="comment">// 根据找到最后一个相等的。+1即可</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                low = mid + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="旋转数组"><a href="#旋转数组" class="headerlink" title="旋转数组"></a>旋转数组</h1><h2 id="查找旋转数组的最小元素（假设不存在重复数字）"><a href="#查找旋转数组的最小元素（假设不存在重复数字）" class="headerlink" title="查找旋转数组的最小元素（假设不存在重复数字）"></a>查找旋转数组的最小元素（假设不存在重复数字）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">findMin</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = nums.length;</span><br><span class="line">    <span class="keyword">if</span> (len == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> low = <span class="number">0</span>, high = len - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (low &lt; high) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = low + (high - low) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &gt; nums[high])</span><br><span class="line">            low = mid + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            high = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> low;</span><br><span class="line">&#125;   </span><br></pre></td></tr></table></figure>
+<h2 id="查找旋转数组的最小元素（存在重复项）"><a href="#查找旋转数组的最小元素（存在重复项）" class="headerlink" title="查找旋转数组的最小元素（存在重复项）"></a>查找旋转数组的最小元素（存在重复项）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">findMin1</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = nums.length;</span><br><span class="line">    <span class="keyword">if</span>(len == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> low = <span class="number">0</span>, high = len - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>(low &lt; high)&#123;</span><br><span class="line">        <span class="keyword">int</span> mid = low + (high - low) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span>(nums[mid] &gt; nums[high])</span><br><span class="line">            low = mid + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(nums[mid] &lt; nums[high])</span><br><span class="line">            high = mid;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            high--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> low;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="在旋转排序数组中搜索（不考虑重复项）"><a href="#在旋转排序数组中搜索（不考虑重复项）" class="headerlink" title="在旋转排序数组中搜索（不考虑重复项）"></a>在旋转排序数组中搜索（不考虑重复项）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">search</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums == <span class="keyword">null</span> || nums.length == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> low = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> high = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (low &lt;= high) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = (high + low) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (nums[low] &lt;= nums[mid]) &#123;<span class="comment">//判断前半段是大数组</span></span><br><span class="line">            <span class="comment">//以后注意：顺序也很有用。因为会短路</span></span><br><span class="line">            <span class="keyword">if</span> (target &gt;= nums[low] &amp;&amp; target &lt; nums[mid]) &#123;<span class="comment">//target在前半段（即target是相对大的数）</span></span><br><span class="line">                high = mid - <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;<span class="comment">//否则target是相对小的数，在后半段找</span></span><br><span class="line">                low = mid + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;<span class="comment">//后半段是大数组</span></span><br><span class="line">            <span class="keyword">if</span> (target &lt;= nums[high] &amp;&amp; target &gt; nums[mid]) &#123;</span><br><span class="line">                low = mid + <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                high = mid - <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="在旋转排序数组中搜索（考虑重复项）"><a href="#在旋转排序数组中搜索（考虑重复项）" class="headerlink" title="在旋转排序数组中搜索（考虑重复项）"></a>在旋转排序数组中搜索（考虑重复项）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">search1</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = nums.length;</span><br><span class="line">    <span class="keyword">if</span>(len == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = len - <span class="number">1</span>, mid;</span><br><span class="line">    <span class="keyword">while</span>(left &lt;= right)&#123;</span><br><span class="line">        mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span>(nums[mid] == target)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(nums[mid] &gt; nums[right])&#123;</span><br><span class="line">            <span class="keyword">if</span>(target &lt; nums[mid] &amp;&amp; target &gt;= nums[left])</span><br><span class="line">                right = mid;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(nums[mid] &lt; nums[right])&#123;</span><br><span class="line">            <span class="keyword">if</span>(target &gt; nums[mid] &amp;&amp; target &lt;= nums[right])</span><br><span class="line">                left = mid + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                right = mid;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            right --;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/10/%E4%BA%8C%E5%88%86%E6%B3%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-KMP学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/10/KMP%E5%AD%A6%E4%B9%A0/">KMP学习</a>
+    </h1>
+  
+
+        
+        <a href="/2021/04/10/KMP%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
+  	<time datetime="2021-04-10T05:38:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>1、如果找到，返回在主串中第一个字符出现的下标，否则为-1</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">bf</span><span class="params">(String str, String pattern)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] s = str.toCharArray();</span><br><span class="line">    <span class="keyword">char</span>[] p = pattern.toCharArray();</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &lt; s.length &amp;&amp; j &lt; p.length) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == p[j]) &#123; <span class="comment">//当两个字符相同，就比较下一个</span></span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            i = i - j + <span class="number">1</span>; <span class="comment">//一旦不匹配，i后退</span></span><br><span class="line">            j = <span class="number">0</span>;  <span class="comment">//j归0</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (j == p.length) &#123;</span><br><span class="line">        <span class="keyword">return</span> i - j;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用next改进</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span>[] getNext(String ps) &#123;</span><br><span class="line">    <span class="keyword">char</span>[] p = ps.toCharArray();</span><br><span class="line">    <span class="keyword">int</span>[] next = <span class="keyword">new</span> <span class="keyword">int</span>[p.length];</span><br><span class="line">    next[<span class="number">0</span>] = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> k = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (j &lt; p.length - <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (k == -<span class="number">1</span> || p[j] == p[k]) &#123;</span><br><span class="line">            next[++j] = ++k;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            k = next[k];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> next;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 使用next</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">KMP</span><span class="params">(String ts, String ps)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] t = ts.toCharArray();</span><br><span class="line">    <span class="keyword">char</span>[] p = ps.toCharArray();</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>; <span class="comment">// 主串的位置</span></span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">0</span>; <span class="comment">// 模式串的位置</span></span><br><span class="line">    <span class="keyword">int</span>[] next = getNext(ps);</span><br><span class="line">    <span class="keyword">while</span> (i &lt; t.length &amp;&amp; j &lt; p.length) &#123;</span><br><span class="line">        <span class="keyword">if</span> (j == -<span class="number">1</span> || t[i] == p[j]) &#123; <span class="comment">// 当j为-1时，要移动的是i，当然j也要归0</span></span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// i不需要回溯了</span></span><br><span class="line">            <span class="comment">// i = i - j + 1;</span></span><br><span class="line">            j = next[j]; <span class="comment">// j回到指定位置</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (j == p.length) &#123;</span><br><span class="line">        <span class="keyword">return</span> i - j;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/10/KMP%E5%AD%A6%E4%B9%A0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-shiro初探" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -764,159 +921,6 @@
 
 
   
-    <article id="post-HashMap深究" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/26/HashMap%E6%B7%B1%E7%A9%B6/">HashMap深究</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/26/HashMap%E6%B7%B1%E7%A9%B6/" class="archive-article-date">
-  	<time datetime="2021-03-26T05:41:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>本文主要学习网上的各位优秀博主的文章，然后再去自行阅读源码进行理解。主要包括以下几个方面：<br>1、put方法<br>2、resize方法<br>3、get方法<br>4、对一些问题的回答</p>
-        
-          <a class="article-more-a" href="/2021/03/26/HashMap%E6%B7%B1%E7%A9%B6/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/26/HashMap%E6%B7%B1%E7%A9%B6/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-MySQL缓存池" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/25/MySQL%E7%BC%93%E5%AD%98%E6%B1%A0/">MySQL缓存池</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/25/MySQL%E7%BC%93%E5%AD%98%E6%B1%A0/" class="archive-article-date">
-  	<time datetime="2021-03-25T01:27:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>主要整理自掘金上一位博主，为知识付费购买义不容辞~~~<br>为什么需要缓存池？<br>MySQL的InnoDB存储引擎是基于磁盘存储的，并且是按照页的方式进行管理的，在数据库系统中，CPU速度和磁盘速度之间的差距是比较大的，为了弥补这种速度，提出了缓存池的概念，简单来说就是一块<code>内存区域</code>,通过内存的速度去弥补磁盘速度较慢，导致对数据库造成的性能影响。</p>
-<p><code>InnoDB</code>的设计者为了缓存磁盘中的页，在<code>MySQL</code>服务器启动的时候就向操作系统申请了一片连续的内存，他们给这片内存起了个名，叫做<code>Buffer Pool</code>（中文名是<code>缓冲池</code>）。默认大小为128M，最小也不能小于5M。</p>
-        
-          <a class="article-more-a" href="/2021/03/25/MySQL%E7%BC%93%E5%AD%98%E6%B1%A0/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/25/MySQL%E7%BC%93%E5%AD%98%E6%B1%A0/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1034,6 +1038,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
@@ -1058,19 +1066,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
+                <a href="javascript:void(0)" class="js-tag color4">中间件</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">中间件</a>
+                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
               </li>
              
               <li class="article-tag-list-item">
