@@ -177,7 +177,6 @@
 <p>2、自动装箱和拆箱</p>
 <p>3、基本数据类型/包装类的常量池问题</p>
 <a id="more"></a>
-
 <blockquote>
 <p>Java基本数据类型</p>
 </blockquote>
@@ -197,7 +196,14 @@
 <p>可以清楚的看到，在装箱的过程中调用的是Integer的valueOf方法，而在拆箱的时候自动调用的是Integer的intValue方法。</p>
 <p>所以可以推断其实现过程就是：</p>
 <p><strong>装箱过程使用过调用包装类的valueOf方法实现，而拆箱过程则是通过使用包装类的xValue方法。</strong></p>
-<p><strong>为什么要进行拆箱和装箱？</strong><br>Java是一种完全面向对象的语言。因此，包括数字、字符、日期、布尔值等等在内的一切，都是对象。似乎只需要一种方式来对待这些对象就可以了。<br>对于CPU来说，处理一个完整的对象，需要很多的指令，对于内存来说，又需要很多的内存。如果连整数都是对象，那么性能自然很低。<br>于是创造了这样一种机制，使得这些基本类型在一般的编程中被当作非对象的简单类型处理，在另一些场合，又允许它们被视作是一个对象。<br>这就是装箱和拆箱。<br>作用：为了保证通用性和提高系统性能<br>一种最普通的场景是调用一个包含类型为Object的参数的函数（方法),该Object可支持任意 类型，以便通用。当你需要将一个值类型传入容器时，就需要装箱了。<br>另一种的用法，就是一个泛型 的容器，同样是为了保证通用，而将元素定义为Object类型的，将值类型的值加入该容器时，需要装箱。</p>
+<p><strong>为什么要进行拆箱和装箱？</strong><br>
+Java是一种完全面向对象的语言。因此，包括数字、字符、日期、布尔值等等在内的一切，都是对象。似乎只需要一种方式来对待这些对象就可以了。<br>
+对于CPU来说，处理一个完整的对象，需要很多的指令，对于内存来说，又需要很多的内存。如果连整数都是对象，那么性能自然很低。<br>
+于是创造了这样一种机制，使得这些基本类型在一般的编程中被当作非对象的简单类型处理，在另一些场合，又允许它们被视作是一个对象。<br>
+这就是装箱和拆箱。<br>
+作用：为了保证通用性和提高系统性能<br>
+一种最普通的场景是调用一个包含类型为Object的参数的函数（方法),该Object可支持任意 类型，以便通用。当你需要将一个值类型传入容器时，就需要装箱了。<br>
+另一种的用法，就是一个泛型 的容器，同样是为了保证通用，而将元素定义为Object类型的，将值类型的值加入该容器时，需要装箱。</p>
 <blockquote>
 <p>通过源码分析常量池问题</p>
 </blockquote>
@@ -497,11 +503,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -8,16 +8,16 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>Nginx学习 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="道阻且长，行则将至，行而不辍，未来可期。第一次自己尝试使用Nginx去部署VUE项目之后，非常好奇为什么Nginx为何这么强大，只通过一个简单的配置就能运行呢？VUE打包出来的dist文件怎么就能运行起来呢？下面通过不断学习整理收集Nginx相关知识努力去解决自己心中的疑惑吧（主要记录自己那一年的那一个下午为了使用nginx部署的心酸吧。） Nginx 是开源的轻量级 Web 服务器、反向代理服务">
+  <meta name="description" content="道阻且长，行则将至，行而不辍，未来可期。 第一次自己尝试使用Nginx去部署VUE项目之后，非常好奇为什么Nginx为何这么强大，只通过一个简单的配置就能运行呢？VUE打包出来的dist文件怎么就能运行起来呢？ 下面通过不断学习整理收集Nginx相关知识努力去解决自己心中的疑惑吧（主要记录自己那一年的那一个下午为了使用nginx部署的心酸吧。） Nginx 是开源的轻量级 Web 服务器、反向代理">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Nginx学习">
 <meta property="og:url" content="http://example.com/2021/03/21/Nginx%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="道阻且长，行则将至，行而不辍，未来可期。第一次自己尝试使用Nginx去部署VUE项目之后，非常好奇为什么Nginx为何这么强大，只通过一个简单的配置就能运行呢？VUE打包出来的dist文件怎么就能运行起来呢？下面通过不断学习整理收集Nginx相关知识努力去解决自己心中的疑惑吧（主要记录自己那一年的那一个下午为了使用nginx部署的心酸吧。） Nginx 是开源的轻量级 Web 服务器、反向代理服务">
+<meta property="og:description" content="道阻且长，行则将至，行而不辍，未来可期。 第一次自己尝试使用Nginx去部署VUE项目之后，非常好奇为什么Nginx为何这么强大，只通过一个简单的配置就能运行呢？VUE打包出来的dist文件怎么就能运行起来呢？ 下面通过不断学习整理收集Nginx相关知识努力去解决自己心中的疑惑吧（主要记录自己那一年的那一个下午为了使用nginx部署的心酸吧。） Nginx 是开源的轻量级 Web 服务器、反向代理">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321195726685.png">
 <meta property="article:published_time" content="2021-03-21T12:13:47.000Z">
-<meta property="article:modified_time" content="2021-03-30T08:04:04.727Z">
+<meta property="article:modified_time" content="2021-04-16T08:38:29.472Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="中间件">
 <meta name="twitter:card" content="summary">
@@ -171,45 +171,149 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>道阻且长，行则将至，行而不辍，未来可期。</em><br>第一次自己尝试使用Nginx去部署VUE项目之后，非常好奇为什么Nginx为何这么强大，只通过一个简单的配置就能运行呢？VUE打包出来的dist文件怎么就能运行起来呢？<br>下面通过不断学习整理收集Nginx相关知识努力去解决自己心中的疑惑吧（主要记录自己那一年的那一个下午为了使用nginx部署的心酸吧。）</p>
-<p><strong>Nginx 是开源的轻量级 Web 服务器、反向代理服务器，以及负载均衡器和 HTTP 缓存器。其特点是高并发，高性能和低内存。</strong><br>跨平台、配置简单、非阻塞、高并发连接（官方检测能支持5w并发）、内存消耗小（开启10个Nginx才占用150M内存）、成本低廉且开源、性能稳定，宕机概率小。</p>
+        <p><em>道阻且长，行则将至，行而不辍，未来可期。</em><br>
+第一次自己尝试使用Nginx去部署VUE项目之后，非常好奇为什么Nginx为何这么强大，只通过一个简单的配置就能运行呢？VUE打包出来的dist文件怎么就能运行起来呢？<br>
+下面通过不断学习整理收集Nginx相关知识努力去解决自己心中的疑惑吧（主要记录自己那一年的那一个下午为了使用nginx部署的心酸吧。）</p>
+<p><strong>Nginx 是开源的轻量级 Web 服务器、反向代理服务器，以及负载均衡器和 HTTP 缓存器。其特点是高并发，高性能和低内存。</strong><br>
+跨平台、配置简单、非阻塞、高并发连接（官方检测能支持5w并发）、内存消耗小（开启10个Nginx才占用150M内存）、成本低廉且开源、性能稳定，宕机概率小。</p>
 <a id="more"></a>
-<p><strong>正向代理：</strong><br>A同学在大众创业、万众创新的大时代背景下开启他的创业之路，目前他遇到的最大的一个问题就是启动资金，于是他决定去找马云爸爸借钱，可想而知，最后碰一鼻子灰回来了，情急之下，他想到一个办法，找关系开后门，经过一番消息打探，原来A同学的大学老师王老师是马云的同学，于是A同学找到王老师，托王老师帮忙去马云那借500万过来，当然最后事成了。不过马云并不知道这钱是A同学借的，马云是借给王老师的，最后由王老师转交给A同学。这里的王老师在这个过程中扮演了一个非常关键的角色，就是<strong>代理</strong>，也可以说是正向代理，王老师代替A同学办这件事，这个过程中，真正借钱的人是谁，马云是不知道的，这点非常关键。</p>
-<p>我们常说的代理也就是只正向代理，正向代理的过程，它隐藏了真实的请求客户端，服务端不知道真实的客户端是谁，客户端请求的服务都被代理服务器代替来请求，某些科学上网工具扮演的就是典型的正向代理角色。用浏览器访问 <a target="_blank" rel="noopener" href="http://www.google.com/">www.google.com</a> 时，被残忍的block，于是你可以在国外搭建一台代理服务器，让代理帮我去请求 google.com，代理把请求返回的相应结构再返回给我。</p>
-<p><strong>反向代理：</strong><br>大家都有过这样的经历，拨打10086客服电话，可能一个地区的10086客服有几个或者几十个，你永远都不需要关心在电话那头的是哪一个，叫什么，男的，还是女的，漂亮的还是帅气的，你都不关心，你关心的是你的问题能不能得到专业的解答，你只需要拨通了10086的总机号码，电话那头总会有人会回答你，只是有时慢有时快而已。那么这里的10086总机号码就是我们说的<strong>反向代理</strong>。客户不知道真正提供服务人的是谁。</p>
-<p>反向代理隐藏了真实的服务端，当我们请求 <a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a> 的时候，就像拨打10086一样，背后可能有成千上万台服务器为我们服务，但具体是哪一台，你不知道，也不需要知道，你只需要知道反向代理服务器是谁就好了，<a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a> 就是我们的反向代理服务器，反向代理服务器会帮我们把请求转发到真实的服务器那里去。Nginx就是性能非常好的反向代理服务器，用来做负载均衡。</p>
+<p><strong>正向代理：</strong><br>
+A同学在大众创业、万众创新的大时代背景下开启他的创业之路，目前他遇到的最大的一个问题就是启动资金，于是他决定去找马云爸爸借钱，可想而知，最后碰一鼻子灰回来了，情急之下，他想到一个办法，找关系开后门，经过一番消息打探，原来A同学的大学老师王老师是马云的同学，于是A同学找到王老师，托王老师帮忙去马云那借500万过来，当然最后事成了。不过马云并不知道这钱是A同学借的，马云是借给王老师的，最后由王老师转交给A同学。这里的王老师在这个过程中扮演了一个非常关键的角色，就是<strong>代理</strong>，也可以说是正向代理，王老师代替A同学办这件事，这个过程中，真正借钱的人是谁，马云是不知道的，这点非常关键。</p>
+<p>我们常说的代理也就是只正向代理，正向代理的过程，它隐藏了真实的请求客户端，服务端不知道真实的客户端是谁，客户端请求的服务都被代理服务器代替来请求，某些科学上网工具扮演的就是典型的正向代理角色。用浏览器访问 <a target="_blank" rel="noopener" href="http://www.google.com">www.google.com</a> 时，被残忍的block，于是你可以在国外搭建一台代理服务器，让代理帮我去请求 <a target="_blank" rel="noopener" href="http://google.com">google.com</a>，代理把请求返回的相应结构再返回给我。</p>
+<p><strong>反向代理：</strong><br>
+大家都有过这样的经历，拨打10086客服电话，可能一个地区的10086客服有几个或者几十个，你永远都不需要关心在电话那头的是哪一个，叫什么，男的，还是女的，漂亮的还是帅气的，你都不关心，你关心的是你的问题能不能得到专业的解答，你只需要拨通了10086的总机号码，电话那头总会有人会回答你，只是有时慢有时快而已。那么这里的10086总机号码就是我们说的<strong>反向代理</strong>。客户不知道真正提供服务人的是谁。</p>
+<p>反向代理隐藏了真实的服务端，当我们请求 <a target="_blank" rel="noopener" href="http://www.baidu.com">www.baidu.com</a> 的时候，就像拨打10086一样，背后可能有成千上万台服务器为我们服务，但具体是哪一台，你不知道，也不需要知道，你只需要知道反向代理服务器是谁就好了，<a target="_blank" rel="noopener" href="http://www.baidu.com">www.baidu.com</a> 就是我们的反向代理服务器，反向代理服务器会帮我们把请求转发到真实的服务器那里去。Nginx就是性能非常好的反向代理服务器，用来做负载均衡。</p>
 <p>两者的区别在于代理的对象不一样：<strong>正向代理</strong>代理的对象是客户端，<strong>反向代理</strong>代理的对象是服务端</p>
 <hr>
-<p><strong>负载均衡:</strong><br>将原先请求集中到单个服务器上的情况改为增加服务器的数量，然后将请求分发到各个服务器上，将负载分发到不同的服务器，即负载均衡。</p>
-<p>官方解释：负载均衡是由多台服务器以对称的方式组成一个服务器集合，每台服务器都具有等价的地位，都可以单独对外供应效力而无须其他服务器的辅助。经过某种负载分管技术，将外部发送来的央求均匀分配到对称结构中的某一台服务器上，而接收到央求的服务器独登时回应客户的央求。均衡负载可以平均分配客户央求到服务器列阵，籍此供应快速获取重要数据，解决很多并发访问效力问题。这种群集技术可以用最少的出资取得接近于大型主机的性能。<br>有个经典的例子: 早高峰的地铁站，入站口经常会有地铁工作人员拿着大喇嘛“请走B通道，B通道人少….”。这个工作人员就是负载均衡。</p>
-<p><strong>负载均衡的分类</strong><br>首先学习一下6种负载均衡算法：1、轮询法 2、随机法 3、源地址哈希法 4、加权轮询法 5、加权随机法 6、最小连接数法 <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_29373285/article/details/88777503">负载均衡算法</a><br>其中Nginx默认使用了3种负载均衡策略：1、轮询 2、ip哈希 3、最小连接<br><code>HTTP重定向负载均衡：</code><br>HTTP重定向服务器是一台普通的应用服务器，其唯一个功能就是根据用户的HTTP请求计算出一台真实的服务器地址，并将该服务器地址写入HTTP重定向响应中（重定向响应状态码为302）返回给用户浏览器。用户浏览器在获取到响应之后，根据返回的信息，重新发送一个请求到真实的服务器上。<br>这种负载均衡方案的优点是比较简单，缺点是浏览器需要两次请求服务器才能完成一次访问，性能较差；同时，重定向服务器本身的处理能力有可能成为瓶颈，整个集群的伸缩性规模有限；使用HTTP返回码302重定向，有可能使搜索引擎判断为SEO作弊，降低搜索排名。因此实践中很少使用这种负载均衡方案来部署。</p>
-<p><code>根据DNS的负载均衡:</code><br>DNS（Domain Name System）是因特网的一项服务，它作为域名和IP地址相互映射的一个分布式数据库，能够使人更方便的访问互联网。人们在通过浏览器访问网站时只需要记住网站的域名即可，而不需要记住那些不太容易理解的IP地址。在DNS系统中有一个比较重要的的资源类型叫做主机记录也称为A记录，A记录是用于名称解析的重要记录，它将特定的主机名映射到对应主机的IP地址上。如果你有一个自己的域名，那么要想别人能访问到你的网站，你需要到特定的DNS解析服务商的服务器上填写A记录，过一段时间后，别人就能通过你的域名访问你的网站了。当然DNS除了能解析域名之外，还能做负载均衡。</p>
+<p><strong>负载均衡:</strong><br>
+将原先请求集中到单个服务器上的情况改为增加服务器的数量，然后将请求分发到各个服务器上，将负载分发到不同的服务器，即负载均衡。</p>
+<p>官方解释：负载均衡是由多台服务器以对称的方式组成一个服务器集合，每台服务器都具有等价的地位，都可以单独对外供应效力而无须其他服务器的辅助。经过某种负载分管技术，将外部发送来的央求均匀分配到对称结构中的某一台服务器上，而接收到央求的服务器独登时回应客户的央求。均衡负载可以平均分配客户央求到服务器列阵，籍此供应快速获取重要数据，解决很多并发访问效力问题。这种群集技术可以用最少的出资取得接近于大型主机的性能。<br>
+有个经典的例子: 早高峰的地铁站，入站口经常会有地铁工作人员拿着大喇嘛“请走B通道，B通道人少…”。这个工作人员就是负载均衡。</p>
+<p><strong>负载均衡的分类</strong><br>
+首先学习一下6种负载均衡算法：1、轮询法 2、随机法 3、源地址哈希法 4、加权轮询法 5、加权随机法 6、最小连接数法 <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_29373285/article/details/88777503">负载均衡算法</a><br>
+其中Nginx默认使用了3种负载均衡策略：1、轮询 2、ip哈希 3、最小连接<br>
+<code>HTTP重定向负载均衡：</code><br>
+HTTP重定向服务器是一台普通的应用服务器，其唯一个功能就是根据用户的HTTP请求计算出一台真实的服务器地址，并将该服务器地址写入HTTP重定向响应中（重定向响应状态码为302）返回给用户浏览器。用户浏览器在获取到响应之后，根据返回的信息，重新发送一个请求到真实的服务器上。<br>
+这种负载均衡方案的优点是比较简单，缺点是浏览器需要两次请求服务器才能完成一次访问，性能较差；同时，重定向服务器本身的处理能力有可能成为瓶颈，整个集群的伸缩性规模有限；使用HTTP返回码302重定向，有可能使搜索引擎判断为SEO作弊，降低搜索排名。因此实践中很少使用这种负载均衡方案来部署。</p>
+<p><code>根据DNS的负载均衡:</code><br>
+DNS（Domain Name System）是因特网的一项服务，它作为域名和IP地址相互映射的一个分布式数据库，能够使人更方便的访问互联网。人们在通过浏览器访问网站时只需要记住网站的域名即可，而不需要记住那些不太容易理解的IP地址。在DNS系统中有一个比较重要的的资源类型叫做主机记录也称为A记录，A记录是用于名称解析的重要记录，它将特定的主机名映射到对应主机的IP地址上。如果你有一个自己的域名，那么要想别人能访问到你的网站，你需要到特定的DNS解析服务商的服务器上填写A记录，过一段时间后，别人就能通过你的域名访问你的网站了。当然DNS除了能解析域名之外，还能做负载均衡。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DNS域名解析负载均衡有如下优点：</span><br><span class="line">1. 将负载均衡的工作交给DNS，省去了网站管理维护负载均衡服务器的麻烦。</span><br><span class="line">2. 技术实现比较灵活、方便，简单易行，成本低，使用于大多数TCP&#x2F;IP应用。</span><br><span class="line">3. 对于部署在服务器上的应用来说不需要进行任何的代码修改即可实现不同机器上的应用访问。</span><br><span class="line">3. 服务器可以位于互联网的任意位置。</span><br><span class="line">4. 同时许多DNS还支持基于地理位置的域名解析，即会将域名解析成距离用户地理最近的一个服务器地址，这样就可以加速用户访问，改善性能。</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">DNS域名解析存在的缺点：</span><br><span class="line">1. 目前的DNS是多级解析的，每一级DNS都可能缓存A记录，当某台服务器下线之后，即使修改了A记录，要使其生效也需要较长的时间，这段时间，DNS任然会将域名解析到已下线的服务器上，最终导致用户访问失败。</span><br><span class="line">2. 不能够按服务器的处理能力来分配负载。DNS负载均衡采用的是简单的轮询算法，不能区分服务器之间的差异，不能反映服务器当前运行状态，所以其的负载均衡效果并不是太好。</span><br><span class="line">3. 可能会造成额外的网络问题。为了使本DNS服务器和其他DNS服务器及时交互，保证DNS数据及时更新，使地址能随机分配，一般都要将DNS的刷新时间设置的较小，但太小将会使DNS流量大增造成额外的网络问题。</span><br></pre></td></tr></table></figure>
 <p>事实上，大型网站总是部分使用DNS域名解析，利用域名解析作为第一级负载均衡手段，即域名解析得到的一组服务器并不是实际提供服务的物理服务器，而是同样提供负载均衡服务器的内部服务器，这组内部负载均衡服务器再进行负载均衡，请请求发到真实的服务器上，最终完成请求。</p>
-<p><code>反向代理负载均衡</code><br>这种方法就是使用反向代理服务器，它一般在web服务器前面，这个位置也正好是负载均衡服务器的位置，所以大多数反向代理服务器同时也提供负载均衡的功能。由于web服务器不直接对外提供访问，因此web服务器不需要使用外部IP,而反向代理服务器则需要配置双网卡和内部外部两套IP地址。反向代理服务器转发请求是在HTTP协议层面，因此也叫应用层负载均衡，由于应用层在七层网络模型中的第七层，所以一般也称为七层负载均衡。优点就是和反向代理功服务器功能集成在一起，部署简单。缺点是反向代理服务器是所有请求和响应的中转站，其性能可能会成为瓶颈。</p>
-<p><code>网络层负载均衡</code><br>这种方法是在网络层通过修改请求目标地址进行负载均衡，网络层在七层网络层模型的第四层，所以也叫做四层负载均衡，也叫做IP层负载均衡。请求达到负载均衡服务器后，由负载均衡服务器在操作系统内核进程获取网络数据包，根据负载均衡算法得到一台真实web服务器的地址，然后修改请求的目的地址到这台真实的web服务器地址，等到web服务器处理完成后，响应数据包回到负载均衡服务器，再将数据包源地址修改为自身的IP（负载均衡服务器的IP）地址发送给用户浏览器。这里关键在于真实无力web服务器响应数据包如何返回给负载均衡服务器。一种是源地址转换（SNAT），第二种是负载均衡服务器作为网关服务器。网络层的负载均衡在内核进程完成数据转发，有更好的性能。但是由于响应请求的流量要经过负载均衡服务器，容易成为瓶颈。</p>
-<p><code>数据链路层负载均衡</code><br>数据链路层主要处理mac地址，所以使用修改mac地址进行转发请求。负载均衡数据分发过程中不修改IP地址，只修改mac地址，通过配置真实物理服务器集群所有机器虚拟IP和负载均衡服务器IP地址一致，从而达到不修改数据包的源地址和目的地址就可以进行数据分发的目的。由于web服务器的服务器地址IP和数据请求目的IP地址一致，不需要通过负载均衡服务器进行地址转换，可将相应数据包直接返回用户。如果有足够的公有IP,其实web服务器也可以直接使用自己的IP响应请求，不过这样web服务器必须绑定负载均衡的虚拟IP地址（VIP），才能保证web服务器收到来自负载均衡发送的数据包。<br>这种方式称作三角传输模式，单臂模式，也叫做直接路由方式（DR）。使用DR方式的链路层负载均衡是目前大型网站使用最广的一种负载均衡手段。</p>
-<p>下面大致记录以下负载均衡的演进：<br>nginx做反向代理的同时也做七层负载均衡。<br>使用四层的代理负载均衡，并使用主备，一般使用HAproxy或者LVS<br>使用单臂模式加七层代理集群，一般是LVS（DR模式）主备+HAproxy集群（七层负载均衡）<br>Nginx做负载均衡是非常方便的，如果一个机器满足不了需求了，可以直接做一个反向代理加上负载均衡。四层的代理负载均衡比七层负载均衡性能好很多，集群规模可以迅速扩大，并且可以细分服务。当公司的规模很大的时候，有多个机房、多个大型服务时，LVS（单臂）+HAproxy（七层）就更适合了。</p>
+<p><code>反向代理负载均衡</code><br>
+这种方法就是使用反向代理服务器，它一般在web服务器前面，这个位置也正好是负载均衡服务器的位置，所以大多数反向代理服务器同时也提供负载均衡的功能。由于web服务器不直接对外提供访问，因此web服务器不需要使用外部IP,而反向代理服务器则需要配置双网卡和内部外部两套IP地址。反向代理服务器转发请求是在HTTP协议层面，因此也叫应用层负载均衡，由于应用层在七层网络模型中的第七层，所以一般也称为七层负载均衡。优点就是和反向代理功服务器功能集成在一起，部署简单。缺点是反向代理服务器是所有请求和响应的中转站，其性能可能会成为瓶颈。</p>
+<p><code>网络层负载均衡</code><br>
+这种方法是在网络层通过修改请求目标地址进行负载均衡，网络层在七层网络层模型的第四层，所以也叫做四层负载均衡，也叫做IP层负载均衡。请求达到负载均衡服务器后，由负载均衡服务器在操作系统内核进程获取网络数据包，根据负载均衡算法得到一台真实web服务器的地址，然后修改请求的目的地址到这台真实的web服务器地址，等到web服务器处理完成后，响应数据包回到负载均衡服务器，再将数据包源地址修改为自身的IP（负载均衡服务器的IP）地址发送给用户浏览器。这里关键在于真实无力web服务器响应数据包如何返回给负载均衡服务器。一种是源地址转换（SNAT），第二种是负载均衡服务器作为网关服务器。网络层的负载均衡在内核进程完成数据转发，有更好的性能。但是由于响应请求的流量要经过负载均衡服务器，容易成为瓶颈。</p>
+<p><code>数据链路层负载均衡</code><br>
+数据链路层主要处理mac地址，所以使用修改mac地址进行转发请求。负载均衡数据分发过程中不修改IP地址，只修改mac地址，通过配置真实物理服务器集群所有机器虚拟IP和负载均衡服务器IP地址一致，从而达到不修改数据包的源地址和目的地址就可以进行数据分发的目的。由于web服务器的服务器地址IP和数据请求目的IP地址一致，不需要通过负载均衡服务器进行地址转换，可将相应数据包直接返回用户。如果有足够的公有IP,其实web服务器也可以直接使用自己的IP响应请求，不过这样web服务器必须绑定负载均衡的虚拟IP地址（VIP），才能保证web服务器收到来自负载均衡发送的数据包。<br>
+这种方式称作三角传输模式，单臂模式，也叫做直接路由方式（DR）。使用DR方式的链路层负载均衡是目前大型网站使用最广的一种负载均衡手段。</p>
+<p>下面大致记录以下负载均衡的演进：<br>
+nginx做反向代理的同时也做七层负载均衡。<br>
+使用四层的代理负载均衡，并使用主备，一般使用HAproxy或者LVS<br>
+使用单臂模式加七层代理集群，一般是LVS（DR模式）主备+HAproxy集群（七层负载均衡）<br>
+Nginx做负载均衡是非常方便的，如果一个机器满足不了需求了，可以直接做一个反向代理加上负载均衡。四层的代理负载均衡比七层负载均衡性能好很多，集群规模可以迅速扩大，并且可以细分服务。当公司的规模很大的时候，有多个机房、多个大型服务时，LVS（单臂）+HAproxy（七层）就更适合了。</p>
 <p><strong>负载均衡服务器的好处</strong>：1.摆脱停机时间 2.处理高性能 3.管理服务器故障 4.增强安全性 5.改善客户体验</p>
 <hr>
-<p><strong>请解释 Nginx 如何处理 HTTP 请求？</strong><br>首先，Nginx在启动时，会解析配置文件，得到需要监听的端口与IP地址，然后在Nginx的Master进程(解释：读取及评估配置和维持)里面先初始化好这个监控的Socket，然后在fork出多个子进程出来。之后，子进程会竞争accept新的连接。此时，客户端就可以向nginx发起连接，当客户端与nginx进行三次握手，与nginx建立好连接之后。此时，某一个子进程会accept成功，得到这个建立好的连接Scoket，然后创建nginx对连接的封装，接着，设置读写事件处理函数，并添加读写事件来与客户端进行数据的交换。最后Nginx或客户端主动关闭连接，到此，以一个连接也就结束了。</p>
-<p><strong>为什么Nginx不适用多线程？</strong><br>Apache: 创建多个进程或线程，而每个进程或线程都会为其分配 cpu 和内存（线程要比进程小的多，所以 worker 支持比 perfork 高的并发），并发过大会榨干服务器资源。</p>
+<p><strong>请解释 Nginx 如何处理 HTTP 请求？</strong><br>
+首先，Nginx在启动时，会解析配置文件，得到需要监听的端口与IP地址，然后在Nginx的Master进程(解释：读取及评估配置和维持)里面先初始化好这个监控的Socket，然后在fork出多个子进程出来。之后，子进程会竞争accept新的连接。此时，客户端就可以向nginx发起连接，当客户端与nginx进行三次握手，与nginx建立好连接之后。此时，某一个子进程会accept成功，得到这个建立好的连接Scoket，然后创建nginx对连接的封装，接着，设置读写事件处理函数，并添加读写事件来与客户端进行数据的交换。最后Nginx或客户端主动关闭连接，到此，以一个连接也就结束了。</p>
+<p><strong>为什么Nginx不适用多线程？</strong><br>
+Apache: 创建多个进程或线程，而每个进程或线程都会为其分配 cpu 和内存（线程要比进程小的多，所以 worker 支持比 perfork 高的并发），并发过大会榨干服务器资源。</p>
 <p>Nginx: 采用单线程来异步非阻塞处理请求（管理员可以配置 Nginx 主进程的工作进程的数量）(epoll)，不会为每个请求分配 cpu 和内存资源，节省了大量资源，同时也减少了大量的 CPU 的上下文切换。所以才使得 Nginx 支持更高的并发。</p>
-<p><strong>Nginx和Apache的不同点</strong><br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321195726685.png" alt="image-20210321195726685"></p>
+<p><strong>Nginx和Apache的不同点</strong><br>
+<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321195726685.png" alt="image-20210321195726685"></p>
 <p><strong>Nginx配置文件</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">user  nginx;                        # 运行用户，默认即是nginx，可以不进行设置</span><br><span class="line">worker_processes  1;                # Nginx 进程数，一般设置为和 CPU 核数一样</span><br><span class="line">error_log  &#x2F;var&#x2F;log&#x2F;nginx&#x2F;error.log warn;   # Nginx 的错误日志存放目录</span><br><span class="line">pid        &#x2F;var&#x2F;run&#x2F;nginx.pid;      # Nginx 服务启动时的 pid 存放位置</span><br><span class="line"></span><br><span class="line">events &#123;</span><br><span class="line">    use epoll;     # 使用epoll的I&#x2F;O模型(如果你不知道Nginx该使用哪种轮询方法，会自动选择一个最适合你操作系统的)</span><br><span class="line">    worker_connections 1024;   # 每个进程允许最大并发数</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;   # 配置使用最频繁的部分，代理、缓存、日志定义等绝大多数功能和第三方模块的配置都在这里设置</span><br><span class="line">    # 设置日志模式</span><br><span class="line">    log_format  main  &#39;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#39;</span><br><span class="line">                      &#39;$status $body_bytes_sent &quot;$http_referer&quot; &#39;</span><br><span class="line">                      &#39;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#39;;</span><br><span class="line"></span><br><span class="line">    access_log  &#x2F;var&#x2F;log&#x2F;nginx&#x2F;access.log  main;   # Nginx访问日志存放位置</span><br><span class="line"></span><br><span class="line">    sendfile            on;   # 开启高效传输模式</span><br><span class="line">    tcp_nopush          on;   # 减少网络报文段的数量</span><br><span class="line">    tcp_nodelay         on;</span><br><span class="line">    keepalive_timeout   65;   # 保持连接的时间，也叫超时时间，单位秒</span><br><span class="line">    types_hash_max_size 2048;</span><br><span class="line"></span><br><span class="line">    include             &#x2F;etc&#x2F;nginx&#x2F;mime.types;      # 文件扩展名与类型映射表</span><br><span class="line">    default_type        application&#x2F;octet-stream;   # 默认文件类型</span><br><span class="line"></span><br><span class="line">    include &#x2F;etc&#x2F;nginx&#x2F;conf.d&#x2F;*.conf;   # 加载子配置项</span><br><span class="line">    </span><br><span class="line">    server &#123;</span><br><span class="line">    	listen       80;       # 配置监听的端口</span><br><span class="line">    	server_name  localhost;    # 配置的域名</span><br><span class="line">    	</span><br><span class="line">    	location &#x2F; &#123;</span><br><span class="line">    		root   &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html;  # 网站根目录</span><br><span class="line">    		index  index.html index.htm;   # 默认首页文件</span><br><span class="line">    		deny 172.168.22.11;   # 禁止访问的ip地址，可以为all</span><br><span class="line">    		allow 172.168.33.44；# 允许访问的ip地址，可以为all</span><br><span class="line">    	&#125;</span><br><span class="line">    	</span><br><span class="line">    	error_page 500 502 503 504 &#x2F;50x.html;  # 默认50x对应的访问页面</span><br><span class="line">    	error_page 400 404 error.html;   # 同上</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>server 块可以包含多个 location 块，location 指令用于匹配 uri，语法：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location [ &#x3D; | ~ | ~* | ^~] uri &#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>重点：后面进行负载均衡、反向代理都是使用这个<br>1、= 精确匹配路径，用于不含正则表达式的 uri 前，如果匹配成功，不再进行后续的查找；<br>2、^~ 用于不含正则表达式的 uri 前，表示如果该符号后面的字符是最佳匹配，采用该规则，不再进行后续的查找；<br>3、~ 表示用该符号后面的正则去匹配路径，区分大小写；<br>4、~* 表示用该符号后面的正则去匹配路径，不区分大小写。跟 ~ 优先级都比较低，如有多个location的正则能匹配的话，则使用正则表达式最长的那个；<br>如果 uri 包含正则表达式，则必须要有 ~ 或 ~* 标志。<br>还有一些其他的指令：我用过proxy_redirect 参看之前的项目部署<br>1、proxy_set_header：在将客户端请求发送给后端服务器之前，更改来自客户端的请求头信息；<br>2、proxy_connect_timeout：配置 Nginx 与后端代理服务器尝试建立连接的超时时间；<br>3、proxy_read_timeout：配置 Nginx 向后端服务器组发出 read 请求后，等待相应的超时时间；<br>4、proxy_send_timeout：配置 Nginx 向后端服务器组发出 write 请求后，等待相应的超时时间；<br>5、proxy_redirect：用于修改后端服务器返回的响应头中的 Location 和 Refresh。</p>
-<p><strong>什么是动静分离</strong><br>动态资源、静态资源分离，是让动态网站里的动态网页根据一定规则把不变的资源和经常变的资源区分开来，动静资源做好了拆分以后我们就可以根据静态资源的特点将其做缓存操作，这就是网站静态化处理的核心思路。</p>
-<p><em>动态资源、静态资源分离简单的概括是：动态文件与静态文件的分离。</em><br>一般来说，都需要将动态资源和静态资源分开，由于 Nginx 的高并发和静态资源缓存等特性，经常将静态资源部署在 Nginx 上。如果请求的是静态资源，直接到静态资源目录获取资源，如果是动态资源的请求，则利用反向代理的原理，把请求转发给对应后台应用去处理，从而实现动静分离。使用<code>前后端分离</code>后，可以很大程度提升静态资源的访问速度，即使动态服务不可用，静态资源的访问也不会受到影响。</p>
-<p><strong>为什么要动静分离</strong><br>在我们的软件开发中，有些请求是需要后台处理的（如：.jsp,.do等等），有些请求是不需要经过后台处理的（如：css、html、jpg、js等等文件, 这些不需要经过后台处理的文件称为静态文件，否则动态文件。因此我们后台处理忽略静态文件。这会有人又说那我后台忽略静态文件不就完了吗? 当然这是可以的，但是这样后台的请求次数就明显增多了。在我们对资源的响应速度有要求的时候，我们应该使用这种动静分离的策略去解决, 动、静分离将网站静态资源（HTML，JavaScript，CSS，img等文件）与后台应用分开部署，提高用户访问静态代码的速度，降低对后台应用访问<br>这里我们将静态资源放到nginx中，动态资源转发到tomcat服务器中</p>
-<p><strong>Nginx是怎么进行负载均衡的</strong><br>其中Nginx默认使用的负载均衡策略：轮询(RR)、加权轮询(WRR)、ip_hash、least_conn<br>1、轮询：<br>将请求按顺序轮流地分配到每个节点上，不关心每个节点实际的连接数和当前的系统负载。<br>优点：简单高效，易于水平扩展，每个节点满足字面意义上的均衡；<br>缺点：没有考虑机器的性能问题，根据木桶最短木板理论，集群性能瓶颈更多的会受性能差的服务器影响。<br>2、加权轮询<br>不同的后端服务器可能机器的配置和当前系统的负载并不相同，因此它们的抗压能力也不相同。给配置高、负载低的机器配置更高的权重，让其处理更多的请；而配置低、负载高的机器，给其分配较低的权重，降低其系统负载，加权轮询能很好地处理这一问题，并将请求顺序且按照权重分配到后端。<br>加权轮询算法要生成一个服务器序列，该序列中包含n个服务器。n是所有服务器的权重之和。在该序列中，每个服务器的出现的次数，等于其权重值。并且，生成的序列中，服务器的分布应该尽可能的均匀。比如序列{a, a, a, a, a, b, c}中，前五个请求都会分配给服务器a，这就是一种不均匀的分配方法，更好的序列应该是：{a, a, b, a, c, a, a}。<br>优点：可以将不同机器的性能问题纳入到考量范围，集群性能最优最大化；<br>缺点：生产环境复杂多变，服务器抗压能力也无法精确估算，静态算法导致无法实时动态调整节点权重，只能粗糙优化。<br>3、源地址哈希<br>源地址哈希的思想是根据客户端的IP地址，通过哈希函数计算得到一个数值，用该数值对服务器节点数进行取模，得到的结果便是要访问节点序号。采用源地址哈希法进行负载均衡，同一IP地址的客户端，当后端服务器列表不变时，它每次都会落到到同一台服务器进行访问。<br>优点：相同的IP每次落在同一个节点，可以人为干预客户端请求方向，例如灰度发布；<br>缺点：如果某个节点出现故障，会导致这个节点上的客户端无法使用，无法保证高可用。当某一用户成为热点用户，那么会有巨大的流量涌向这个节点，导致冷热分布不均衡，无法有效利用起集群的性能。所以当热点事件出现时，一般会将源地址哈希法切换成轮询法。<br>4、最少链接数<br>根据每个节点当前的连接情况，动态地选取其中当前积压连接数最少的一个节点处理当前请求，尽可能地提高后端服务的利用效率，将请求合理地分流到每一台服务器。俗称闲的人不能闲着，大家一起动起来。<br>优点：动态，根据节点状况实时变化；<br>缺点：提高了复杂度，每次连接断开需要进行计数；<br>实现：将连接数的倒数当权重值。</p>
+<p>重点：后面进行负载均衡、反向代理都是使用这个<br>
+1、= 精确匹配路径，用于不含正则表达式的 uri 前，如果匹配成功，不再进行后续的查找；<br>
+2、^~ 用于不含正则表达式的 uri 前，表示如果该符号后面的字符是最佳匹配，采用该规则，不再进行后续的查找；<br>
+3、~ 表示用该符号后面的正则去匹配路径，区分大小写；<br>
+4、~* 表示用该符号后面的正则去匹配路径，不区分大小写。跟 ~ 优先级都比较低，如有多个location的正则能匹配的话，则使用正则表达式最长的那个；<br>
+如果 uri 包含正则表达式，则必须要有 ~ 或 ~* 标志。<br>
+还有一些其他的指令：我用过proxy_redirect 参看之前的项目部署<br>
+1、proxy_set_header：在将客户端请求发送给后端服务器之前，更改来自客户端的请求头信息；<br>
+2、proxy_connect_timeout：配置 Nginx 与后端代理服务器尝试建立连接的超时时间；<br>
+3、proxy_read_timeout：配置 Nginx 向后端服务器组发出 read 请求后，等待相应的超时时间；<br>
+4、proxy_send_timeout：配置 Nginx 向后端服务器组发出 write 请求后，等待相应的超时时间；<br>
+5、proxy_redirect：用于修改后端服务器返回的响应头中的 Location 和 Refresh。</p>
+<p><strong>什么是动静分离</strong><br>
+动态资源、静态资源分离，是让动态网站里的动态网页根据一定规则把不变的资源和经常变的资源区分开来，动静资源做好了拆分以后我们就可以根据静态资源的特点将其做缓存操作，这就是网站静态化处理的核心思路。</p>
+<p><em>动态资源、静态资源分离简单的概括是：动态文件与静态文件的分离。</em><br>
+一般来说，都需要将动态资源和静态资源分开，由于 Nginx 的高并发和静态资源缓存等特性，经常将静态资源部署在 Nginx 上。如果请求的是静态资源，直接到静态资源目录获取资源，如果是动态资源的请求，则利用反向代理的原理，把请求转发给对应后台应用去处理，从而实现动静分离。使用<code>前后端分离</code>后，可以很大程度提升静态资源的访问速度，即使动态服务不可用，静态资源的访问也不会受到影响。</p>
+<p><strong>为什么要动静分离</strong><br>
+在我们的软件开发中，有些请求是需要后台处理的（如：.jsp,.do等等），有些请求是不需要经过后台处理的（如：css、html、jpg、js等等文件, 这些不需要经过后台处理的文件称为静态文件，否则动态文件。因此我们后台处理忽略静态文件。这会有人又说那我后台忽略静态文件不就完了吗? 当然这是可以的，但是这样后台的请求次数就明显增多了。在我们对资源的响应速度有要求的时候，我们应该使用这种动静分离的策略去解决, 动、静分离将网站静态资源（HTML，JavaScript，CSS，img等文件）与后台应用分开部署，提高用户访问静态代码的速度，降低对后台应用访问<br>
+这里我们将静态资源放到nginx中，动态资源转发到tomcat服务器中</p>
+<p><strong>Nginx是怎么进行负载均衡的</strong><br>
+其中Nginx默认使用的负载均衡策略：轮询(RR)、加权轮询(WRR)、ip_hash、least_conn<br>
+1、轮询：<br>
+将请求按顺序轮流地分配到每个节点上，不关心每个节点实际的连接数和当前的系统负载。<br>
+优点：简单高效，易于水平扩展，每个节点满足字面意义上的均衡；<br>
+缺点：没有考虑机器的性能问题，根据木桶最短木板理论，集群性能瓶颈更多的会受性能差的服务器影响。<br>
+2、加权轮询<br>
+不同的后端服务器可能机器的配置和当前系统的负载并不相同，因此它们的抗压能力也不相同。给配置高、负载低的机器配置更高的权重，让其处理更多的请；而配置低、负载高的机器，给其分配较低的权重，降低其系统负载，加权轮询能很好地处理这一问题，并将请求顺序且按照权重分配到后端。<br>
+加权轮询算法要生成一个服务器序列，该序列中包含n个服务器。n是所有服务器的权重之和。在该序列中，每个服务器的出现的次数，等于其权重值。并且，生成的序列中，服务器的分布应该尽可能的均匀。比如序列{a, a, a, a, a, b, c}中，前五个请求都会分配给服务器a，这就是一种不均匀的分配方法，更好的序列应该是：{a, a, b, a, c, a, a}。<br>
+优点：可以将不同机器的性能问题纳入到考量范围，集群性能最优最大化；<br>
+缺点：生产环境复杂多变，服务器抗压能力也无法精确估算，静态算法导致无法实时动态调整节点权重，只能粗糙优化。<br>
+3、源地址哈希<br>
+源地址哈希的思想是根据客户端的IP地址，通过哈希函数计算得到一个数值，用该数值对服务器节点数进行取模，得到的结果便是要访问节点序号。采用源地址哈希法进行负载均衡，同一IP地址的客户端，当后端服务器列表不变时，它每次都会落到到同一台服务器进行访问。<br>
+优点：相同的IP每次落在同一个节点，可以人为干预客户端请求方向，例如灰度发布；<br>
+缺点：如果某个节点出现故障，会导致这个节点上的客户端无法使用，无法保证高可用。当某一用户成为热点用户，那么会有巨大的流量涌向这个节点，导致冷热分布不均衡，无法有效利用起集群的性能。所以当热点事件出现时，一般会将源地址哈希法切换成轮询法。<br>
+4、最少链接数<br>
+根据每个节点当前的连接情况，动态地选取其中当前积压连接数最少的一个节点处理当前请求，尽可能地提高后端服务的利用效率，将请求合理地分流到每一台服务器。俗称闲的人不能闲着，大家一起动起来。<br>
+优点：动态，根据节点状况实时变化；<br>
+缺点：提高了复杂度，每次连接断开需要进行计数；<br>
+实现：将连接数的倒数当权重值。</p>
+<h2 id="Nginx简单使用">Nginx简单使用</h2>
+<h3 id="安装到Linux">安装到Linux</h3>
+<p>1、通过yum安装</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum install yum-utils</span><br><span class="line">yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo</span><br><span class="line">yum install openresty</span><br><span class="line">yum install openresty-resty</span><br></pre></td></tr></table></figure>
+<p>一路下来y就完事了。至此不出意外就将OpenResty安装成功。默认目录为<code>/usr/local/openresty</code><br>
+下面就是激动人心的时刻启动。首先进入nginx目录。<br>
+然后<code>sbin/nginx -c conf/nginx.conf</code><br>
+去访问吧，少年！<br>
+nginx无缝重启命令:<code>sbin/nginx -s reload</code><br>
+知道你感到不过瘾，只看到一个简单的页面。那么下面在来看看一些基本规则。<br>
+第一等级 = 精准匹配 例如 = /a<br>
+第二等级 ^~  以什么开头 ^~ /a 如果使用/a 那么还是走上一个精准匹配，但是如果访问/a/b 那么就走这个。<br>
+第三等级 ~ 开头表示区分大小写正则匹配<br>
+第四等级 / 通用匹配</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">location = / &#123;</span><br><span class="line">   #规则A</span><br><span class="line">&#125;</span><br><span class="line">location = /login &#123;</span><br><span class="line">   #规则B</span><br><span class="line">&#125;</span><br><span class="line">location ^~ /static/ &#123;</span><br><span class="line">   #规则C</span><br><span class="line">&#125;</span><br><span class="line">location ~ \.(gif|jpg|png|js|css)$ &#123;</span><br><span class="line">   #规则D，注意：是根据括号内的大小写进行匹配。括号内全是小写，只匹配小写</span><br><span class="line">&#125;</span><br><span class="line">location ~* \.png$ &#123;</span><br><span class="line">   #规则E</span><br><span class="line">&#125;</span><br><span class="line">location !~ \.xhtml$ &#123;</span><br><span class="line">   #规则F</span><br><span class="line">&#125;</span><br><span class="line">location !~* \.xhtml$ &#123;</span><br><span class="line">   #规则G</span><br><span class="line">&#125;</span><br><span class="line">location / &#123;</span><br><span class="line">   #规则H</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>小结：<br>
+1、= ^ ~ / 优先级由高到低<br>
+2、同一优先级，匹配程度较高的先匹配<br>
+3、匹配程度一样，则写在前面的先进行匹配</p>
+<h4 id="反向代理测试">反向代理测试</h4>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">   location &#x2F; &#123;</span><br><span class="line">    echo &quot;hello&quot;;</span><br><span class="line">&#125;</span><br><span class="line">location &#x2F;a &#123;</span><br><span class="line">    proxy_pass https:&#x2F;&#x2F;www.baidu.com&#x2F;;</span><br><span class="line">&#125;</span><br><span class="line">location &#x2F;b &#123;</span><br><span class="line">    proxy_pass https:&#x2F;&#x2F;www.taobao.com&#x2F;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个时候你去访问三个不同的路径将为有三个不同的展示。<br>
+下面设置负载均衡，轮询</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">   upstream group1 &#123;</span><br><span class="line">       server www.baidu.com weight&#x3D;2;</span><br><span class="line">       server www.taobao.com weight&#x3D;1;</span><br><span class="line">   &#125;</span><br><span class="line">   location &#x2F; &#123;</span><br><span class="line">    echo &quot;hello&quot;;</span><br><span class="line">&#125;</span><br><span class="line">location &#x2F;a &#123;</span><br><span class="line">    proxy_pass https:&#x2F;&#x2F;group1&#x2F;;</span><br><span class="line">&#125;</span><br><span class="line">location &#x2F;b &#123;</span><br><span class="line">    proxy_pass https:&#x2F;&#x2F;www.taobao.com&#x2F;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>安装Java环境，先去下载tar，然后上传解压，去profile添加环境变量,<code>vim /etc/profile</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME&#x3D;&#x2F;home&#x2F;wdz&#x2F;jdk1.8.0_221 </span><br><span class="line">export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</span><br><span class="line">export CLASSPATH&#x3D;.:$JAVA_HOME&#x2F;lib&#x2F;dt.jar:$JAVA_HOME&#x2F;lib&#x2F;tools.jar</span><br><span class="line">export JRE_HOME&#x3D;$JAVA_HOME&#x2F;jre</span><br></pre></td></tr></table></figure>
+<p>注意上面的第一个就是自己解压的目录<br>
+<code>source /etc/profile</code>刷新配置文件之后，就成功了。<br>
+安装Tomcat<br>
+上传压缩包，解压，然后进入bin中就可以执行了。<br>
+部署自己的项目<br>
+使用nginx。<br>
+安装MySQL  TODO</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/hafErlto-1N6ypYfOVIGBQ">可能是最详细的Nginx介绍了</a><br><a target="_blank" rel="noopener" href="https://www.jb51.net/article/122310.htm">服务器负载均衡</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/348024b6b3ab">nginx部署之后404</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/101961241">Nginx原理篇</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102528726">Nginx高级篇</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/348024b6b3ab">nginx部署之后404</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_29373285/article/details/88777503">负载均衡算法</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/a303549861/article/details/88672901">Nginx学习</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/123369538">负载均衡</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/cywosp/article/details/38014581">负载均衡之HTTP重定向</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/cywosp/article/details/38017027">负载均衡之DNS域名解析</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/h13140995776/article/details/101174283">Nginx缓存</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43122090/article/details/105461971">Nginx问题</a></p>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/hafErlto-1N6ypYfOVIGBQ">可能是最详细的Nginx介绍了</a><br>
+<a target="_blank" rel="noopener" href="https://www.jb51.net/article/122310.htm">服务器负载均衡</a><br>
+<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/348024b6b3ab">nginx部署之后404</a><br>
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/101961241">Nginx原理篇</a><br>
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102528726">Nginx高级篇</a><br>
+<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/348024b6b3ab">nginx部署之后404</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_29373285/article/details/88777503">负载均衡算法</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/a303549861/article/details/88672901">Nginx学习</a><br>
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/123369538">负载均衡</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/cywosp/article/details/38014581">负载均衡之HTTP重定向</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/cywosp/article/details/38017027">负载均衡之DNS域名解析</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/h13140995776/article/details/101174283">Nginx缓存</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43122090/article/details/105461971">Nginx问题</a></p>
 
       
 
@@ -470,11 +574,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">

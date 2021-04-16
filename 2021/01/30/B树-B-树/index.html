@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>B树/B+树 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="MySQL灵魂问答 首先明确一下，B-树就是B树。  B-树的特征  参考百度百科如下：一棵m阶B树(balanced tree of order m)是一棵平衡的m路搜索树。它或者是空树，或者是满足下列性质的树：  1、根结点至少有两个子女；">
+  <meta name="description" content="MySQL灵魂问答 首先明确一下，B-树就是B树。  B-树的特征  参考百度百科如下： 一棵m阶B树(balanced tree of order m)是一棵平衡的m路搜索树。它或者是空树，或者是满足下列性质的树：  1、根结点至少有两个子女；">
 <meta property="og:type" content="article">
 <meta property="og:title" content="B树&#x2F;B+树">
 <meta property="og:url" content="http://example.com/2021/01/30/B%E6%A0%91-B-%E6%A0%91/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="MySQL灵魂问答 首先明确一下，B-树就是B树。  B-树的特征  参考百度百科如下：一棵m阶B树(balanced tree of order m)是一棵平衡的m路搜索树。它或者是空树，或者是满足下列性质的树：  1、根结点至少有两个子女；">
+<meta property="og:description" content="MySQL灵魂问答 首先明确一下，B-树就是B树。  B-树的特征  参考百度百科如下： 一棵m阶B树(balanced tree of order m)是一棵平衡的m路搜索树。它或者是空树，或者是满足下列性质的树：  1、根结点至少有两个子女；">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210307082751819.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210307082832093.png">
@@ -178,21 +178,27 @@
 <blockquote>
 <p>B-树的特征</p>
 </blockquote>
-<p>参考百度百科如下：<br>一棵m阶B树(balanced tree of order m)是一棵平衡的m路搜索树。它或者是空树，或者是满足下列性质的树：</p>
+<p>参考百度百科如下：<br>
+一棵m阶B树(balanced tree of order m)是一棵平衡的m路搜索树。它或者是空树，或者是满足下列性质的树：</p>
 <ul>
 <li>1、根结点至少有两个子女；</li>
 </ul>
 <a id="more"></a>
-
 <ul>
 <li>2、每个非根节点所包含的关键字个数 j 满足：<strong>┌m/2┐ - 1 &lt;= j &lt;= m - 1；</strong> (例如5阶的非根节点关键字个数为2~4)</li>
 <li>3、除根结点以外的所有结点（不包括叶子结点）的度数正好是关键字总数加1，故内部子树个数 k 满足：┌m/2┐ &lt;= k &lt;= m ；</li>
-<li>4、所有的叶子结点都位于同一层。<br>在B-树中，每个结点中关键字从小到大排列，并且当该结点的孩子是非叶子结点时，该k-1个关键字正好是k个孩子包含的关键字的值域的分划。<br>因为叶子结点不包含关键字，所以可以把叶子结点看成在树里实际上并不存在外部结点，指向这些外部结点的指针为空，叶子结点的数目正好等于树中所包含的关键字总个数加1。<br>B-树中的一个包含n个关键字，n+1个指针的结点的一般形式为： （n,P0,K1,P1,K2,P2,…,Kn,Pn）<br>其中，Ki为关键字，K1&lt;K2&lt;…&lt;Kn, Pi 是指向包括Ki到Ki+1之间的关键字的子树的指针。</li>
+<li>4、所有的叶子结点都位于同一层。<br>
+在B-树中，每个结点中关键字从小到大排列，并且当该结点的孩子是非叶子结点时，该k-1个关键字正好是k个孩子包含的关键字的值域的分划。<br>
+因为叶子结点不包含关键字，所以可以把叶子结点看成在树里实际上并不存在外部结点，指向这些外部结点的指针为空，叶子结点的数目正好等于树中所包含的关键字总个数加1。<br>
+B-树中的一个包含n个关键字，n+1个指针的结点的一般形式为： （n,P0,K1,P1,K2,P2,…,Kn,Pn）<br>
+其中，Ki为关键字，K1&lt;K2&lt;…&lt;Kn, Pi 是指向包括Ki到Ki+1之间的关键字的子树的指针。</li>
 </ul>
 <blockquote>
 <p>面试：数据库索引为什么使用的树结构存储，而不是二叉查找树？</p>
 </blockquote>
-<p>首先，不得不承认二叉查找树的时间复杂度为O(logN)，性能非常好，而且二叉查找树的查找速度和比较次数都是最小的。但是现实中我们不得不考虑的一个问题就是：<strong>磁盘IO</strong><br>数据库索引是存储在磁盘上的。当数据量比较大的时候，索引有可能达到几个G或者更多。当我们利用索引查询时，能把整个索引都加载到内存中吗？显然这是不现实的。能做的只有逐一加载每一个磁盘页，此时的磁盘也就是对应索引树的节点。二叉查找树的高度就决定了磁盘IO操作的次数，所以就需要改良成一种“胖矮”的结构减少磁盘IO的次数。所以B树的特点之一就是如此。<br>节点中的元素多一些也没有关系，仅仅是多了几次内存交互，只要不超过磁盘页的大小即可。这是B树的另一个特点。</p>
+<p>首先，不得不承认二叉查找树的时间复杂度为O(logN)，性能非常好，而且二叉查找树的查找速度和比较次数都是最小的。但是现实中我们不得不考虑的一个问题就是：<strong>磁盘IO</strong><br>
+数据库索引是存储在磁盘上的。当数据量比较大的时候，索引有可能达到几个G或者更多。当我们利用索引查询时，能把整个索引都加载到内存中吗？显然这是不现实的。能做的只有逐一加载每一个磁盘页，此时的磁盘也就是对应索引树的节点。二叉查找树的高度就决定了磁盘IO操作的次数，所以就需要改良成一种“胖矮”的结构减少磁盘IO的次数。所以B树的特点之一就是如此。<br>
+节点中的元素多一些也没有关系，仅仅是多了几次内存交互，只要不超过磁盘页的大小即可。这是B树的另一个特点。</p>
 <p>B+树</p>
 <blockquote>
 <p>B+树的特征</p>
@@ -202,38 +208,63 @@
 <li>2.所有的叶子结点中包含了全部元素的信息，及指向含这些元素记录的指针，且叶子结点本身依关键字的大小自小而大顺序链接。</li>
 <li>3.所有的中间节点元素都同时存在于子节点，在子节点元素中是最大（或最小）元素。</li>
 </ul>
-<p>小结：<br>首先，每一个父节点的元素都出现在子节中，是子节点的最大(或最小)元素。<br>其次，根节点的最大元素，也就等同于整个B+树的最大元素。以后无论插入多少元素都要保证最大的元素在根节点中。叶子节点之间是有序链表。<br>B+树还具有一个重要的特点，这个特点是在索引之外，确实至关重要的特点。那就是<strong>卫星数据</strong>，<br><font color=red>所谓卫星数据，指的就是索引元素所指向的数据记录，比如数据库中的某一行。在B-树中，无论是中间节点还是叶子结点都带有卫星数据，而在B+树当中，只有叶子节点带有卫星数据，其余中间节点仅仅是索引，没有任何数据关联。</font></p>
-<p>B树中的卫星数据<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210307082751819.png" alt="image-20210307082751819"></p>
-<hr>
-<p>B+树中的卫星数据<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210307082832093.png" alt="image-20210307082832093"></p>
+<p>小结：<br>
+首先，每一个父节点的元素都出现在子节中，是子节点的最大(或最小)元素。<br>
+其次，根节点的最大元素，也就等同于整个B+树的最大元素。以后无论插入多少元素都要保证最大的元素在根节点中。叶子节点之间是有序链表。<br>
+B+树还具有一个重要的特点，这个特点是在索引之外，确实至关重要的特点。那就是<strong>卫星数据</strong>，<br>
+<font color=red>所谓卫星数据，指的就是索引元素所指向的数据记录，比如数据库中的某一行。在B-树中，无论是中间节点还是叶子结点都带有卫星数据，而在B+树当中，只有叶子节点带有卫星数据，其余中间节点仅仅是索引，没有任何数据关联。</font></p>
+<h2 id="B树中的卫星数据image-20210307082751819">B树中的卫星数据<br>
+<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210307082751819.png" alt="image-20210307082751819"></h2>
+<p>B+树中的卫星数据<br>
+<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210307082832093.png" alt="image-20210307082832093"></p>
 <p>需要补充的是，在数据库的聚集索引（Clustered Index）中，叶子节点直接包含卫星数据。在非聚集索引（NonClustered Index）中，叶子节点带有指向卫星数据的指针。</p>
 <blockquote>
 <p>B+树优点</p>
 </blockquote>
-<p>B+树的好处主要体现在查询性能上。<br>在单元素查询的时候，B+树会自顶向下逐层查找节点，最终找到匹配的叶子节点。</p>
+<p>B+树的好处主要体现在查询性能上。<br>
+在单元素查询的时候，B+树会自顶向下逐层查找节点，最终找到匹配的叶子节点。</p>
 <ul>
 <li>B+树的中间节点没有卫星数据，所以同样大小的磁盘页可以容纳更多的节点元素，这就意味着在数据量相同的情况下，B+树更加的矮胖，因此IO的次数也就较少</li>
 <li>B+树查询必须查找到叶子节点，每一次查找都是稳定的</li>
 </ul>
-<p>总结：<br>1.单一节点存储更多的元素，使得查询的IO次数更少。<br>2.所有查询都要查找到叶子节点，查询性能稳定。<br>3.所有叶子节点形成有序链表，便于范围查询,远远高于B-树。</p>
+<p>总结：<br>
+1.单一节点存储更多的元素，使得查询的IO次数更少。<br>
+2.所有查询都要查找到叶子节点，查询性能稳定。<br>
+3.所有叶子节点形成有序链表，便于范围查询,远远高于B-树。</p>
 <blockquote>
 <p>面试：联合索引在B+树上的存储结构及数据查找方式</p>
 </blockquote>
-<p>首先了解一下，索引可选的数据结构包括：二叉树、红黑树、hash、B树。<br>下面一步步来解说为什么没有选择其他结构，首先说说二叉树，在某些条件下二叉树可能退化成链表结构。而链表的缺点就是在查找的时候必须从头开始遍历。这就是弊端。<br>再说说红黑树，在JDK1.8中hashmap就用到了红黑树。那为什么索引也不同样使用hashmap呢？假如说我查找的数据在底层的叶子节点上，一般来说都是从根节点开始查找，假如树的高度是50，那我要进行50次查找，50次磁盘IO那得多慢啊这开销已经很大了。这就是红黑树作为索引数据结构的弊端：树的高度过高导致查询效率变慢。<br>说到这里就不得不提及一下存储引擎MyISAM和InnoDB</p>
-<p>MyISAM的索引查找过程<br>    MYISAM这个存储引擎他的查找的一个大致过程就是，先看条件字段有没有用到索引，是索引字段就先去到索引文件去查找这个索引所在的那一行的磁盘文件地址，就借助B+Tree的特点从根节点顺藤摸瓜找到磁盘文件地址指针，然后从MYD文件一次性定位到所找的数据，也就是说MYISAM会垮两个文件。</p>
-<p>InnoDB的索引查找过程<br>    它也是一个B+Tree，但是它的叶子节点和MYISAM有点区别，它存储的是索引所在行的所有字段。<br>    这个好处是是什么？不用回表了，性能应该比MYISAM高，你看MYISAM查找到索引所在行记录的磁盘地址后还要回MYD文件读取一次。</p>
-<p>聚集索引/非聚集索引<br>聚集索引/聚簇索引，叶子节点包含了完整的数据记录，InnoDB的主键索引就是一个聚集索引，他的索引和数据是绑定在一起的（叶子节点）。MYISAM的是非聚集索引，索引和数据是分开存储的。InnoDB的主键索引我们叫做聚集索引。</p>
-<hr>
-<p>自己能力有限，没太看懂，继续重复理解翻阅把！！！<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ibigboy/p/12373978.html">联合索引在B+树上的存储结构及数据查找方式</a></p>
+<p>首先了解一下，索引可选的数据结构包括：二叉树、红黑树、hash、B树。<br>
+下面一步步来解说为什么没有选择其他结构，首先说说二叉树，在某些条件下二叉树可能退化成链表结构。而链表的缺点就是在查找的时候必须从头开始遍历。这就是弊端。<br>
+再说说红黑树，在JDK1.8中hashmap就用到了红黑树。那为什么索引也不同样使用hashmap呢？假如说我查找的数据在底层的叶子节点上，一般来说都是从根节点开始查找，假如树的高度是50，那我要进行50次查找，50次磁盘IO那得多慢啊这开销已经很大了。这就是红黑树作为索引数据结构的弊端：树的高度过高导致查询效率变慢。<br>
+说到这里就不得不提及一下存储引擎MyISAM和InnoDB</p>
+<p>MyISAM的索引查找过程<br>
+MYISAM这个存储引擎他的查找的一个大致过程就是，先看条件字段有没有用到索引，是索引字段就先去到索引文件去查找这个索引所在的那一行的磁盘文件地址，就借助B+Tree的特点从根节点顺藤摸瓜找到磁盘文件地址指针，然后从MYD文件一次性定位到所找的数据，也就是说MYISAM会垮两个文件。</p>
+<p>InnoDB的索引查找过程<br>
+它也是一个B+Tree，但是它的叶子节点和MYISAM有点区别，它存储的是索引所在行的所有字段。<br>
+这个好处是是什么？不用回表了，性能应该比MYISAM高，你看MYISAM查找到索引所在行记录的磁盘地址后还要回MYD文件读取一次。</p>
+<h2 id="聚集索引-非聚集索引聚集索引-聚簇索引，叶子节点包含了完整的数据记录，InnoDB的主键索引就是一个聚集索引，他的索引和数据是绑定在一起的（叶子节点）。MYISAM的是非聚集索引，索引和数据是分开存储的。InnoDB的主键索引我们叫做聚集索引。">聚集索引/非聚集索引<br>
+聚集索引/聚簇索引，叶子节点包含了完整的数据记录，InnoDB的主键索引就是一个聚集索引，他的索引和数据是绑定在一起的（叶子节点）。MYISAM的是非聚集索引，索引和数据是分开存储的。InnoDB的主键索引我们叫做聚集索引。</h2>
+<p>自己能力有限，没太看懂，继续重复理解翻阅把！！！<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ibigboy/p/12373978.html">联合索引在B+树上的存储结构及数据查找方式</a></p>
 <blockquote>
-<p>InnoDB扩展问题 </p>
+<p>InnoDB扩展问题</p>
 </blockquote>
-<p>1、建InnoDB表的时候没有建主键，表也能建成功，为什么？<br>    不建主键不代表没有主键，没有建主键innodb会帮你选一个字段，一个可以标识唯一的字段，选为默认字段，如果这个字段唯一的话，不重复，可一键唯一索引的话，就会作为类似于唯一索引，用这个字段来作为唯一索引来维护整个表的数据。如果没有，mysql会生成一个唯一的列，类似于rowid，只不过你看不到，他会用生成的这个唯一列，维护B+Tree的结构，查数据的时候还是用B+Tree的结构去查找。</p>
-<p>2、为什么推荐整形呢？<br>    我们想象一下查找过程，是把节点load到内存然后在内存里去比较大小，也就是在查找的过程中要不断的去进行数据的比对。假设UUID，既不自增也不是整形。问一下，是整形的1&lt;2比较的效率高还是字符串的“abc”和“abe”比较的效率高呢？显然是前者，因为字符串的比较是转换成ASICI一位一位的比，如果最后一位不一样，比到最后才比较出大小，就比整形比较慢多了，存储空间来说，整形更小。索引越节约资源越好。<br>3、为什么是自增的呢？<br>    我们可以看一下B-Tree的叶子节点之间是没有指针的，B+Tree优化后增加了叶子节点之间的指针，如果我们遍历数据，从当前节点遍历完之后，就可以根据节点间的指针快速找到下一个节点去遍历。讲到这，穿插一下B+Tree为什么要比B-Tree多一个节点间指针呢？那就讲一下索引的另一种数据结构就是hash。</p>
+<p>1、建InnoDB表的时候没有建主键，表也能建成功，为什么？<br>
+不建主键不代表没有主键，没有建主键innodb会帮你选一个字段，一个可以标识唯一的字段，选为默认字段，如果这个字段唯一的话，不重复，可一键唯一索引的话，就会作为类似于唯一索引，用这个字段来作为唯一索引来维护整个表的数据。如果没有，mysql会生成一个唯一的列，类似于rowid，只不过你看不到，他会用生成的这个唯一列，维护B+Tree的结构，查数据的时候还是用B+Tree的结构去查找。</p>
+<p>2、为什么推荐整形呢？<br>
+我们想象一下查找过程，是把节点load到内存然后在内存里去比较大小，也就是在查找的过程中要不断的去进行数据的比对。假设UUID，既不自增也不是整形。问一下，是整形的1&lt;2比较的效率高还是字符串的“abc”和“abe”比较的效率高呢？显然是前者，因为字符串的比较是转换成ASICI一位一位的比，如果最后一位不一样，比到最后才比较出大小，就比整形比较慢多了，存储空间来说，整形更小。索引越节约资源越好。<br>
+3、为什么是自增的呢？<br>
+我们可以看一下B-Tree的叶子节点之间是没有指针的，B+Tree优化后增加了叶子节点之间的指针，如果我们遍历数据，从当前节点遍历完之后，就可以根据节点间的指针快速找到下一个节点去遍历。讲到这，穿插一下B+Tree为什么要比B-Tree多一个节点间指针呢？那就讲一下索引的另一种数据结构就是hash。</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/moakun/article/details/79927830">小灰说B树</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/54102723">小灰说B+树</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/nullzx/p/8729425.html">B树的插入和删除</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzUxNTQyOTIxNA==&mid=2247484041&idx=1&sn=76d3bf1772f9e3c796ad3d8a089220fa&chksm=f9b784b8cec00dae3d52318f6cb2bdee39ad975bf79469b72a499ceca1c5d57db5cbbef914ea&token=2025456560&lang=zh_CN&scene=21#wechat_redirect">MySQL索引为什么选择B树</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ibigboy/p/12373978.html">联合索引在B+树上的存储结构及数据查找方式</a></p>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/moakun/article/details/79927830">小灰说B树</a><br>
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/54102723">小灰说B+树</a><br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/nullzx/p/8729425.html">B树的插入和删除</a><br>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzUxNTQyOTIxNA==&amp;mid=2247484041&amp;idx=1&amp;sn=76d3bf1772f9e3c796ad3d8a089220fa&amp;chksm=f9b784b8cec00dae3d52318f6cb2bdee39ad975bf79469b72a499ceca1c5d57db5cbbef914ea&amp;token=2025456560&amp;lang=zh_CN&amp;scene=21#wechat_redirect">MySQL索引为什么选择B树</a><br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ibigboy/p/12373978.html">联合索引在B+树上的存储结构及数据查找方式</a></p>
 
       
 
@@ -498,11 +529,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -166,7 +166,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h3><p>工厂模式（Factory Pattern）是 Java 中最常用的设计模式之一。这种类型的设计模式属于创建型模式，它提供了一种创建对象的最佳方式。<br>在工厂模式中，我们在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。<br>工厂模式最最核心的知识点是<font color=red>将对象的创建和使用做分离</font><br>方法模式一般分为三种：</p>
+        <h3 id="工厂模式">工厂模式</h3>
+<p>工厂模式（Factory Pattern）是 Java 中最常用的设计模式之一。这种类型的设计模式属于创建型模式，它提供了一种创建对象的最佳方式。<br>
+在工厂模式中，我们在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。<br>
+工厂模式最最核心的知识点是<font color=red>将对象的创建和使用做分离</font><br>
+方法模式一般分为三种：</p>
 <ul>
 <li>简单/静态工厂模式</li>
 <li>工厂方法模式</li>
@@ -251,10 +255,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h3><ul>
+        <h3 id="单例模式">单例模式</h3>
+<ul>
 <li>单例类只能有一个实例。</li>
 <li>单例类必须自己创建自己的唯一实例。</li>
-<li>单例类必须给所有其他对象提供这一实例。  </li>
+<li>单例类必须给所有其他对象提供这一实例。</li>
 </ul>
         
           <a class="article-more-a" href="/2021/03/06/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/#more">more >></a>
@@ -335,7 +340,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h1><p>所有的类都由类加载器加载，加载的作用就是将 .class 文件加载到内存中。</p>
+        <h1>类加载器</h1>
+<p>所有的类都由类加载器加载，加载的作用就是将 .class 文件加载到内存中。</p>
         
           <a class="article-more-a" href="/2021/03/06/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/#more">more >></a>
         
@@ -411,7 +417,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="类加载过程"><a href="#类加载过程" class="headerlink" title="类加载过程"></a>类加载过程</h1><p>Java虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这个过程就被称为<strong>虚拟机的类加载机制</strong>。<br>完整的类加载过程<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg"></p>
+        <h1>类加载过程</h1>
+<p>Java虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这个过程就被称为<strong>虚拟机的类加载机制</strong>。<br>
+完整的类加载过程<br>
+<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg" alt=""></p>
         
           <a class="article-more-a" href="/2021/03/06/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/#more">more >></a>
         
@@ -487,7 +496,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h4 id="Java类的加载顺序"><a href="#Java类的加载顺序" class="headerlink" title="Java类的加载顺序"></a>Java类的加载顺序</h4><blockquote>
+        <h4 id="Java类的加载顺序">Java类的加载顺序</h4>
+<blockquote>
 <p>有继承关系的加载顺序</p>
 </blockquote>
 <p>父类静态方法/静态代码块-&gt;子类静态方法/静态方法块-&gt;父类成员变量/非静态代码块(从上到下顺序排列)-&gt;父类构造器-&gt;子类成员变量/非静态代码块(从上到下顺序排列)-&gt;子类构造器</p>
@@ -646,7 +656,8 @@
         <blockquote>
 <p>进程和线程</p>
 </blockquote>
-<p>某知乎定义：<br>进程（Process）是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。在早期面向进程设计的计算机结构中，进程是程序的基本执行实体；在当代面向线程设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的描述，进程是程序的实体。</p>
+<p>某知乎定义：<br>
+进程（Process）是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。在早期面向进程设计的计算机结构中，进程是程序的基本执行实体；在当代面向线程设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的描述，进程是程序的实体。</p>
 <p>线程是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。在Unix System V及SunOS中也被称为轻量进程（lightweight processes），但轻量进程更多指内核线程（kernel thread），而把用户线程（user thread）称为线程。</p>
         
           <a class="article-more-a" href="/2021/03/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B/#more">more >></a>
@@ -726,7 +737,9 @@
         <blockquote>
 <p>StringBuilder和StringBuffer区别</p>
 </blockquote>
-<p><strong>区别1：线程安全性</strong><br>StringBuffer：线程安全，StringBuilder：线程不安全。<br>因为 StringBuffer 的所有公开方法都是 synchronized 修饰的，<font color=red>为什么StringBuilder不是线程安全的？</font></p>
+<p><strong>区别1：线程安全性</strong><br>
+StringBuffer：线程安全，StringBuilder：线程不安全。<br>
+因为 StringBuffer 的所有公开方法都是 synchronized 修饰的，<font color=red>为什么StringBuilder不是线程安全的？</font></p>
         
           <a class="article-more-a" href="/2021/03/02/StringBuffer-StringBuilder/#more">more >></a>
         
@@ -807,7 +820,8 @@
 <blockquote>
 <p>B-树的特征</p>
 </blockquote>
-<p>参考百度百科如下：<br>一棵m阶B树(balanced tree of order m)是一棵平衡的m路搜索树。它或者是空树，或者是满足下列性质的树：</p>
+<p>参考百度百科如下：<br>
+一棵m阶B树(balanced tree of order m)是一棵平衡的m路搜索树。它或者是空树，或者是满足下列性质的树：</p>
 <ul>
 <li>1、根结点至少有两个子女；</li>
 </ul>
@@ -1055,11 +1069,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">

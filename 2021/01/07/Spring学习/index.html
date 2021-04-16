@@ -176,44 +176,98 @@
       
         <p>浅谈Spring、主要包括反射、动态代理、IOC、AOP、Spring涉及的设计模式</p>
 <a id="more"></a>
-<h2 id="前提：动态代理、注解和反射"><a href="#前提：动态代理、注解和反射" class="headerlink" title="前提：动态代理、注解和反射"></a>前提：动态代理、注解和反射</h2><h3 id="1、反射基础"><a href="#1、反射基础" class="headerlink" title="1、反射基础"></a>1、反射基础</h3><p><strong>官方定义</strong>：<br>&emsp;&emsp;在运行状态中，对于任意的一个类，都能够知道这个类的<strong>所有属性和方法</strong>，对任意一个对象都能够通过反射机制调用一个类的任意方法，这种动态获取类信息及动态调用类对象方法的功能称为Java的反射机制。<br>&emsp;&emsp;通俗点讲，通过反射，该类对我们来说是完全透明的，想要获取任何东西都可以，这是一种动态获取类的信息以及动态调用对象方法的能力。<br>&emsp;&emsp;想要使用反射机制，就必须要先获取到该类的字节码文件对象(.class)，通过该类的字节码对象，就能够通过该类中的方法获取到我们想要的所有信息(方法，属性，类名，父类名，实现的所有接口等等)，每一个类对应着一个字节码文件也就对应着一个<strong>Class类型的对象</strong>，也就是<strong>字节码文件对象</strong>。</p>
-<p><strong>(1)初识Class类</strong><br>&emsp;&emsp;在类Object下面提供了一个方法：<code>public final native Class&lt;?&gt; getClass()</code>，此方法将会被所有的子类继承，该方法的返回值为一个Class，这个Class类就是反射的源头。那么Class类是什么呢？Class类是Java中用来表达运行时类型信息的对应类，刚刚也说过所有类都会继承Object类的getClass()方法，那么也体现了着Java中的每个类都有一个Class对象，当我们编写并编译一个创建的类就会产生对应的class文件并将类的信息写到该class文件中，当我们使用正常方式new一个对象或者使用类的静态字段时候，JVM的累加器就会将对应的Class对象加载到JVM中，然后JVM根据这个类型信息相关的Class对象创建我们需要的实例对象或者根据提供静态变量的引用值。将Class类称为类的类型，一个Class对象称为类的类型对象。</p>
-<p><strong>(2)Class的特点：</strong><br>&emsp;&emsp;​①Class也是类的一种（不同于class，class是一个关键字）；<br>&emsp;&emsp;②Class类只有一个<strong>私有的构造函数</strong> <code>private Class(ClassLoader loader)</code> ，只有JVM能够创建Class类的实例；<br>&emsp;&emsp;③对于同一类的对象，在JVM中只存在唯一一个对应的Class类实例来描述其信息；<br>&emsp;&emsp;④每个类的实例都会记得自己是由哪个Class实例所生成；<br>&emsp;&emsp;⑤通过Class可以完整的得到一个类中的完整结构；</p>
-<p><strong>反射使用</strong><br>jdk提供了三种方式获取一个对象的Class，就User user来说<br>&emsp;&emsp;1.user.getClass()，这个是Object类里面的方法<br>&emsp;&emsp;2.User.Class属性，任何的数据类型，基本数据类型或者抽象数据类型，都可以通过这种方式获取类<br>&emsp;&emsp;3.Class.forName(“”)，Class类提供了这样一个方法，让我们通过类名来获取到对象类<br><strong>这三种方法用的最多的就是第三种，那么获取到类之后，Class类提供了很多获取类属性，方法，构造方法的api。</strong></p>
+<h2 id="前提：动态代理、注解和反射">前提：动态代理、注解和反射</h2>
+<h3 id="1、反射基础">1、反射基础</h3>
+<p><strong>官方定义</strong>：<br>
+  在运行状态中，对于任意的一个类，都能够知道这个类的<strong>所有属性和方法</strong>，对任意一个对象都能够通过反射机制调用一个类的任意方法，这种动态获取类信息及动态调用类对象方法的功能称为Java的反射机制。<br>
+  通俗点讲，通过反射，该类对我们来说是完全透明的，想要获取任何东西都可以，这是一种动态获取类的信息以及动态调用对象方法的能力。<br>
+  想要使用反射机制，就必须要先获取到该类的字节码文件对象(.class)，通过该类的字节码对象，就能够通过该类中的方法获取到我们想要的所有信息(方法，属性，类名，父类名，实现的所有接口等等)，每一个类对应着一个字节码文件也就对应着一个<strong>Class类型的对象</strong>，也就是<strong>字节码文件对象</strong>。</p>
+<p><strong>(1)初识Class类</strong><br>
+  在类Object下面提供了一个方法：<code>public final native Class&lt;?&gt; getClass()</code>，此方法将会被所有的子类继承，该方法的返回值为一个Class，这个Class类就是反射的源头。那么Class类是什么呢？Class类是Java中用来表达运行时类型信息的对应类，刚刚也说过所有类都会继承Object类的getClass()方法，那么也体现了着Java中的每个类都有一个Class对象，当我们编写并编译一个创建的类就会产生对应的class文件并将类的信息写到该class文件中，当我们使用正常方式new一个对象或者使用类的静态字段时候，JVM的累加器就会将对应的Class对象加载到JVM中，然后JVM根据这个类型信息相关的Class对象创建我们需要的实例对象或者根据提供静态变量的引用值。将Class类称为类的类型，一个Class对象称为类的类型对象。</p>
+<p><strong>(2)Class的特点：</strong><br>
+  ​①Class也是类的一种（不同于class，class是一个关键字）；<br>
+  ②Class类只有一个<strong>私有的构造函数</strong> <code>private Class(ClassLoader loader)</code> ，只有JVM能够创建Class类的实例；<br>
+  ③对于同一类的对象，在JVM中只存在唯一一个对应的Class类实例来描述其信息；<br>
+  ④每个类的实例都会记得自己是由哪个Class实例所生成；<br>
+  ⑤通过Class可以完整的得到一个类中的完整结构；</p>
+<p><strong>反射使用</strong><br>
+jdk提供了三种方式获取一个对象的Class，就User user来说<br>
+  1.user.getClass()，这个是Object类里面的方法<br>
+  2.User.Class属性，任何的数据类型，基本数据类型或者抽象数据类型，都可以通过这种方式获取类<br>
+  3.Class.forName(“”)，Class类提供了这样一个方法，让我们通过类名来获取到对象类<br>
+<strong>这三种方法用的最多的就是第三种，那么获取到类之后，Class类提供了很多获取类属性，方法，构造方法的api。</strong></p>
 <p><strong>获取方法：</strong></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">getDeclaredMethods()    <span class="comment">//获取所有的方法</span></span><br><span class="line"></span><br><span class="line">getReturnType()    <span class="comment">//获得方法的放回类型</span></span><br><span class="line"></span><br><span class="line">getParameterTypes()    <span class="comment">//获得方法的传入参数类型</span></span><br><span class="line"></span><br><span class="line">getDeclaredMethod(<span class="string">&quot;方法名&quot;</span>,参数类型.class,……)    <span class="comment">//获得特定的方法</span></span><br><span class="line"></span><br><span class="line">getDeclaredConstructors()    <span class="comment">//获取所有的构造方法</span></span><br><span class="line"></span><br><span class="line">getDeclaredConstructor(参数类型.class,……)    <span class="comment">//获取特定的构造方法</span></span><br><span class="line"></span><br><span class="line">getSuperclass()    <span class="comment">//获取某类的父类</span></span><br><span class="line"></span><br><span class="line">getInterfaces()    <span class="comment">//获取某类实现的接口</span></span><br></pre></td></tr></table></figure>
-<h3 id="2、反射的作用和动态代理"><a href="#2、反射的作用和动态代理" class="headerlink" title="2、反射的作用和动态代理"></a>2、反射的作用和动态代理</h3><p>反射作用总结就是：<br>&emsp;&emsp;1.动态地创建类的实例，将类绑定到现有的对象中，或从现有的对象中获取类型。<br>&emsp;&emsp;2.应用程序需要在运行时从某个特定的程序集中载入一个特定的类。</p>
-<p>那么什么是动态代理呢？<br>&emsp;&emsp;先给出百度的答案：动态代理，就是根据对象在内存中加载的Class类创建运行时类对象，从而调用代理类方法和属性。<br>​&emsp;&emsp;代理模式的定义：为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。<br>​&emsp;&emsp;而代理模式又分为静态代理和动态代理，先说静态代理。<br>​    <strong>静态代理</strong>通俗点将就是自己手写一个代理类，而动态代理则不用我们手写，而是依赖于java反射机制，</p>
+<h3 id="2、反射的作用和动态代理">2、反射的作用和动态代理</h3>
+<p>反射作用总结就是：<br>
+  1.动态地创建类的实例，将类绑定到现有的对象中，或从现有的对象中获取类型。<br>
+  2.应用程序需要在运行时从某个特定的程序集中载入一个特定的类。</p>
+<p>那么什么是动态代理呢？<br>
+  先给出百度的答案：动态代理，就是根据对象在内存中加载的Class类创建运行时类对象，从而调用代理类方法和属性。<br>
+​  代理模式的定义：为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。<br>
+​  而代理模式又分为静态代理和动态代理，先说静态代理。<br>
+​	<strong>静态代理</strong>通俗点将就是自己手写一个代理类，而动态代理则不用我们手写，而是依赖于java反射机制，</p>
 <img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20200630190926049.png" alt="image-20200630190926049" style="zoom: 67%;" />
-
-<p><strong>动态代理</strong><br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20200630191010796.png" alt="image-20200630191010796" style="zoom:67%;" /></p>
+<p><strong>动态代理</strong><br>
+<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20200630191010796.png" alt="image-20200630191010796" style="zoom:67%;" /></p>
 <p>这里面首先想要做到动态代理，必须先实现这个<strong>InvocationHandler接口</strong>，然后主要看bind方法，参数tar是一个Object类型的对象，也就是需要被代理的对象SubjectImpl，方法里面有一个Proxy类，这个Proxy类提供了很多方法，这里我们用的是newProxyInstance方法，它有三个参数，第一个是被代理类的类构造器，第二个指的是被代理类的接口，也就是Subject接口，第三个是实现这个代理的类，这里就是本类。</p>
-<p>具体的来说，这个方法执行了下面三步：<br>&emsp;&emsp;1.生成一个实现了参数interfaces里所有接口且继承了Proxy的代理类的字节码，然后用参数里的classLoader加载这个代理类。<br>&emsp;&emsp;2.使用代理类父类的构造函数 Proxy(InvocationHandler h)来创造一个代理类的实例，将我们自定义的InvocationHandler的子类传入。<br>&emsp;&emsp;3.返回这个代理类实例，因为我们构造的代理类实现了interfaces（也就是我们程序中传入的subject.getClass().getInterfaces()）里的所有接口，因此返回的代理类可以强转成Subject类型来调用接口中定义的方法。<br>&emsp;&emsp;而在调用每个代理类每个方法的时候，都用反射去调h的invoke方法(也就是我们自定义的InvocationHandler的子类中重写的invoke方法)，用参数传递了代理类实例、接口方法、调用参数列表，这样我们在重写的invoke方法中就可以实现对所有方法的统一包装了。</p>
+<p>具体的来说，这个方法执行了下面三步：<br>
+  1.生成一个实现了参数interfaces里所有接口且继承了Proxy的代理类的字节码，然后用参数里的classLoader加载这个代理类。<br>
+  2.使用代理类父类的构造函数 Proxy(InvocationHandler h)来创造一个代理类的实例，将我们自定义的InvocationHandler的子类传入。<br>
+  3.返回这个代理类实例，因为我们构造的代理类实现了interfaces（也就是我们程序中传入的subject.getClass().getInterfaces()）里的所有接口，因此返回的代理类可以强转成Subject类型来调用接口中定义的方法。<br>
+  而在调用每个代理类每个方法的时候，都用反射去调h的invoke方法(也就是我们自定义的InvocationHandler的子类中重写的invoke方法)，用参数传递了代理类实例、接口方法、调用参数列表，这样我们在重写的invoke方法中就可以实现对所有方法的统一包装了。</p>
 <p>总结一下，静态代理的优点是清晰易懂，但是如果说业务代码很多，那么在代理类里面必须全部重新调用一遍，很麻烦。而动态代理，利用Java反射机制，动态的生成了一个代理类，直接调用代理方法即可。</p>
 <hr>
 <p>IOC（控制反转）和DI（依赖注入） AOP（面向切面编程）</p>
-<h2 id="一、IOC和DI"><a href="#一、IOC和DI" class="headerlink" title="一、IOC和DI"></a>一、IOC和DI</h2><p><strong>控制反转IOC</strong>，传统的 Java 开发模式中，当需要一个对象时，我们会自己使用 new 或者 getInstance 等直接或者间接调用构造方法创建一个对象。而在 Spring 开发模式中，Spring 容器使用了工厂模式为我们创建了所需要的对象，不需要我们自己创建了，直接调用 spring 提供的对象就可以了，这是控制反转的思想。<br><strong>依赖注入DI</strong>，Spring 使用 JavaBean 对象的 set 方法或者带参数的构造方法为我们在创建所需对象时将其属性自动设置所需要的值的过程，就是依赖注入的思想。  </p>
-<p><strong>总结</strong><br>&emsp;&emsp;IOC 控制反转：SpringIOC 负责创建对象，管理对象。<br>&emsp;&emsp;通过依赖注入(DI),装配对象,配置对象,并且管理这些对象的整个生命周期。</p>
-<h3 id="Spring依赖注入的方式"><a href="#Spring依赖注入的方式" class="headerlink" title="Spring依赖注入的方式"></a>Spring依赖注入的方式</h3><p>&emsp;&emsp;1.Set注入：Setter方法注入是容器通过调用无参构造器或无参static工厂方法实例化bean之后，调用该bean的setter方法，即实现了基于setter的依赖注入。<br>&emsp;&emsp;2.构造器注入：构造器依赖注入通过容器触发一个类的构造器来实现的，该类有一系列参数，每个参数代表一个对其他类的依赖。<br>&emsp;&emsp;3.基于注解的注⼊</p>
+<h2 id="一、IOC和DI">一、IOC和DI</h2>
+<p><strong>控制反转IOC</strong>，传统的 Java 开发模式中，当需要一个对象时，我们会自己使用 new 或者 getInstance 等直接或者间接调用构造方法创建一个对象。而在 Spring 开发模式中，Spring 容器使用了工厂模式为我们创建了所需要的对象，不需要我们自己创建了，直接调用 spring 提供的对象就可以了，这是控制反转的思想。<br>
+<strong>依赖注入DI</strong>，Spring 使用 JavaBean 对象的 set 方法或者带参数的构造方法为我们在创建所需对象时将其属性自动设置所需要的值的过程，就是依赖注入的思想。</p>
+<p><strong>总结</strong><br>
+  IOC 控制反转：SpringIOC 负责创建对象，管理对象。<br>
+  通过依赖注入(DI),装配对象,配置对象,并且管理这些对象的整个生命周期。</p>
+<h3 id="Spring依赖注入的方式">Spring依赖注入的方式</h3>
+<p>  1.Set注入：Setter方法注入是容器通过调用无参构造器或无参static工厂方法实例化bean之后，调用该bean的setter方法，即实现了基于setter的依赖注入。<br>
+  2.构造器注入：构造器依赖注入通过容器触发一个类的构造器来实现的，该类有一系列参数，每个参数代表一个对其他类的依赖。<br>
+  3.基于注解的注⼊</p>
 <blockquote>
-<p>小知识:哪种依赖注入方式你建议使用，构造器注入，还是 Setter 方法注入<br>&emsp;&emsp;两种依赖方式都可以使用，构造器注入和 Setter 方法注入。最好的解决方案是用构造器参数<br>实现强制依赖，setter 方法实现可选依赖。</p>
+<p>小知识:哪种依赖注入方式你建议使用，构造器注入，还是 Setter 方法注入<br>
+  两种依赖方式都可以使用，构造器注入和 Setter 方法注入。最好的解决方案是用构造器参数<br>
+实现强制依赖，setter 方法实现可选依赖。</p>
 </blockquote>
-<p><strong>Spring常用注解</strong><br>注解装配在默认情况下是不开启的，为了使用注解装配，我们必须在 Spring 配置文件中配置<br><code>&lt;context:annotation-config/&gt;</code>元素。<br>@Required:该注解应用于设值方法<br>@Qualifier：该注解和@Autowired 搭配使用，用于消除特定 bean 自动装配的歧义。<br>@Autowired：该注解应用于有值设值方法、非设值方法、构造方法和变量。Spring 提供的注解默认情况下要求依赖对象必须存在，如果要允许null值，可以设置它的required属性为false，如@Autowired（required=false）如果我们想使用名称装配，可以结合@Qualifer注解使用</p>
+<p><strong>Spring常用注解</strong><br>
+注解装配在默认情况下是不开启的，为了使用注解装配，我们必须在 Spring 配置文件中配置<br>
+<code>&lt;context:annotation-config/&gt;</code>元素。<br>
+@Required:该注解应用于设值方法<br>
+@Qualifier：该注解和@Autowired 搭配使用，用于消除特定 bean 自动装配的歧义。<br>
+@Autowired：该注解应用于有值设值方法、非设值方法、构造方法和变量。Spring 提供的注解默认情况下要求依赖对象必须存在，如果要允许null值，可以设置它的required属性为false，如@Autowired（required=false）如果我们想使用名称装配，可以结合@Qualifer注解使用</p>
 <blockquote>
-<p>@Autowired和@Resource区别<br>&emsp;&emsp;@Autowired注解是按类型装配依赖对象，默认情况下它要求依赖对象必须存在，如果允许null值，可以设置它required属性为false。<br>&emsp;&emsp;@Resource注解默认按名称装配。名称可以通过@Resource的name属性指定，如果没有指定name属性，当注解标注在字段上，即默认取字段的名称作为bean名称寻找依赖对象，当注解标注在属性的setter方法上，即默认取属性名作为bean名称寻找依赖对象。<br>@Resources按名字，是JDK 的，@Autowired按类型，是 Spring 的。<br>推荐使用@Resource 减少Spring耦合</p>
+<p>@Autowired和@Resource区别<br>
+  @Autowired注解是按类型装配依赖对象，默认情况下它要求依赖对象必须存在，如果允许null值，可以设置它required属性为false。<br>
+  @Resource注解默认按名称装配。名称可以通过@Resource的name属性指定，如果没有指定name属性，当注解标注在字段上，即默认取字段的名称作为bean名称寻找依赖对象，当注解标注在属性的setter方法上，即默认取属性名作为bean名称寻找依赖对象。<br>
+@Resources按名字，是JDK 的，@Autowired按类型，是 Spring 的。<br>
+推荐使用@Resource 减少Spring耦合</p>
 </blockquote>
 <hr>
-<h2 id="二、Spring-AOP"><a href="#二、Spring-AOP" class="headerlink" title="二、Spring AOP"></a>二、Spring AOP</h2><p>&emsp;&emsp;<code>AOP(AspectOrientedProgramming)</code>,即面向切面编程,可以说是 <code>OOP(ObjectOrientedProgramming，面向对象编程)</code>的补充和完善。OOP 引入封装、继承、多态等概念来建立一种对象层次结构，用于模拟公共行为的一个集合。不过 OOP 允许开发者定义纵向的关系，但并不适合定义横向的关系，例如日志功能。日志代码往往横向地散布在所有对象层次中,而与它对应的对象的核心功能毫无关系对于其他类型的代码，如安全性、异常处理和透明的持续性也都是如此，这种散布在各处的无关的代码被称为横切(crosscutting)，在 OOP 设计中，它导致了大量代码的重复，而不利于各个模块的重用。AOP 技术恰恰相反，它利用一种称为”横切”的技术，剖解开封装的对象内部，并将那些影响了多个类的公共行为封装到一个可重用模块，并将其命名为”Aspect”，即切面。所谓”切面”，简单说就是那些与业务无关，却为业务模块所共同调用的逻辑或责任封装起来，便于减少系统的重复代码，降低模块之间的耦合度，并有利于未来的可操作性和可维护性。使用”横切”技术，AOP 把软件系统分为两个部分：核心关注点和横切关注点。业务处理的主要流程是核心关注点，与之关系不大的部分是横切关注点。横切关注点的一个特点是，他们经常发生在核心关注点的多处，而各处基本相似，比如权限认证、日志、事物。</p>
-<p>&emsp;&emsp;AOP 的作用在于分离系统中的各种关注点，将核心关注点和横切关注点分离开来。  </p>
-<p>&emsp;&emsp;AOP 核心就是切面，它将多个类的通用行为封装成可重用的模块，该模块含有一组 API 提供横切功能。比如，一个日志模块可以被称作日志的 AOP 切面。根据需求的不同，一个应用程序可以有若干切面。  </p>
+<h2 id="二、Spring-AOP">二、Spring AOP</h2>
+<p>  <code>AOP(AspectOrientedProgramming)</code>,即面向切面编程,可以说是 <code>OOP(ObjectOrientedProgramming，面向对象编程)</code>的补充和完善。OOP 引入封装、继承、多态等概念来建立一种对象层次结构，用于模拟公共行为的一个集合。不过 OOP 允许开发者定义纵向的关系，但并不适合定义横向的关系，例如日志功能。日志代码往往横向地散布在所有对象层次中,而与它对应的对象的核心功能毫无关系对于其他类型的代码，如安全性、异常处理和透明的持续性也都是如此，这种散布在各处的无关的代码被称为横切(crosscutting)，在 OOP 设计中，它导致了大量代码的重复，而不利于各个模块的重用。AOP 技术恰恰相反，它利用一种称为&quot;横切&quot;的技术，剖解开封装的对象内部，并将那些影响了多个类的公共行为封装到一个可重用模块，并将其命名为&quot;Aspect&quot;，即切面。所谓&quot;切面&quot;，简单说就是那些与业务无关，却为业务模块所共同调用的逻辑或责任封装起来，便于减少系统的重复代码，降低模块之间的耦合度，并有利于未来的可操作性和可维护性。使用&quot;横切&quot;技术，AOP 把软件系统分为两个部分：核心关注点和横切关注点。业务处理的主要流程是核心关注点，与之关系不大的部分是横切关注点。横切关注点的一个特点是，他们经常发生在核心关注点的多处，而各处基本相似，比如权限认证、日志、事物。</p>
+<p>  AOP 的作用在于分离系统中的各种关注点，将核心关注点和横切关注点分离开来。</p>
+<p>  AOP 核心就是切面，它将多个类的通用行为封装成可重用的模块，该模块含有一组 API 提供横切功能。比如，一个日志模块可以被称作日志的 AOP 切面。根据需求的不同，一个应用程序可以有若干切面。</p>
 <p>在 SpringAOP 中，切面通过带有@Aspect 注解的类实现。</p>
-<h3 id="1、AOP概述"><a href="#1、AOP概述" class="headerlink" title="1、AOP概述"></a>1、AOP概述</h3><p>&emsp;&emsp;面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。AOP主要的功能有日志记录、性能统计、安全控制、事务处理和异常处理等。</p>
-<h3 id="2、AOP核心概念"><a href="#2、AOP核心概念" class="headerlink" title="2、AOP核心概念"></a>2、AOP核心概念</h3><p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20200630203236969.png" alt="image-20200630203236969"></p>
-<h3 id="3、JDK动态代理实现日志框架"><a href="#3、JDK动态代理实现日志框架" class="headerlink" title="3、JDK动态代理实现日志框架"></a>3、JDK动态代理实现日志框架</h3><p>Spring AOP内部是使用动态代理模式来实现的</p>
-<p>总结JDK动态代理的一般实现步骤：<br>&emsp;&emsp;（1）创建一个实现InvocationHandler接口的类xxx，它必须实现invoke方法。<br>&emsp;&emsp;（2）创建被代理的类xxxService以及接口xxxServiceImpl实现。<br>&emsp;&emsp;（3）调用Proxy的静态方法mewProxyInstance，创建一个代理类。<br>&emsp;&emsp;（4）通过代理类调用方法。</p>
-<h3 id="4、Spring-AOP实现日志框架"><a href="#4、Spring-AOP实现日志框架" class="headerlink" title="4、Spring AOP实现日志框架"></a>4、Spring AOP实现日志框架</h3><p>在配置文件spring-mvc.xml中添加配置，具体如下</p>
+<h3 id="1、AOP概述">1、AOP概述</h3>
+<p>  面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。AOP主要的功能有日志记录、性能统计、安全控制、事务处理和异常处理等。</p>
+<h3 id="2、AOP核心概念">2、AOP核心概念</h3>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20200630203236969.png" alt="image-20200630203236969"></p>
+<h3 id="3、JDK动态代理实现日志框架">3、JDK动态代理实现日志框架</h3>
+<p>Spring AOP内部是使用动态代理模式来实现的</p>
+<p>总结JDK动态代理的一般实现步骤：<br>
+  （1）创建一个实现InvocationHandler接口的类xxx，它必须实现invoke方法。<br>
+  （2）创建被代理的类xxxService以及接口xxxServiceImpl实现。<br>
+  （3）调用Proxy的静态方法mewProxyInstance，创建一个代理类。<br>
+  （4）通过代理类调用方法。</p>
+<h3 id="4、Spring-AOP实现日志框架">4、Spring AOP实现日志框架</h3>
+<p>在配置文件spring-mvc.xml中添加配置，具体如下</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">aop:aspectj-autoproxy</span> <span class="attr">proxy-target-class</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>之后就可以使用注解进行切面。  </p>
+<p>之后就可以使用注解进行切面。</p>
 <ul>
 <li>@Aspect ： 标识xxx类为一个切面，供容器读取</li>
 <li>@Before ： 在所拦截方法之前执行before方法。</li>
@@ -221,13 +275,15 @@
 <li>@Around ： 可以同时在所拦截方法的前后执行一段逻辑。</li>
 <li>execution切入点指示符，使用方法如下图：</li>
 </ul>
-<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20200630204747172.png"></p>
-<h3 id="5、静态代理与动态代理模式"><a href="#5、静态代理与动态代理模式" class="headerlink" title="5、静态代理与动态代理模式"></a>5、静态代理与动态代理模式</h3><p>参考前面！</p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20200630204747172.png" alt=""></p>
+<h3 id="5、静态代理与动态代理模式">5、静态代理与动态代理模式</h3>
+<p>参考前面！</p>
 <p>或者网上资源<a target="_blank" rel="noopener" href="https://www.cnblogs.com/fsmly/p/11031395.html">Java的反射机制和动态代理</a></p>
 <blockquote>
 <p>一些问题</p>
 </blockquote>
-<h3 id="Spring中的设计模式"><a href="#Spring中的设计模式" class="headerlink" title="Spring中的设计模式"></a>Spring中的设计模式</h3><table>
+<h3 id="Spring中的设计模式">Spring中的设计模式</h3>
+<table>
 <thead>
 <tr>
 <th>设计模式</th>
@@ -235,7 +291,8 @@
 <th>Spring中的使用方式</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>简单工厂</td>
 <td>又叫做静态工厂方法（StaticFactory Method）模式，但不属于23种GOF设计模式之一。 简单工厂模式的实质是由一个工厂类根据传入的参数，动态决定应该创建哪一个产品类。</td>
 <td>spring中的BeanFactory就是简单工厂模式的体现，根据传入一个唯一的标识来获得bean对象，但是否是在传入参数后创建还是传入参数前创建这个要根据具体情况来定。</td>
@@ -275,10 +332,18 @@
 <td>定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤。</td>
 <td>spring中的JdbcTemplate，在用这个类时并不想去继承这个类，因为这个类的方法太多，但是我们还是想用到JdbcTemplate已有的稳定的、公用的数据库连接，那么我们怎么办呢？我们可以把变化的东西抽出来作为一个参数传入JdbcTemplate的方法中。但是变化的东西是一段代码，而且这段代码会用到JdbcTemplate中的变量。怎么办？那我们就用回调对象吧。在这个回调对象中定义一个操纵JdbcTemplate中变量的方法，我们去实现这个方法，就把变化的东西集中到这里了。然后我们再传入这个回调对象到JdbcTemplate，从而完成了调用。这可能是Template Method不需要继承的另一种实现方式吧。</td>
 </tr>
-</tbody></table>
-<h3 id="Spring有几种配置方式"><a href="#Spring有几种配置方式" class="headerlink" title="Spring有几种配置方式"></a>Spring有几种配置方式</h3><p>将Spring配置到应用开发中主要有三种方式：<br>&emsp;&emsp;1、基于XML的配置<br>&emsp;&emsp;2、基于注解的配置<br>&emsp;&emsp;3、基于Java的配置。 </p>
-<h3 id="Spring怎么设置事务隔离级别"><a href="#Spring怎么设置事务隔离级别" class="headerlink" title="Spring怎么设置事务隔离级别"></a>Spring怎么设置事务隔离级别</h3><p>用<code>@Transactional </code>注解声明式事务的事务管理中来设置 <code>isolation</code> 属性的隔离级别<br>在配置文件中设置事务<code>&lt;tx:method&gt;</code>元素</p>
-<h3 id="Spring的事务隔离级别和数据库的事务隔离级别区别"><a href="#Spring的事务隔离级别和数据库的事务隔离级别区别" class="headerlink" title="Spring的事务隔离级别和数据库的事务隔离级别区别"></a>Spring的事务隔离级别和数据库的事务隔离级别区别</h3><p>Spring中的隔离级别</p>
+</tbody>
+</table>
+<h3 id="Spring有几种配置方式">Spring有几种配置方式</h3>
+<p>将Spring配置到应用开发中主要有三种方式：<br>
+  1、基于XML的配置<br>
+  2、基于注解的配置<br>
+  3、基于Java的配置。</p>
+<h3 id="Spring怎么设置事务隔离级别">Spring怎么设置事务隔离级别</h3>
+<p>用<code>@Transactional </code>注解声明式事务的事务管理中来设置 <code>isolation</code> 属性的隔离级别<br>
+在配置文件中设置事务<code>&lt;tx:method&gt;</code>元素</p>
+<h3 id="Spring的事务隔离级别和数据库的事务隔离级别区别">Spring的事务隔离级别和数据库的事务隔离级别区别</h3>
+<p>Spring中的隔离级别</p>
 <table>
 <thead>
 <tr>
@@ -286,7 +351,8 @@
 <th>解释</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>ISOLATION_DEFAULT</td>
 <td>这是个 PlatfromTransactionManager 默认的隔离级别，使用数据库默认的事务隔离级别。另外四个与 JDBC 的隔离级别相对应。</td>
 </tr>
@@ -306,13 +372,15 @@
 <td>ISOLATION_SERIALIZABLE</td>
 <td>这是花费最高代价但是最可靠的事务隔离级别。事务被处理为顺序执行。</td>
 </tr>
-</tbody></table>
-<p>spring事务本质上使用数据库锁；<br>spring事务只有在方法执行过程中出现异常才会回滚，并且只回滚数据库相关的操作；</p>
+</tbody>
+</table>
+<p>spring事务本质上使用数据库锁；<br>
+spring事务只有在方法执行过程中出现异常才会回滚，并且只回滚数据库相关的操作；</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
 <p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_31854907/article/details/87627067?utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromMachineLearnPai2~default-1.control&dist_request_id=1328769.12281.16173605466738077&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromMachineLearnPai2~default-1.control">spring事务隔离级别与数据库事务隔离级别的关系</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_31854907/article/details/87627067?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control&amp;dist_request_id=1328769.12281.16173605466738077&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control">spring事务隔离级别与数据库事务隔离级别的关系</a></p>
 
       
 
@@ -573,11 +641,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">

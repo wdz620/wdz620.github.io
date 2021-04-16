@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>类加载机制 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="类加载过程Java虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这个过程就被称为虚拟机的类加载机制。完整的类加载过程">
+  <meta name="description" content="类加载过程 Java虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这个过程就被称为虚拟机的类加载机制。 完整的类加载过程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="类加载机制">
 <meta property="og:url" content="http://example.com/2021/03/06/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="类加载过程Java虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这个过程就被称为虚拟机的类加载机制。完整的类加载过程">
+<meta property="og:description" content="类加载过程 Java虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这个过程就被称为虚拟机的类加载机制。 完整的类加载过程">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210306084321460.png">
@@ -172,18 +172,23 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="类加载过程"><a href="#类加载过程" class="headerlink" title="类加载过程"></a>类加载过程</h1><p>Java虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这个过程就被称为<strong>虚拟机的类加载机制</strong>。<br>完整的类加载过程<br><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg"></p>
+        <h1>类加载过程</h1>
+<p>Java虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这个过程就被称为<strong>虚拟机的类加载机制</strong>。<br>
+完整的类加载过程<br>
+<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg" alt=""></p>
 <a id="more"></a>
-
-<h2 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h2><p>首先是<em>加载</em>过程需要做的三件事：</p>
+<h2 id="加载">加载</h2>
+<p>首先是<em>加载</em>过程需要做的三件事：</p>
 <ul>
 <li>通过一个类的全限定名来获取此类的二进制字节流</li>
 <li>将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构</li>
 <li>在内存中生成一个代表这个类的Class对象，作为方法区这个类的各种数据的访问入口</li>
 </ul>
 <p>加载阶段结束后，Java虚拟机外部的二进制字节流就按照虚拟机所设定的格式存储在方法区之中了。类型数据妥善安置在方法区之后，会在Java堆内存中实例化一个Class对象，这个对象作为程序访问方法区中的类型数据的外部接口。</p>
-<h2 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h2><p>连接部分分成三个部分，首先进行验证，然后进行准备，最后对其进行解析。</p>
-<h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><p>下面来简单介绍验证的过程。</p>
+<h2 id="连接">连接</h2>
+<p>连接部分分成三个部分，首先进行验证，然后进行准备，最后对其进行解析。</p>
+<h4 id="验证">验证</h4>
+<p>下面来简单介绍验证的过程。</p>
 <p>首先说明验证的重要性，如果Java虚拟机不检查输入的字节流，对其完全信任的化，很可能就会因为载入了错误或者恶意的字节码流而导致整个系统受到攻击而崩溃，所以验证字节码是Java虚拟机保护自身的一项必要措施。</p>
 <p>验证阶段大致上会完成四个阶段的检验工作：</p>
 <ul>
@@ -192,30 +197,39 @@
 <li>字节码验证</li>
 <li>符号引用验证</li>
 </ul>
-<h4 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h4><p>准备阶段是正式为类中定义的变量分配内存并设置类变量初始值的阶段，这些变量所使用的内存都应当在方法区中进行分配。</p>
+<h4 id="准备">准备</h4>
+<p>准备阶段是正式为类中定义的变量分配内存并设置类变量初始值的阶段，这些变量所使用的内存都应当在方法区中进行分配。</p>
 <p>在准备阶段需要注意的两个问题：</p>
 <ul>
 <li>这个时候进行内存分配的仅包括<strong>类变量，而不包括实例变量</strong>，实例变量将会在对象实例化时随着对象一起分配在Java堆中</li>
-<li>这里所设置的初始值”通常情况”下是数据类型默认的零值，比如我们定义了<code>public static int value=123</code> ，那么 value 变量在准备阶段的初始值就是 0 而不是123（初始化阶段才会赋值）。特殊情况：比如给 value 变量加上了 fianl 关键字<code>public static final int value=111</code> ，那么准备阶段 value 的值就被赋值为 111。<blockquote>
+<li>这里所设置的初始值&quot;通常情况&quot;下是数据类型默认的零值，比如我们定义了<code>public static int value=123</code> ，那么 value 变量在准备阶段的初始值就是 0 而不是123（初始化阶段才会赋值）。特殊情况：比如给 value 变量加上了 fianl 关键字<code>public static final int value=111</code> ，那么准备阶段 value 的值就被赋值为 111。</li>
+</ul>
+<blockquote>
 <p>为什么fianl可以？ static final修饰的字段在Javac时生成ConstantValue属性，在类加载的准备阶段根据 ConstantValue的值为该字段赋值，它没有默认值，必须显式地赋值，否则Javac时会报错。  可以理解为在编译期即把结果放入了常量池中。</p>
 </blockquote>
-</li>
-</ul>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210306084321460.png" alt="image-20210306084321460"></p>
-<h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><p>解析阶段是Java虚拟机将常量池内的符号引用替换为直接引用的过程。<br>解析阶段主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符这7类符号引用进行。</p>
-<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>类的初始化阶段是类加载过程的最后一个阶段。一种更直接的形式表达：初始化阶段就是执行类构造器<clinit>()方法的过程。</p>
+<h4 id="解析">解析</h4>
+<p>解析阶段是Java虚拟机将常量池内的符号引用替换为直接引用的过程。<br>
+解析阶段主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符这7类符号引用进行。</p>
+<h2 id="初始化">初始化</h2>
+<p>类的初始化阶段是类加载过程的最后一个阶段。一种更直接的形式表达：初始化阶段就是执行类构造器<clinit>()方法的过程。</p>
 <ul>
 <li>clinit&lt;&gt;()方法是编译器自动收集类中所有类变量的赋值动作和静态语言块中的语句合并产生的，其中编辑器收集的顺序是有语句在源文件中出现的顺序决定的，静态语句块中只能访问到定义在静态语句块之前的变量，定义在它之后的变量，在签名的静态语句块可以赋值，但是不能访问。</li>
 </ul>
 <blockquote>
 <p>思考</p>
 </blockquote>
-<p>final、static、static final修饰的字段赋值的区别<br>static修饰的字段在类加载过程中的准备阶段被初始化为0或null等默认值，而后在初始化阶段（触发类构造器）才会被赋予代码中设定的值，如果没有设定值，那么它的值就为默认值。<br>final修饰的字段在运行时被初始化（可以直接赋值，也可以在实例构造器中赋值），一旦赋值便不可更改；<br>static final修饰的字段在Javac时生成ConstantValue属性，在类加载的准备阶段根据ConstantValue的值为该字段赋值，它没有默认值，必须显式地赋值，否则Javac时会报错。可以理解为在编译期即把结果放入了常量池中。</p>
+<p>final、static、static final修饰的字段赋值的区别<br>
+static修饰的字段在类加载过程中的准备阶段被初始化为0或null等默认值，而后在初始化阶段（触发类构造器）才会被赋予代码中设定的值，如果没有设定值，那么它的值就为默认值。<br>
+final修饰的字段在运行时被初始化（可以直接赋值，也可以在实例构造器中赋值），一旦赋值便不可更改；<br>
+static final修饰的字段在Javac时生成ConstantValue属性，在类加载的准备阶段根据ConstantValue的值为该字段赋值，它没有默认值，必须显式地赋值，否则Javac时会报错。可以理解为在编译期即把结果放入了常量池中。</p>
 <blockquote>
 <p>参考</p>
 </blockquote>
 <p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！</p>
-<p>深入理解Java虚拟机<br><a target="_blank" rel="noopener" href="https://snailclimb.gitee.io/javaguide/#/docs/java/jvm/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B">参考JavaGuide</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012723673/article/details/80580011">深入理解Java的final关键字</a></p>
+<p>深入理解Java虚拟机<br>
+<a target="_blank" rel="noopener" href="https://snailclimb.gitee.io/javaguide/#/docs/java/jvm/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B">参考JavaGuide</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/u012723673/article/details/80580011">深入理解Java的final关键字</a></p>
 
       
 
@@ -476,11 +490,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -176,7 +176,6 @@
 <p><strong>进程（Process）</strong> 是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。 在当代面向线程设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的描述，进程是程序的实体。</p>
 <p><strong>线程（thread）</strong> 是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。</p>
 <a id="more"></a>
-
 <blockquote>
 <p>简单来说</p>
 </blockquote>
@@ -191,9 +190,9 @@
 <p>线程就好比车间里的工人。<code>一个进程包括多个线程</code>。</p>
 <p>车间内的空间是工人们共享的，比如许多房间是每个工人都可以进出的。这象征一个进程的内存空间是共享的，每个<code>线程</code>都可以使用这些<code>共享内存</code>。</p>
 <p>可是，每间房间的大小不同，有些房间最多只能容纳一个人，比如厕所。里面有人的时候，其他人就不能进去了。这代表一个线程使用某些共享内存时，其他线程必须等它结束，才能使用这一块内存。</p>
-<p>一个防止他人进入的简单方法，就是门口加一把锁。先到的人锁上门，后到的人看到上锁，就在门口排队，等锁打开再进去。这就叫”<code>互斥锁</code>“（Mutual exclusion，缩写 Mutex），防止多个线程同时读写某一块内存区域。</p>
+<p>一个防止他人进入的简单方法，就是门口加一把锁。先到的人锁上门，后到的人看到上锁，就在门口排队，等锁打开再进去。这就叫&quot;<code>互斥锁</code>&quot;（Mutual exclusion，缩写 Mutex），防止多个线程同时读写某一块内存区域。</p>
 <p>还有些房间，可以同时容纳n个人，比如厨房。也就是说，如果人数大于n，多出来的人只能在外面等着。这好比某些内存区域，只能供给<code>固定数目</code>的线程使用。</p>
-<p>这时的解决方法，就是在门口挂n把钥匙。进去的人就取一把钥匙，出来时再把钥匙挂回原处。后到的人发现钥匙架空了，就知道必须在门口排队等着了。这种做法叫做”<code>信号量</code>“（Semaphore），用来保证多个线程不会互相冲突。</p>
+<p>这时的解决方法，就是在门口挂n把钥匙。进去的人就取一把钥匙，出来时再把钥匙挂回原处。后到的人发现钥匙架空了，就知道必须在门口排队等着了。这种做法叫做&quot;<code>信号量</code>&quot;（Semaphore），用来保证多个线程不会互相冲突。</p>
 <p>上述例子的总结：</p>
 <p>CPU：一个工厂</p>
 <p>进程：一个车间</p>
@@ -229,7 +228,10 @@
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://www.sohu.com/a/321408502_663371">进程与线程的区别：最浅显易懂的解释</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/coder-programming/p/10595804.html">一篇让你明白进程与线程之间的区别与联系</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/110120723">理解进程线程</a></p>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br>
+<a target="_blank" rel="noopener" href="https://www.sohu.com/a/321408502_663371">进程与线程的区别：最浅显易懂的解释</a><br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/coder-programming/p/10595804.html">一篇让你明白进程与线程之间的区别与联系</a><br>
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/110120723">理解进程线程</a></p>
 
       
 
@@ -490,11 +492,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">

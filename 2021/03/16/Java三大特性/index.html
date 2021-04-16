@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>Java三大特性 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="封装  介绍  lombok相关 继承 多态">
+  <meta name="description" content="封装 介绍 lombok相关 继承 多态">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java三大特性">
 <meta property="og:url" content="http://example.com/2021/03/16/Java%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="封装  介绍  lombok相关 继承 多态">
+<meta property="og:description" content="封装 介绍 lombok相关 继承 多态">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-16T02:40:53.000Z">
 <meta property="article:modified_time" content="2021-04-12T05:47:22.606Z">
@@ -170,7 +170,9 @@
     <div class="article-entry" itemprop="articleBody">
       
         <ul>
-<li>封装<br>  介绍<br>  lombok相关</li>
+<li>封装<br>
+介绍<br>
+lombok相关</li>
 <li>继承</li>
 <li>多态</li>
 </ul>
@@ -178,42 +180,62 @@
 <blockquote>
 <p>封装</p>
 </blockquote>
-<p>封装是指一种将抽象性函式接口的实现细节部分封装、隐藏起来的方法，封装可以被看作是一个保护屏障，防止该类的代码和数据被外部定义的代码随机进行访问。<strong>封装的目的</strong>就是为了增强安全性和简化编程，使用者不必去了解具体的实现细节而只是通过外部接口去使用类的成员。<strong>封装的基本要求：</strong>把所有的属性私有化，对每个属性提供getter和setter方法，如果有一个带参的构造函数的话，那就必须要写一个不带参数的构造函数，而且大部分情况还要重写toString方法，方便测试。</p>
-<p>在开发中有个神奇，lombok插件。下面进行简单的介绍。<br>首先进行安装：因为我使用的是idea，首先需要在Plugins中安装lombok，然后引入maven依赖。<br><em>为什么maven中加入lombok依赖后，还需要安装插件？</em><br>因为lombok的引入使得java文件使用javac编译成字节码文件中包含get set函数,但是源代码中找不到定义，IDE会认为这是错误，因此需要安装一个lombok的插件。<br>常用注解：</p>
+<p>封装是指一种将抽象性函式接口的实现细节部分封装、隐藏起来的方法，封装可以被看作是一个保护屏障，防止该类的代码和数据被外部定义的代码随机进行访问。<strong>封装的目的</strong>就是为了增强安全性和简化编程，使用者不必去了解具体的实现细节而只是通过外部接口去使用类的成员。**封装的基本要求：**把所有的属性私有化，对每个属性提供getter和setter方法，如果有一个带参的构造函数的话，那就必须要写一个不带参数的构造函数，而且大部分情况还要重写toString方法，方便测试。</p>
+<p>在开发中有个神奇，lombok插件。下面进行简单的介绍。<br>
+首先进行安装：因为我使用的是idea，首先需要在Plugins中安装lombok，然后引入maven依赖。<br>
+<em>为什么maven中加入lombok依赖后，还需要安装插件？</em><br>
+因为lombok的引入使得java文件使用javac编译成字节码文件中包含get set函数,但是源代码中找不到定义，IDE会认为这是错误，因此需要安装一个lombok的插件。<br>
+常用注解：</p>
 <ul>
 <li>@Data ：使用最多的注解@Data，这就使得该封装类有了包括：get、set、equals、hashCode、toString等方法。</li>
 <li>@Setter ：注在属性上，提供 set 方法</li>
 <li>@Getter ：注在属性上，提供 get 方法</li>
 <li>@NoArgsConstructor ： 注在类上，提供类的无参构造</li>
 <li>@AllArgsConstructor ： 注在类上，提供类的全参构造</li>
-<li>@EqualsAndHashCode ： 注在类上，提供对应的 equals 和 hashCode 方法  </li>
+<li>@EqualsAndHashCode ： 注在类上，提供对应的 equals 和 hashCode 方法</li>
 </ul>
-<p>Lombok本质上就是一个实现了“<a target="_blank" rel="noopener" href="https://www.jcp.org/en/jsr/detail?id=269">JSR 269 API</a>”的程序。在使用javac的过程中，它产生作用的具体流程如下：<br>1、javac对源代码进行分析，生成了一棵抽象语法树（AST）<br>2、运行过程中调用实现了“JSR 269 API”的Lombok程序<br>3、此时Lombok就对第一步骤得到的AST进行处理，找到@Data注解所在类对应的语法树（AST），然后修改该语法树（AST），增加getter和setter方法定义的相应树节点<br>4、javac使用修改后的抽象语法树（AST）生成字节码文件，即给class增加新的节点（代码块）<br>封装指的就是将属性私有化，但是需要提供必要的setter和getter方法来访问其中的属性  </p>
-<p>Lombok优缺点：<br>优点：1、能通过注解的形式自动生成构造器、getter和setter等方法，提升开发效率。2、代码简洁、不用关注相应的方法，同时也简化了修改属性时重写相应方法的，方便维护。<br>缺点：1、不支持多种参数构造器的重载。2、虽然省去了手动创建getter和setter方法，但是也同时减低了源代码的可读性和完整。  </p>
-<p><em>扩展问题：通过lombok可以添加相应的set和get方法，但是需要运行环境安装lombok插件，如果将来程序在Linux系统中发布，是否也需要提前安装lombok插件呢？</em><br>不需要，LOM插件在编译期生效。 IDE工具将.java文件 编译为.class文件时,lombok插件开始工作.。为.class文件动态拼接get/set/toString等方法.所以当程序在Linux中运行时. xxxx.jar 项目 (.class)文件. 可以直接运行.和lombok是否安装无关。</p>
-<p>回归正题：<br>封装的优点：便于使用、提高可用性、提高安全性。缺点：将变量等使用private修饰，或者封装锦方法内，使其不能直接被访问，增加了访问步骤与难度。</p>
+<p>Lombok本质上就是一个实现了“<a target="_blank" rel="noopener" href="https://www.jcp.org/en/jsr/detail?id=269">JSR 269 API</a>”的程序。在使用javac的过程中，它产生作用的具体流程如下：<br>
+1、javac对源代码进行分析，生成了一棵抽象语法树（AST）<br>
+2、运行过程中调用实现了“JSR 269 API”的Lombok程序<br>
+3、此时Lombok就对第一步骤得到的AST进行处理，找到@Data注解所在类对应的语法树（AST），然后修改该语法树（AST），增加getter和setter方法定义的相应树节点<br>
+4、javac使用修改后的抽象语法树（AST）生成字节码文件，即给class增加新的节点（代码块）<br>
+封装指的就是将属性私有化，但是需要提供必要的setter和getter方法来访问其中的属性</p>
+<p>Lombok优缺点：<br>
+优点：1、能通过注解的形式自动生成构造器、getter和setter等方法，提升开发效率。2、代码简洁、不用关注相应的方法，同时也简化了修改属性时重写相应方法的，方便维护。<br>
+缺点：1、不支持多种参数构造器的重载。2、虽然省去了手动创建getter和setter方法，但是也同时减低了源代码的可读性和完整。</p>
+<p><em>扩展问题：通过lombok可以添加相应的set和get方法，但是需要运行环境安装lombok插件，如果将来程序在Linux系统中发布，是否也需要提前安装lombok插件呢？</em><br>
+不需要，LOM插件在编译期生效。 IDE工具将.java文件 编译为.class文件时,lombok插件开始工作.。为.class文件动态拼接get/set/toString等方法.所以当程序在Linux中运行时. xxxx.jar 项目 (.class)文件. 可以直接运行.和lombok是否安装无关。</p>
+<p>回归正题：<br>
+封装的优点：便于使用、提高可用性、提高安全性。缺点：将变量等使用private修饰，或者封装锦方法内，使其不能直接被访问，增加了访问步骤与难度。</p>
 <blockquote>
 <p>继承</p>
 </blockquote>
-<p>继承关键字：<em>extends</em><br>继承是指将多个相同的属性和方法提取出来，新建一个父类。从而在多个类中不需要重复定义公共部分！这个公共部分就是父类，也可以称为超类或者基类，其他的类就被称为子类。Java中一个类只能继承一个父类，且只能继承访问权限非private的属性和方法。子类可以重写父类中的方法，命名与父类中同名的属性。继承的特点：1、子类比父类更强大。2、Java是单继承，不能进行多继承，但是可以继承多层子类（一般不建议超过三层）3、子类继承父类，但是对父类的成员变量是无法直接操作的，只能通过父类继承过来的setter和getter方法。<br>继承的目的：代码复用<br>优点：减少代码量、很好的提高复用率，使类与类之间存在继承关系，是实现多态操作的前提。<br>缺点：继承使得多个类之间育有了子父类关系，当一个类存在多个子类的时候，如果父类发生变化，那么这些子类会跟着一同变化，造成类之间的“强耦合”关系。</p>
+<p>继承关键字：<em>extends</em><br>
+继承是指将多个相同的属性和方法提取出来，新建一个父类。从而在多个类中不需要重复定义公共部分！这个公共部分就是父类，也可以称为超类或者基类，其他的类就被称为子类。Java中一个类只能继承一个父类，且只能继承访问权限非private的属性和方法。子类可以重写父类中的方法，命名与父类中同名的属性。继承的特点：1、子类比父类更强大。2、Java是单继承，不能进行多继承，但是可以继承多层子类（一般不建议超过三层）3、子类继承父类，但是对父类的成员变量是无法直接操作的，只能通过父类继承过来的setter和getter方法。<br>
+继承的目的：代码复用<br>
+优点：减少代码量、很好的提高复用率，使类与类之间存在继承关系，是实现多态操作的前提。<br>
+缺点：继承使得多个类之间育有了子父类关系，当一个类存在多个子类的时候，如果父类发生变化，那么这些子类会跟着一同变化，造成类之间的“强耦合”关系。</p>
 <blockquote>
 <p>多态</p>
 </blockquote>
-<p>封装和继承几乎都是为多态而准备的。<br>多态可以分为两种：设计时多态和运行时多态。</p>
+<p>封装和继承几乎都是为多态而准备的。<br>
+多态可以分为两种：设计时多态和运行时多态。</p>
 <ul>
 <li>设计时多态：即重载，是指Java允许方法名相同而参数不同（返回值可以相同也可以不相同）。</li>
-<li>运行时多态：即重写，是指Java运行根据调用该方法的类型决定调用哪个方法。  </li>
+<li>运行时多态：即重写，是指Java运行根据调用该方法的类型决定调用哪个方法。</li>
 </ul>
-<p>多态目的：增加代码的灵活度。<br>优点：</p>
+<p>多态目的：增加代码的灵活度。<br>
+优点：</p>
 <ul>
 <li>可替换性：多态对一存在的代码具有可替代性</li>
 <li>可扩充性：增加的子类不影响已存在的类的特性的运行和操作</li>
 <li>接口性：多态时超类通过方法签名想子类提供了一个公共的接口，由子类来完善或者覆盖它而实现的</li>
-<li>灵活性：在应用中体现了灵活多样的操作，提高了使用的效率<br>缺点：只能使用父类的引用访问父类的成员</li>
+<li>灵活性：在应用中体现了灵活多样的操作，提高了使用的效率<br>
+缺点：只能使用父类的引用访问父类的成员</li>
 </ul>
 <p>设计一个简单的Java应用程序来运用所学：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 定义一个类，描述一个矩形，包含有长、宽两种属性和计算面积方法。</span></span><br><span class="line"><span class="comment">* 编写一个类，继承自矩形类，同时该类描述长方体，具有长、宽、高属性和计算体积的方法。</span></span><br><span class="line"><span class="comment">* 编写一个测试类，对以上两个类进行测试，创建一个长方体，定义其长、宽、高，输出其底面积和体积。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rectangle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">double</span> chang;</span><br><span class="line">    <span class="keyword">double</span> kuan;</span><br><span class="line"></span><br><span class="line">    Rectangle(<span class="keyword">double</span> chang,<span class="keyword">double</span> kuan)&#123;</span><br><span class="line">        <span class="keyword">this</span>.chang = chang;</span><br><span class="line">        <span class="keyword">this</span>.kuan = kuan;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">getArea</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> chang * kuan;    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rectangular</span> <span class="keyword">extends</span> <span class="title">Rectangle</span></span>&#123;</span><br><span class="line">    <span class="keyword">double</span> gao;</span><br><span class="line"></span><br><span class="line">    Rectangular(<span class="keyword">double</span> chang, <span class="keyword">double</span> kuan,<span class="keyword">double</span> gao) &#123;</span><br><span class="line">        <span class="keyword">super</span>(chang, kuan);</span><br><span class="line">        <span class="keyword">this</span>.gao = gao;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">getVolume</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> gao * getArea();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RectangleTest</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String []args)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;开始执行&quot;</span>);</span><br><span class="line"></span><br><span class="line">        Rectangular rectangular = <span class="keyword">new</span> Rectangular(<span class="number">15</span>,<span class="number">12</span>,<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;这是体积计算：&quot;</span> + rectangular.getVolume());</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;这是面积计算：&quot;</span> + rectangular.getArea());</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;另一种实例化方式：&quot;</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;这是面积计算：&quot;</span> + <span class="keyword">new</span> Rectangle(<span class="number">15</span>,<span class="number">12</span>).getArea());</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;这是体积计算：&quot;</span> + <span class="keyword">new</span> Rectangular(<span class="number">15</span>,<span class="number">12</span>,<span class="number">5</span>).getVolume());</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>从另一个角度说明   </p>
+<p>从另一个角度说明</p>
 <p>一个方法名，参数不同，这叫方法重载。(Overload)</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(String str)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">int</span> number)</span></span>;</span><br></pre></td></tr></table></figure>
 <p>父类与子类有同样的方法名和参数，这叫方法覆盖。(Override)</p>
@@ -221,12 +243,32 @@
 <p>父类引用指向子类对象，调用方法时会调用子类的实现，而不是父类的实现，这叫多态。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Parent instance = <span class="keyword">new</span> Child();</span><br><span class="line">instance.foo(); <span class="comment">//==&gt; Child foo()</span></span><br></pre></td></tr></table></figure>
 <p>多态与继承体系有关，与方法覆盖有关，与方法重载无关。</p>
-<p>再看一个经典的案例<br>猫和动物<br>动物类有eat()和sleep()方法<br>1、继承关系：猫继承动物<br>2、子类要重写父类方法：eat()、sleep() + catMouse()<br>3、父类数据类型的引用指向子类对象。Animal am = new Cat();语句在堆内存中开辟了子类(Cat)的对象，并把栈内存中的父类(Animal)的引用指向了这个Cat对象。<br>成员变量<br>编译看左边(父类),运行看左边(父类)<br>成员方法<br>编译看左边(父类)，运行看右边(子类)。动态绑定<br>静态方法<br>编译看左边(父类)，运行看左边(父类)。<br>(静态和类相关，算不上重写，所以，访问还是左边的)<br>只有非静态的成员方法,编译看左边,运行看右边<br>原因就是多态的弊端，就是：不能使用子类特有的成员属性和子类特有的成员方法。</p>
-<p>一些问题  </p>
-<h2 id="抽象类和接口的区别"><a href="#抽象类和接口的区别" class="headerlink" title="抽象类和接口的区别"></a>抽象类和接口的区别</h2><blockquote>
+<p>再看一个经典的案例<br>
+猫和动物<br>
+动物类有eat()和sleep()方法<br>
+1、继承关系：猫继承动物<br>
+2、子类要重写父类方法：eat()、sleep() + catMouse()<br>
+3、父类数据类型的引用指向子类对象。Animal am = new Cat();语句在堆内存中开辟了子类(Cat)的对象，并把栈内存中的父类(Animal)的引用指向了这个Cat对象。<br>
+成员变量<br>
+编译看左边(父类),运行看左边(父类)<br>
+成员方法<br>
+编译看左边(父类)，运行看右边(子类)。动态绑定<br>
+静态方法<br>
+编译看左边(父类)，运行看左边(父类)。<br>
+(静态和类相关，算不上重写，所以，访问还是左边的)<br>
+只有非静态的成员方法,编译看左边,运行看右边<br>
+原因就是多态的弊端，就是：不能使用子类特有的成员属性和子类特有的成员方法。</p>
+<p>一些问题</p>
+<h2 id="抽象类和接口的区别">抽象类和接口的区别</h2>
+<blockquote>
 <p>参考链接</p>
 </blockquote>
-<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/hellosweet1/article/details/81320384">三大特性</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c1ee7e4247bf">Lombok学习</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/28edf5352b63">Java注解原理到案例</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_34900758/article/details/114145326">java多态</a><br><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/30082151/answer/120520568">相当不错Java多态</a></p>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/hellosweet1/article/details/81320384">三大特性</a><br>
+<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c1ee7e4247bf">Lombok学习</a><br>
+<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/28edf5352b63">Java注解原理到案例</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_34900758/article/details/114145326">java多态</a><br>
+<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/30082151/answer/120520568">相当不错Java多态</a></p>
 
       
 
@@ -487,11 +529,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">

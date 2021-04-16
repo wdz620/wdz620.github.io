@@ -183,8 +183,7 @@
 <li>阻塞状态：因等待某一事件而不能运行。</li>
 </ul>
 <a id="more"></a>
-
-<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81%E5%92%8C%E8%BD%AC%E6%8D%A2.png"></p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81%E5%92%8C%E8%BD%AC%E6%8D%A2.png" alt=""></p>
 <p>还有两个状态</p>
 <ul>
 <li>创建状态：进程正在被创建，系统为其初始化PCB，分配资源。</li>
@@ -193,21 +192,39 @@
 <blockquote>
 <p>进程之间的转换</p>
 </blockquote>
-<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E8%BF%9B%E7%A8%8B%E7%9A%84%E8%BD%AC%E6%8D%A2.png"></p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E8%BF%9B%E7%A8%8B%E7%9A%84%E8%BD%AC%E6%8D%A2.png" alt=""></p>
 <blockquote>
 <p>总结</p>
 </blockquote>
-<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81%E6%80%BB%E7%BB%93.png"></p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81%E6%80%BB%E7%BB%93.png" alt=""></p>
 <blockquote>
 <p>思考问题</p>
 </blockquote>
-<p><strong>进程的创建过程？</strong><br>1、给新创建的进程分配一个内部标识（PCB），在内核中建立进程结构。<br>2、复制父进程的环境<br>3、为进程分配资源，包括进程映像所需要的所有元素（程序、数据、用户栈等）<br>4、复制父进程地址空间的内容到该进程地址空间中。<br>5、置该进程的状态为就绪，插入就绪队列。</p>
-<p><strong>进程的撤销过程?</strong><br>1、<code>关闭软中断:</code>因为进程即将终止而不再处理任何软中断信号；<br>2、<code>回收资源：</code>释放进程分配的所有资源，如关闭所有已打开文件，释放进程相应的数据结构等；<br>3、<code>写记帐信息：</code>将进程在运行过程中所产生的记帐数据（其中包括进程运行时的各种统计信息）记录到一个全局记帐文件中；<br>4、<code>置该进程为僵死状态:</code>向父进程发送子进程死的软中断信号，将终止信息status送到指定的存储单元中；<br>5、<code>转进程调度:</code>因为此时CPU已经被释放，需要由进程调度进行CPU再分配。</p>
-<p><strong>终止进程的方法</strong><br>1、<code>从main函数返回：</code>从return返回，执行完毕退出<br>2、<code>调用exit：</code>C函数库，实际上也是调用系统调用_exit完成的，在任何一个函数调用exit函数都可使得进程撤销<br>3、<code>调用_exit：</code>系统调用<br>4、<code>调用abort：</code>调用abort()函数使得进程终止，实际上该函数是产生一个SIGABRT信号，<br>5、<code>由信号终止：</code>发送一些信号如SINGINT等信号</p>
+<p><strong>进程的创建过程？</strong><br>
+1、给新创建的进程分配一个内部标识（PCB），在内核中建立进程结构。<br>
+2、复制父进程的环境<br>
+3、为进程分配资源，包括进程映像所需要的所有元素（程序、数据、用户栈等）<br>
+4、复制父进程地址空间的内容到该进程地址空间中。<br>
+5、置该进程的状态为就绪，插入就绪队列。</p>
+<p><strong>进程的撤销过程?</strong><br>
+1、<code>关闭软中断:</code>因为进程即将终止而不再处理任何软中断信号；<br>
+2、<code>回收资源：</code>释放进程分配的所有资源，如关闭所有已打开文件，释放进程相应的数据结构等；<br>
+3、<code>写记帐信息：</code>将进程在运行过程中所产生的记帐数据（其中包括进程运行时的各种统计信息）记录到一个全局记帐文件中；<br>
+4、<code>置该进程为僵死状态:</code>向父进程发送子进程死的软中断信号，将终止信息status送到指定的存储单元中；<br>
+5、<code>转进程调度:</code>因为此时CPU已经被释放，需要由进程调度进行CPU再分配。</p>
+<p><strong>终止进程的方法</strong><br>
+1、<code>从main函数返回：</code>从return返回，执行完毕退出<br>
+2、<code>调用exit：</code>C函数库，实际上也是调用系统调用_exit完成的，在任何一个函数调用exit函数都可使得进程撤销<br>
+3、<code>调用_exit：</code>系统调用<br>
+4、<code>调用abort：</code>调用abort()函数使得进程终止，实际上该函数是产生一个SIGABRT信号，<br>
+5、<code>由信号终止：</code>发送一些信号如SINGINT等信号</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/HelloBytes/p/13174641.html">作者:HelloBytes</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/51194025">操作系统</a><br><a target="_blank" rel="noopener" href="http://www.elecfans.com/d/1310954.html">进程的三种状态</a></p>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/HelloBytes/p/13174641.html">作者:HelloBytes</a><br>
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/51194025">操作系统</a><br>
+<a target="_blank" rel="noopener" href="http://www.elecfans.com/d/1310954.html">进程的三种状态</a></p>
 
       
 
@@ -468,11 +485,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">

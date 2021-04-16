@@ -166,7 +166,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>主要是搜集网上的一些关于MySQL的问题，然后尝试通过自己浅薄的知识进行回答，如有错误，请您谅解。当然非常欢迎在文末进行交流~<br>仅供个人学习回顾使用，如有侵权留言联系删除！</p>
+        <p>主要是搜集网上的一些关于MySQL的问题，然后尝试通过自己浅薄的知识进行回答，如有错误，请您谅解。当然非常欢迎在文末进行交流~<br>
+仅供个人学习回顾使用，如有侵权留言联系删除！</p>
         
           <a class="article-more-a" href="/2021/03/28/%E6%AF%8F%E6%97%A5%E8%AF%B5%E7%BB%8F/#more">more >></a>
         
@@ -324,7 +325,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>本文主要学习网上的各位优秀博主的文章，然后再去自行阅读源码进行理解。主要包括以下几个方面：<br>1、put方法<br>2、resize方法<br>3、get方法<br>4、对一些问题的回答</p>
+        <p>本文主要学习网上的各位优秀博主的文章，然后再去自行阅读源码进行理解。主要包括以下几个方面：<br>
+1、put方法<br>
+2、resize方法<br>
+3、get方法<br>
+4、对一些问题的回答</p>
         
           <a class="article-more-a" href="/2021/03/26/HashMap%E6%B7%B1%E7%A9%B6/#more">more >></a>
         
@@ -400,7 +405,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>主要整理自掘金上一位博主，为知识付费购买义不容辞~~~<br>为什么需要缓存池？<br>MySQL的InnoDB存储引擎是基于磁盘存储的，并且是按照页的方式进行管理的，在数据库系统中，CPU速度和磁盘速度之间的差距是比较大的，为了弥补这种速度，提出了缓存池的概念，简单来说就是一块<code>内存区域</code>,通过内存的速度去弥补磁盘速度较慢，导致对数据库造成的性能影响。</p>
+        <p>主要整理自掘金上一位博主，为知识付费购买义不容辞~~~<br>
+为什么需要缓存池？<br>
+MySQL的InnoDB存储引擎是基于磁盘存储的，并且是按照页的方式进行管理的，在数据库系统中，CPU速度和磁盘速度之间的差距是比较大的，为了弥补这种速度，提出了缓存池的概念，简单来说就是一块<code>内存区域</code>,通过内存的速度去弥补磁盘速度较慢，导致对数据库造成的性能影响。</p>
 <p><code>InnoDB</code>的设计者为了缓存磁盘中的页，在<code>MySQL</code>服务器启动的时候就向操作系统申请了一片连续的内存，他们给这片内存起了个名，叫做<code>Buffer Pool</code>（中文名是<code>缓冲池</code>）。默认大小为128M，最小也不能小于5M。</p>
         
           <a class="article-more-a" href="/2021/03/25/MySQL%E7%BC%93%E5%AD%98%E6%B1%A0/#more">more >></a>
@@ -477,7 +484,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>首先明确锁是数据库系统区别于文件系统的一个重要特性。数据库使用锁是为了支持对共享资源进行并发访问，提供数据的完整性和一致性。<br>排它锁，共享锁，表锁，页锁，间隙锁，意向排它锁，意向共享锁，行锁，读锁，写锁，乐观锁，悲观锁，死锁。我不是知道你看到这些概念在想什么，反正我是一脸懵X。。。。。<br>下面通过整理学习，不断去了解它，打败它。</p>
+        <p>首先明确锁是数据库系统区别于文件系统的一个重要特性。数据库使用锁是为了支持对共享资源进行并发访问，提供数据的完整性和一致性。<br>
+排它锁，共享锁，表锁，页锁，间隙锁，意向排它锁，意向共享锁，行锁，读锁，写锁，乐观锁，悲观锁，死锁。我不是知道你看到这些概念在想什么，反正我是一脸懵X。。。。。<br>
+下面通过整理学习，不断去了解它，打败它。</p>
         
           <a class="article-more-a" href="/2021/03/24/%E9%94%81/#more">more >></a>
         
@@ -553,11 +562,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="数据库底层的执行"><a href="#数据库底层的执行" class="headerlink" title="数据库底层的执行"></a>数据库底层的执行</h3><p>首先明确SQL的执行过程是有必要的</p>
-<p>书写顺序</p>
-<blockquote>
-<p>SELECT … FROM … WHERE … GROUP BY … HAVING … ORDER BY …</p>
-</blockquote>
+        <h3 id="数据库底层的执行">数据库底层的执行</h3>
+<p>一:MySQL执行过程<br>
+二:MySQL执行过程中的状态<br>
+三:MySQL执行的顺序</p>
         
           <a class="article-more-a" href="/2021/03/22/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BA%95%E5%B1%82%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/#more">more >></a>
         
@@ -633,8 +641,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>道阻且长，行则将至，行而不辍，未来可期。</em><br>第一次自己尝试使用Nginx去部署VUE项目之后，非常好奇为什么Nginx为何这么强大，只通过一个简单的配置就能运行呢？VUE打包出来的dist文件怎么就能运行起来呢？<br>下面通过不断学习整理收集Nginx相关知识努力去解决自己心中的疑惑吧（主要记录自己那一年的那一个下午为了使用nginx部署的心酸吧。）</p>
-<p><strong>Nginx 是开源的轻量级 Web 服务器、反向代理服务器，以及负载均衡器和 HTTP 缓存器。其特点是高并发，高性能和低内存。</strong><br>跨平台、配置简单、非阻塞、高并发连接（官方检测能支持5w并发）、内存消耗小（开启10个Nginx才占用150M内存）、成本低廉且开源、性能稳定，宕机概率小。</p>
+        <p><em>道阻且长，行则将至，行而不辍，未来可期。</em><br>
+第一次自己尝试使用Nginx去部署VUE项目之后，非常好奇为什么Nginx为何这么强大，只通过一个简单的配置就能运行呢？VUE打包出来的dist文件怎么就能运行起来呢？<br>
+下面通过不断学习整理收集Nginx相关知识努力去解决自己心中的疑惑吧（主要记录自己那一年的那一个下午为了使用nginx部署的心酸吧。）</p>
+<p><strong>Nginx 是开源的轻量级 Web 服务器、反向代理服务器，以及负载均衡器和 HTTP 缓存器。其特点是高并发，高性能和低内存。</strong><br>
+跨平台、配置简单、非阻塞、高并发连接（官方检测能支持5w并发）、内存消耗小（开启10个Nginx才占用150M内存）、成本低廉且开源、性能稳定，宕机概率小。</p>
         
           <a class="article-more-a" href="/2021/03/21/Nginx%E5%AD%A6%E4%B9%A0/#more">more >></a>
         
@@ -710,9 +721,17 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>软件工程中没有银弹。<br>主要记录一下关于索引的一些问题，方便自己随时翻阅。主要包括以下内容</p>
+        <p>软件工程中没有银弹。<br>
+主要记录一下关于索引的一些问题，方便自己随时翻阅。主要包括以下内容</p>
 <blockquote>
-<p>索引分类<br>聚集索引和非聚集索引<br>最左匹配原则<br>什么样的值不能作为索引<br>建立索引的原则<br>explain命令<br>慢查询优化步骤<br>索引结构：B+树</p>
+<p>索引分类<br>
+聚集索引和非聚集索引<br>
+最左匹配原则<br>
+什么样的值不能作为索引<br>
+建立索引的原则<br>
+explain命令<br>
+慢查询优化步骤<br>
+索引结构：B+树</p>
 </blockquote>
         
           <a class="article-more-a" href="/2021/03/21/%E7%B4%A2%E5%BC%95/#more">more >></a>
@@ -789,7 +808,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>GC（Garbage Collection）垃圾收集<br>进入了“自动化”时代，为什么我们还要去了解垃圾收集和内存分配呢？<br>当需要排查各种内存溢出、内存泄漏问题时，当垃圾收集成为系统达到更高并发量的瓶颈时，我们必须对这些“自动化”技术实施必要的监控和调节。<br>本文跟着三个疑问去学习整理：<br>1、哪些内存需要回收？<br>2、什么时候回收？<br>3、怎么回收？ </p>
+        <p>GC（Garbage Collection）垃圾收集<br>
+进入了“自动化”时代，为什么我们还要去了解垃圾收集和内存分配呢？<br>
+当需要排查各种内存溢出、内存泄漏问题时，当垃圾收集成为系统达到更高并发量的瓶颈时，我们必须对这些“自动化”技术实施必要的监控和调节。<br>
+本文跟着三个疑问去学习整理：<br>
+1、哪些内存需要回收？<br>
+2、什么时候回收？<br>
+3、怎么回收？</p>
         
           <a class="article-more-a" href="/2021/03/19/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/#more">more >></a>
         
@@ -874,7 +899,8 @@
 <th>UDP</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>是否连接</td>
 <td>面向连接</td>
 <td>无连接</td>
@@ -909,7 +935,8 @@
 <td>慢</td>
 <td>快</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
         
           <a class="article-more-a" href="/2021/03/18/TCP%E5%92%8CUDP/#more">more >></a>
         
@@ -1074,11 +1101,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">

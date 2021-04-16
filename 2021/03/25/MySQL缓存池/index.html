@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>MySQL缓存池 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="主要整理自掘金上一位博主，为知识付费购买义不容辞~~~为什么需要缓存池？MySQL的InnoDB存储引擎是基于磁盘存储的，并且是按照页的方式进行管理的，在数据库系统中，CPU速度和磁盘速度之间的差距是比较大的，为了弥补这种速度，提出了缓存池的概念，简单来说就是一块内存区域,通过内存的速度去弥补磁盘速度较慢，导致对数据库造成的性能影响。 InnoDB的设计者为了缓存磁盘中的页，在MySQL服务器启动">
+  <meta name="description" content="主要整理自掘金上一位博主，为知识付费购买义不容辞~~~ 为什么需要缓存池？ MySQL的InnoDB存储引擎是基于磁盘存储的，并且是按照页的方式进行管理的，在数据库系统中，CPU速度和磁盘速度之间的差距是比较大的，为了弥补这种速度，提出了缓存池的概念，简单来说就是一块内存区域,通过内存的速度去弥补磁盘速度较慢，导致对数据库造成的性能影响。 InnoDB的设计者为了缓存磁盘中的页，在MySQL服务器">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL缓存池">
 <meta property="og:url" content="http://example.com/2021/03/25/MySQL%E7%BC%93%E5%AD%98%E6%B1%A0/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="主要整理自掘金上一位博主，为知识付费购买义不容辞~~~为什么需要缓存池？MySQL的InnoDB存储引擎是基于磁盘存储的，并且是按照页的方式进行管理的，在数据库系统中，CPU速度和磁盘速度之间的差距是比较大的，为了弥补这种速度，提出了缓存池的概念，简单来说就是一块内存区域,通过内存的速度去弥补磁盘速度较慢，导致对数据库造成的性能影响。 InnoDB的设计者为了缓存磁盘中的页，在MySQL服务器启动">
+<meta property="og:description" content="主要整理自掘金上一位博主，为知识付费购买义不容辞~~~ 为什么需要缓存池？ MySQL的InnoDB存储引擎是基于磁盘存储的，并且是按照页的方式进行管理的，在数据库系统中，CPU速度和磁盘速度之间的差距是比较大的，为了弥补这种速度，提出了缓存池的概念，简单来说就是一块内存区域,通过内存的速度去弥补磁盘速度较慢，导致对数据库造成的性能影响。 InnoDB的设计者为了缓存磁盘中的页，在MySQL服务器">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210324194902202.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210324195611030.png">
@@ -172,14 +172,17 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>主要整理自掘金上一位博主，为知识付费购买义不容辞~~~<br>为什么需要缓存池？<br>MySQL的InnoDB存储引擎是基于磁盘存储的，并且是按照页的方式进行管理的，在数据库系统中，CPU速度和磁盘速度之间的差距是比较大的，为了弥补这种速度，提出了缓存池的概念，简单来说就是一块<code>内存区域</code>,通过内存的速度去弥补磁盘速度较慢，导致对数据库造成的性能影响。</p>
+        <p>主要整理自掘金上一位博主，为知识付费购买义不容辞~~~<br>
+为什么需要缓存池？<br>
+MySQL的InnoDB存储引擎是基于磁盘存储的，并且是按照页的方式进行管理的，在数据库系统中，CPU速度和磁盘速度之间的差距是比较大的，为了弥补这种速度，提出了缓存池的概念，简单来说就是一块<code>内存区域</code>,通过内存的速度去弥补磁盘速度较慢，导致对数据库造成的性能影响。</p>
 <p><code>InnoDB</code>的设计者为了缓存磁盘中的页，在<code>MySQL</code>服务器启动的时候就向操作系统申请了一片连续的内存，他们给这片内存起了个名，叫做<code>Buffer Pool</code>（中文名是<code>缓冲池</code>）。默认大小为128M，最小也不能小于5M。</p>
 <a id="more"></a>
-
 <p><strong>Buffer Pool内部组成</strong></p>
 <p><code>Buffer Pool</code>中默认的缓存页大小和在磁盘上默认的页大小是一样的，都是<code>16KB</code>。直接上一个图进行(通过学习掘金一位大神的图)</p>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210324194902202.png" alt="image-20210324194902202"></p>
-<p>控制块和缓存页是一一对应的，它们都被存放到 Buffer Pool 中，其中控制块被存放到 Buffer Pool 的前边，缓存页被存放到 Buffer Pool 后边。碎片就是剩下的空间（简称’单身狗’，因为控制块和缓存页是一对一对出现的，如果剩下的不够一对出现的，就是碎片了。当然如果你这个设计者设计的特别好，就不会有’单身狗’的出现了）。<br>控制块中包括：表空间编号(sapce id)、页号(page numeber)、页在 buffer Pool 的地址、一些锁信息以及 LSN 信息日志序列号、其他控制信息。为了后面进行哈希查找铺垫<br><strong>Free链表</strong></p>
+<p>控制块和缓存页是一一对应的，它们都被存放到 Buffer Pool 中，其中控制块被存放到 Buffer Pool 的前边，缓存页被存放到 Buffer Pool 后边。碎片就是剩下的空间（简称’单身狗’，因为控制块和缓存页是一对一对出现的，如果剩下的不够一对出现的，就是碎片了。当然如果你这个设计者设计的特别好，就不会有’单身狗’的出现了）。<br>
+控制块中包括：表空间编号(sapce id)、页号(page numeber)、页在 buffer Pool 的地址、一些锁信息以及 LSN 信息日志序列号、其他控制信息。为了后面进行哈希查找铺垫<br>
+<strong>Free链表</strong></p>
 <p>那么我们启动服务器，申请一块连续的内存之后，然后把它划分成若干对控制块和缓存页。那么问题来了，从磁盘上读取一个页到<code>Buffer Pool</code>中的时候该放到哪个缓存页的位置呢？或者说怎么区分<code>Buffer Pool</code>中哪些缓存页是空闲的，哪些已经被使用了呢？这里就引出了下一个关键人物==free链表==（我们可以把所有空闲的缓存页对应的控制块作为一个节点放到一个链表中，这个链表也可以被称作<code>free链表</code>（或者说空闲链表））</p>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210324195611030.png" alt="image-20210324195611030"></p>
 <p>我们为了管理好这个<code>free链表</code>，特意为这个链表定义了一个<code>基节点</code>，里边儿包含着链表的头节点地址，尾节点地址，以及当前链表中节点的数量等信息。注意：链表的基节点占用的内存空间并不包含在为<code>Buffer Pool</code>申请的一大片连续内存空间之内，而是单独申请的一块内存空间。</p>
@@ -225,7 +228,8 @@
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br><a target="_blank" rel="noopener" href="https://juejin.cn/book/6844733769996304392">MySQL 是怎样运行的：从根儿上理解 MySQL</a></p>
+<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br>
+<a target="_blank" rel="noopener" href="https://juejin.cn/book/6844733769996304392">MySQL 是怎样运行的：从根儿上理解 MySQL</a></p>
 
       
 
@@ -486,11 +490,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
