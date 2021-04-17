@@ -6,26 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>HashMap和HashTable | 无雨无晴</title>
+  <title>Archives: 2021/4 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1.安全性：  HashMap是非线程安全的，HashTable是线程安全的：就是因为HashTable内部的实现方法基本都经过synchronized修饰。 如果想要保证线程安全最好使用ConcurrentHashMap，详见下面补充  2.底层实现：  因为线程安全的原因，HashMap比HashTable效率高一些。此外，HashTable基本被淘汰，尽量不要使用。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="HashMap和HashTable">
-<meta property="og:url" content="http://example.com/2021/01/16/HashMap%E5%92%8CHashTable/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="无雨无晴">
+<meta property="og:url" content="http://example.com/archives/2021/04/page/2/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="1.安全性：  HashMap是非线程安全的，HashTable是线程安全的：就是因为HashTable内部的实现方法基本都经过synchronized修饰。 如果想要保证线程安全最好使用ConcurrentHashMap，详见下面补充  2.底层实现：  因为线程安全的原因，HashMap比HashTable效率高一些。此外，HashTable基本被淘汰，尽量不要使用。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRWdFd0hIQ0NKQjIzeTk0RTBQUzJ3QW96NEJhSWVYbGZKeGVVOEllNXhrQW51REo2Nlo2S3ZXUS82NDA?x-oss-process=image/format,png">
-<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRXg5RjhtMUllR2liYlM0MGlhV2t4a2liZGVZeXQzQ1N0bGtQcTdGVlFZNGJ6dDdNZnBxQ0hUQmxLQS82NDA?x-oss-process=image/format,png">
-<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/640">
-<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%BA%92%E6%96%A5%E9%94%81.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/HashTable.png">
-<meta property="article:published_time" content="2021-01-16T10:23:46.000Z">
-<meta property="article:modified_time" content="2021-04-06T06:33:08.155Z">
 <meta property="article:author" content="一直默默潜行的修行者">
-<meta property="article:tag" content="Java集合">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRWdFd0hIQ0NKQjIzeTk0RTBQUzJ3QW96NEJhSWVYbGZKeGVVOEllNXhrQW51REo2Nlo2S3ZXUS82NDA?x-oss-process=image/format,png">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -155,295 +144,63 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-HashMap和HashTable" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      HashMap和HashTable
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2021" class="archive-year">2021</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2021/04/01/%E8%BE%93%E5%85%A5URL%E5%90%8E%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/" class="archive-article-date">
+  	<time datetime="2021-04-01T00:26:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2021/04/01/%E8%BE%93%E5%85%A5URL%E5%90%8E%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/">输入URL后的全过程</a>
     </h1>
   
 
-        
-        <a href="/2021/01/16/HashMap%E5%92%8CHashTable/" class="archive-article-date">
-  	<time datetime="2021-01-16T10:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>1.<strong>安全性</strong>：</p>
-<blockquote>
-<p>HashMap是非线程安全的，HashTable是线程安全的：就是因为HashTable内部的实现方法基本都经过synchronized修饰。<br>
-如果想要保证线程安全最好使用ConcurrentHashMap，详见下面补充</p>
-</blockquote>
-<p>2.<strong>底层实现</strong>：</p>
-<blockquote>
-<p>因为线程安全的原因，HashMap比HashTable效率高一些。此外，HashTable基本被淘汰，尽量不要使用。</p>
-</blockquote>
-<a id="more"></a>
-<p>3.<strong>Null key/Value支持性</strong>：</p>
-<blockquote>
-<p>HashMap中，null可以作为键，但只可以有一个，可以有一个或多个键所对应的值为null。<br>
-HashTable中put的键值只要有一个null，就会抛出NullPointerException</p>
-</blockquote>
-<p>4.<strong>容量和扩容</strong>：</p>
-<blockquote>
-<p>首先，创建时如果不指定容量初始值，HashTable默认的初始大小为11，之后每次进行扩容，容量变为原来的2n+1;HashMap默认的初始化大小为16，之后每次扩容，容量变为原来的2倍。<br>
-如果指定了容量的初始值，那么HashTable会直接使用你给定的大小，而HashMap会将其扩容为2的幂次方大小。可以详见之前说的HashMap探究为什么总是使用2的幂作为哈希表大小。</p>
-</blockquote>
-<p>5.<strong>底层数据结构</strong>：</p>
-<blockquote>
-<p>JDK1.8以后的HashMap在解决哈希冲突时有了较大的变化，当链表长度大于阈值(默认为8)时，将链表转化为红黑树，以减少搜索时间。HashTable没有这样的机制。</p>
-</blockquote>
-<hr>
-<p><font color=red>扩展：多线程下安全操作Map</font><br>
-在Java中，HashMap是非线程安全的，如果想在多线程安全下操作map，主要由以下解决方法：</p>
-<ul>
-<li>第一种、使用HashTable线程安全类；</li>
-<li>第二种、使用Collections.synchronizedMap方法，对方法进行加同步锁；</li>
-<li>第三种、使用并发包中的ConcurrentHashMap类；</li>
-</ul>
-<blockquote>
-<p>第一种分析</p>
-</blockquote>
-<p>关于HashTable类，之前也做过介绍，它主要将几乎所有的添加、删除、查询方法都加上了synchronized同步锁，相当于给整个哈希表加了一把大锁，多线程访问的时候，只要有一个线程访问或操作该对象，那其他线程只能阻塞等待需要的锁被释放，在激烈竞争的多线程场景中新能比较差，<strong>所以不推荐使用Hashtable</strong></p>
-<blockquote>
-<p>第二种分析</p>
-</blockquote>
-<p>部分源码如下</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SynchronizedMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Map</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;, <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1978198479659022715L</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;K,V&gt; m;     <span class="comment">// Backing Map</span></span><br><span class="line">    <span class="keyword">final</span> Object      mutex;        <span class="comment">// Object on which to synchronize</span></span><br><span class="line"></span><br><span class="line">    SynchronizedMap(Map&lt;K,V&gt; m) &#123;</span><br><span class="line">        <span class="keyword">this</span>.m = Objects.requireNonNull(m);</span><br><span class="line">        mutex = <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    SynchronizedMap(Map&lt;K,V&gt; m, Object mutex) &#123;</span><br><span class="line">        <span class="keyword">this</span>.m = m;</span><br><span class="line">        <span class="keyword">this</span>.mutex = mutex;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mutex) &#123;<span class="keyword">return</span> m.size();&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mutex) &#123;<span class="keyword">return</span> m.isEmpty();&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">containsKey</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mutex) &#123;<span class="keyword">return</span> m.containsKey(key);&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">containsValue</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mutex) &#123;<span class="keyword">return</span> m.containsValue(value);&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">get</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mutex) &#123;<span class="keyword">return</span> m.get(key);&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mutex) &#123;<span class="keyword">return</span> m.put(key, value);&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">remove</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mutex) &#123;<span class="keyword">return</span> m.remove(key);&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">putAll</span><span class="params">(Map&lt;? extends K, ? extends V&gt; map)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mutex) &#123;m.putAll(map);&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mutex) &#123;m.clear();&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>清晰的看到，如果传入的是HashMap对象，其实也是对HashMap做的方法做了一次包装，里面使用对象锁来保证多线程场景下，操作安全，本质也是对 <strong>HashMap进行全表锁</strong><br>
-<strong>同第一种一样，在竞争激烈的多线程环境下依然也比较差，所以不太推荐使用！</strong></p>
-<p>小结：上述两种方法，都是由于对方法进行全表锁，所以导致在多线程环境下性能较差。由于HashMap是数组+链表的数据结构，如果我们把数组进行<em>分割多段</em>，对每一段分别设计一把同步锁，那么在多线程访问的过程，是不是就能解决锁竞争的，提升性能呢？</p>
-<blockquote>
-<p>第三种(重点)：ConcurrentHashMap分析</p>
-</blockquote>
-<p>ConcurrentHashMap类所采用的方法就是分段锁的思想，将HashMap进行切割，把HashMap中的哈希数组切分成小数组，每个小数组由n个HashEntry组成，其中小数组继承字ReentrantLock(可重入锁)，这个小数组名叫Segment，如图：<br>
-<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRWdFd0hIQ0NKQjIzeTk0RTBQUzJ3QW96NEJhSWVYbGZKeGVVOEllNXhrQW51REo2Nlo2S3ZXUS82NDA?x-oss-process=image/format,png" alt="ConcurrentMap整体结构图JDK1.7"></p>
-<p>这里的ConcurrentMap也是区分JDK1.7和JDK1.8的！<br>
-因为JDK1.8对HashMap做了变动，<strong>当冲突链表长度大于8，会将链表转变成红黑树结构。</strong><br>
-上图是JDK1.7。在下图展示的是ConcurrentHashMap在JDK1.8的整体结构，内容如下：<br>
-<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRXg5RjhtMUllR2liYlM0MGlhV2t4a2liZGVZeXQzQ1N0bGtQcTdGVlFZNGJ6dDdNZnBxQ0hUQmxLQS82NDA?x-oss-process=image/format,png" alt="ConcurrentMap整体结构图JDK1.8"><br>
-在JDK1.8中ConcurrentHashMap类取消了Segment分段锁，采用CAS + synchronized来保证并发安全，数据结构JDK1.8中的HashMap结构类似，都是数组+链表(长度大于8，变成红黑树)结构。<br>
-ConcurrentHashMap 中 synchronized 只锁定当前链表或红黑二叉树的首节点，只要节点 hash 不冲突，就不会产生并发，相比 JDK1.7 的 ConcurrentHashMap 效率又提升了 N 倍！</p>
-<blockquote>
-<p>JDK1.7和JDK1.8源码分析</p>
-</blockquote>
-<p>可以参看这个博主：<a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/104586114/">https://blog.csdn.net/singwhatiwanna/article/details/104586114/</a><br>
-总结：<br>
-虽然 HashMap 在多线程环境下操作不安全，但是在 java.util.concurrent 包下，java 为我们提供了 ConcurrentHashMap 类，保证在多线程下 HashMap 操作安全！<br>
-在 JDK1.7 中，ConcurrentHashMap 采用了分段锁策略，将一个 HashMap 切割成 Segment 数组，其中 Segment 可以看成一个 HashMap， 不同点是 Segment 继承自 ReentrantLock，在操作的时候给 Segment 赋予了一个对象锁，从而保证多线程环境下并发操作安全。<br>
-但是 JDK1.7 中，HashMap 容易因为冲突链表过长，造成查询效率低，所以在 JDK1.8 中，HashMap 引入了红黑树特性，当冲突链表长度大于 8 时，会将链表转化成红黑二叉树结构。<br>
-在 JDK1.8 中，与此对应的 ConcurrentHashMap 也是采用了与 HashMap 类似的存储结构，但是 JDK1.8 中 ConcurrentHashMap 并没有采用分段锁的策略，而是在元素的节点上采用 CAS + synchronized 操作来保证并发的安全性，源码的实现比 JDK1.7 要复杂的多。</p>
-<hr>
-<h3 id="synchronizedMap-具体是怎么实现线程安全的？">synchronizedMap 具体是怎么实现线程安全的？</h3>
-<p>一般我们会这样使用 synchronizedMap 方法来创建一个线程安全的 Map：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Map m = Collections.synchronizedMap(<span class="keyword">new</span> HashMap(...));</span><br></pre></td></tr></table></figure>
-<p>Collections 中的这个静态方法 synchronizedMap 其实是创建了一个内部类的对象，这个内部类就是 SynchronizedMap。在其内部维护了一个普通的 Map 对象以及互斥锁 mutex</p>
-<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/640" alt="图片" style="zoom:80%;" />
-<p>可以看到 <code>SynchronizedMap</code> 有两个构造函数，如果你传入了互斥锁 mutex 参数，就使用我们自己传入的互斥锁。如果没有传入，则将互斥锁赋值为 this，也就是将调用了该构造函数的对象作为互斥锁，即我们上面所说的 Map。</p>
-<p>创建出 <code>SynchronizedMap</code> 对象之后，通过源码可以看到对于这个对象的所有操作全部都是上了悲观锁 <code>synchronized</code> 的：</p>
-<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%BA%92%E6%96%A5%E9%94%81.png" style="zoom:50%;" />
-<p>由于多个线程都共享同一把互斥锁，导致同一时刻只能有一个线程进行读写操作，而其他线程只能等待，所以虽然它支持高并发，但是并发度太低，多线程情况下性能比较低下。</p>
-<p>而且，大多数情况下，业务场景都是读多写少，多个线程之间的读操作本身其实并不冲突，所以<code>SynchronizedMap</code> 极大的限制了读的性能。</p>
-<p>所以多线程并发场景我们很少使用 <code>SynchronizedMap</code> 。</p>
-<h3 id="hashTable怎么样呢？">hashTable怎么样呢？</h3>
-<p>和 SynchronizedMap 一样，Hashtable 也是非常粗暴的给每个方法都加上了悲观锁 synchronized，我们随便找几个方法看看：<br>
-<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/HashTable.png" style="zoom:67%;" /><br>
-<code>Hashtable</code> 是不允许 key 或 value 为 null 的，<code>HashMap</code> 的 key 和 value 都可以为 null ！！！</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> V <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Make sure the value is not null</span></span><br><span class="line">    <span class="keyword">if</span> (value == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Makes sure the key is not already in the hashtable.</span></span><br><span class="line">    Entry&lt;?,?&gt; tab[] = table;</span><br><span class="line">    <span class="keyword">int</span> hash = key.hashCode(); <span class="comment">// 此时拿一个空的key去比较！</span></span><br><span class="line">    <span class="keyword">int</span> index = (hash &amp; <span class="number">0x7FFFFFFF</span>) % tab.length;</span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">    Entry&lt;K,V&gt; entry = (Entry&lt;K,V&gt;)tab[index];</span><br><span class="line">    <span class="keyword">for</span>(; entry != <span class="keyword">null</span> ; entry = entry.next) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((entry.hash == hash) &amp;&amp; entry.key.equals(key)) &#123;</span><br><span class="line">            V old = entry.value;</span><br><span class="line">            entry.value = value;</span><br><span class="line">            <span class="keyword">return</span> old;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    addEntry(hash, key, value, index);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>而HashMap做了一个特殊的处理</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> putVal(hash(key), key, value, <span class="keyword">false</span>, <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 下面的三元表达式就是相应的处理</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> h;</span><br><span class="line">    <span class="keyword">return</span> (key == <span class="keyword">null</span>) ? <span class="number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>也就是说 HashMap 中 key为 null 的键值对的 hash 为 0。因此一个 HashMap 对象中只会存储一个 key 为 null 的键值对，因为它们的 hash 值都相同。</p>
-<p>如果我们 put 进来的 value 是 null，由于 HashMap 的 put 方法不会对 value 是否为 null 进行校验，因此一个 HashMap 对象可以存储多个 value 为 null 的键值对。</p>
-<p>不过需要注意的是，这里有个小坑需要注意，我们来看看 HashMap 的 get 方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">get</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">    Node&lt;K,V&gt; e;</span><br><span class="line">    <span class="keyword">return</span> (e = getNode(hash(key), key)) == <span class="keyword">null</span> ? <span class="keyword">null</span> : e.value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果 Map 中没有查询到这个 key 的键值对，那么 get 方法就会返回 null 对象。但是我们上面刚刚说了，HashMap 里面可以存在多个 value 为 null 的键值对，也就是说，通过 get(key) 方法返回的结果为 null 有两种可能：</p>
-<ul>
-<li>HashMap 中不存在这个 key 对应的键值对</li>
-<li>HashMap 中这个 key 对应的 value 为 null<br>
-因此，一般来说我们不能使用 get 方法来判断 HashMap 中是否存在某个 key，而应该使用 containsKey 方法。</li>
-</ul>
-<h3 id="那到底为什么-Hashtable-不允许-key-和-value-为-null-呢？为什么这么设计呢？">那到底为什么 Hashtable 不允许 key 和 value 为 null 呢？为什么这么设计呢？</h3>
-<p>不止是 Hashtable 不允许 key 为 null 或者 value 为 null，ConcurrentHashMap 也是不允许的。作为支持并发的容器，如果它们像 HashMap 一样，允许 null key 和 null value 的话，在多线程环境下会出现问题。</p>
-<p>假设它们允许 null key 和 null value，我们来看看会出现什么问题：当你通过 get(key) 获取到对应的 value 时，如果返回的结果是 null 时，你无法判断这个 key 是否真的存在。为此，我们需要调用 containsKey 方法来判断这个 key 到底是 value = null 还是它根本就不存在，如果 containsKey 方法返回的结果是 true，OK，那我们就可以调用 map.get(key) 获取 value。<br>
-上面这段逻辑对于单线程的 HashMap 当然没有任何问题。在单线程中，当我们得到的 value 是 null 的时候，可以用 map.containsKey(key) 方法来区分二义性。<br>
-但是！由于 Hashtable 和 ConcurrentHashMap 是支持多线程的容器，在调用 map.get(key) 的这个时候 map 对象可能已经不同了。<br>
-我们假设此时某个线程 A 调用了 map.get(key) 方法，它返回为 value = null 的真实情况就是因为这个 key 不存在 。当然，线程 A 还是会按部就班的继续用 map.containsKey(key)，我们期望的结果是返回 false。<br>
-但是，在线程 A 调用 map.get(key) 方法之后，map.containsKey 方法之前，另一个线程 B 执行了 map.put(key,null) 的操作。那么线程 A 调用的 map.containsKey 方法返回的就是 true 了。这就与我们的假设的真实情况不符合了。</p>
-<p>所以，出于并发安全性的考虑，Hashtable 和 ConcurrentHashMap 不允许 key 和 value 为 null。</p>
-<h3 id="介绍下-fail-safe-和-fail-fast-机制">介绍下 fail-safe 和 fail-fast 机制</h3>
-<p>**快速失败 fail-fast:**一种快速发现系统故障的机制。一旦发生异常，立即停止当前的操作，并上报给上层的系统来处理这些故障。<br>
-java.util 包下的集合类都是 fail-fast 的，比如 HashMap 和 HashTable。<br>
-**失败安全 fail-safe:**在故障发生之后会维持系统继续运行。<br>
-顾名思义，和 fail-fast 恰恰相反，当我们对集合的结构做出改变的时候，fail-safe 机制不会抛出异常。<br>
-java.util.concurrent 包下的容器都是 fail-safe 的，比如 ConcurrentHashMap，可以在多线程下并发使用，并发修改。同时也可以在 for-each 增强循环中进行 add/remove。</p>
-<h3 id="讲-fail-fast-的原理是什么">讲 fail-fast 的原理是什么</h3>
-<p>TODO</p>
-<blockquote>
-<p>参考链接：</p>
-</blockquote>
-<p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/104586114/">参考</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机网络</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/01/16/HashMap%E5%92%8CHashTable/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2021/01/18/String/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          String
-        
-      </div>
-    </a>
   
   
-    <a href="/2021/01/11/HashMap%E5%88%9D%E6%8E%A2/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">HashMap初探</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div id="vcomment" class="comment"></div> 
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-   var notify = 'false' == true ? true : false;
-   var verify = 'false' == true ? true : false;
-    window.onload = function() {
-        new Valine({
-            el: '.comment',
-            notify: notify,
-            verify: verify,
-            app_id: "Pcf0NAjXdaEBh1idVXCRepMY-gzGzoHsz",
-            app_key: "v9XAIwg5leNISwUAz5fXdQwd",
-            placeholder: "Just go go",
-            avatar:"retro"
-        });
-    }
-</script>
-
-  </section>
-
-
-  
-  
+    </div></section>
   
 
-  
-
-  
-
+    
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/archives/2021/04/">&amp;laquo; Prev</a><a class="page-number" href="/archives/2021/04/">1</a><span class="page-number current">2</span>
+    </nav>
   
 
 
@@ -467,8 +224,8 @@ java.util.concurrent 包下的容器都是 fail-safe 的，比如 ConcurrentHash
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

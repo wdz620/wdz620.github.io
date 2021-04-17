@@ -146,6 +146,82 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-桶排序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/17/%E6%A1%B6%E6%8E%92%E5%BA%8F/">桶排序</a>
+    </h1>
+  
+
+        
+        <a href="/2021/04/17/%E6%A1%B6%E6%8E%92%E5%BA%8F/" class="archive-article-date">
+  	<time datetime="2021-04-17T06:09:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-17</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>桶排序相关问题</p>
+        
+          <a class="article-more-a" href="/2021/04/17/%E6%A1%B6%E6%8E%92%E5%BA%8F/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/17/%E6%A1%B6%E6%8E%92%E5%BA%8F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Linux环境搭建" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -166,46 +242,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="Java环境搭建">Java环境搭建</h3>
-<p>1、下载安装包（自己网盘有个1.8版本）<br>
-2、上传解压 （一般都安装在 <code>/usr/local</code>）<br>
-3、tar -zxvf /usr/local/jdk-XXX.tar.gz  (这里注意是解压自己的包)<br>
-4、添加环境变量,<code>vim /etc/profile</code></p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=这里是你自己的安装目录</span><br><span class="line">export <span class="built_in">PATH</span>=$JAVA_HOME/bin:$<span class="built_in">PATH</span></span><br><span class="line">export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line">export JRE_HOME=$JAVA_HOME/jre</span><br></pre></td></tr></table></figure>
-<p>5、<code>source /etc/profile</code>刷新配置文件之后，就成功了。<br>
-6、java -version查看安装是否成功</p>
-<h3 id="Nginx安装部署">Nginx安装部署</h3>
-<p>参看之前</p>
-<h3 id="MySQL安装">MySQL安装</h3>
-<p>清理原有的mysql</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa | grep mysql</span><br><span class="line">#可能的显示情况如下</span><br><span class="line">#mysql-community-libs-<span class="number">8</span>.<span class="number">0</span>.<span class="number">12</span>-<span class="number">1</span>.el7.x86_64</span><br><span class="line">#mysql80-community-release-el7-<span class="number">1</span>.noarch</span><br><span class="line">#mysql-community-client-<span class="number">8</span>.<span class="number">0</span>.<span class="number">12</span>-<span class="number">1</span>.el7.x86_64</span><br><span class="line">#mysql-community-common-<span class="number">8</span>.<span class="number">0</span>.<span class="number">12</span>-<span class="number">1</span>.el7.x86_64</span><br><span class="line">#mysql-community-server-<span class="number">8</span>.<span class="number">0</span>.<span class="number">12</span>-<span class="number">1</span>.el7.x86_64</span><br><span class="line">#通过下面的命令进行删除</span><br><span class="line">yum remove mysql-xxx-xxx-</span><br><span class="line"></span><br><span class="line">#查找mysql的相关文件</span><br><span class="line"><span class="built_in">find</span> / -name mysql</span><br><span class="line"></span><br><span class="line">#根据自身的需求删除mysql的配置文件信息</span><br><span class="line">rm -rf /var/lib/mysql</span><br></pre></td></tr></table></figure>
-<p>删除CentOS7默认的数据库mariadb</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa | grep mariadb</span><br><span class="line">#查找mariadb</span><br><span class="line">#可能出现的结果mariadb-libs-5.5.56-2.el7.x86_64</span><br><span class="line">#将查找出来的结果进行强制删除</span><br><span class="line">rpm -e --nodeps mariadb-libs-<span class="number">5.5</span><span class="number">.56</span>-<span class="number">2.</span>el7.x86_64</span><br></pre></td></tr></table></figure>
-<h4 id="正片开始">正片开始</h4>
-<p>下载mysql yum源 <a target="_blank" rel="noopener" href="https://dev.mysql.com/downloads/repo/yum/">https://dev.mysql.com/downloads/repo/yum/</a></p>
-<p>鼠标悬浮在 &quot;No thanks, just start my download.&quot;可查看mysql yum源的地址，选中右键复制链接地址进行下载。</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/src</span><br><span class="line">wget https://dev.mysql.com/get/mysql80-community-release-el7-<span class="number">1</span>.noarch.rpm</span><br><span class="line"></span><br><span class="line">#安装yum源</span><br><span class="line">yum localinstall mysql80-community-release-el7-<span class="number">1</span>.noarch.rpm</span><br><span class="line"></span><br><span class="line">#更新yum源</span><br><span class="line">yum clean all</span><br><span class="line">yum makecache</span><br><span class="line"></span><br><span class="line">#开始安装MySQL</span><br><span class="line">yum install mysql-community-server</span><br><span class="line"></span><br><span class="line">#启动MySQL</span><br><span class="line">systemctl <span class="built_in">start</span> mysqld</span><br><span class="line"></span><br><span class="line">#启动成功后可以查看初始化密码随机生成的</span><br><span class="line">cat /var/log/mysqld.log | grep password</span><br><span class="line"></span><br><span class="line">#登录MySQL修改mysql用户密码</span><br><span class="line">mysql -u root -p</span><br><span class="line">mysql&gt; ALTER USER &#x27;root&#x27;@&#x27;localhost&#x27; IDENTIFIED BY &#x27;yourpassword&#x27;;</span><br><span class="line">#远程设置</span><br><span class="line">mysql&gt; use mysql;</span><br><span class="line">mysql&gt; update user <span class="built_in">set</span> host=&#x27;%&#x27; where user=&#x27;root&#x27;;</span><br><span class="line">#授权用户名的权限，赋予任何主机访问数据的权限</span><br><span class="line">mysql&gt; GRANT ALL PRIVILEGES ON *.* TO &#x27;root&#x27;@&#x27;%&#x27; WITH GRANT OPTION;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
-<p>其中可能遇到的问题：<br>
-1、没有安装wget 使用命令 <code>yum install -y wget</code><br>
-2、远程设置出现 ERROR 1410 (42000): You are not allowed to create a user with GRANT<br>
-解决办法 <code>update user set host = '%' where user = 'root' and host='localhost';</code><br>
-再次授权然后刷新即可。<br>
-3、注意开放端口。</p>
-<blockquote>
-<p>一些命令<br>
-保存，但不退出vi    :w<br>
-保存并退出vi        :wq<br>
-退出vi，但不保存更改  :q!</p>
-</blockquote>
-<h2 id="部署">部署</h2>
-<p><code>nohup java -jar xxx.jar &gt;/dev/null &amp;</code><br>
-其中/dev/null:表示的是一个黑洞,通常用于丢弃不需要的数据输出,或者用于输入流的空文件。<br>
-nohup 不挂断地运行命令。<br>
-&amp; 在后台运行</p>
-<h3 id="重新部署">重新部署</h3>
-<p>jps 查看进程号<br>
-直接kill</p>
-
+        <p>关于Linux环境搭建的记录</p>
+        
+          <a class="article-more-a" href="/2021/04/17/Linux%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/#more">more >></a>
+        
       
 
       
@@ -278,11 +318,10 @@ nohup 不挂断地运行命令。<br>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="快速排序">快速排序</h2>
-<p>首先快排是选择排序，时间复杂度是<code>O(nlgn)</code> ,最坏是<code>O(n2)</code> ,空间复杂度是<code>O(lgn)</code>,不稳定的算法。<br>
-思路，选取一个基准q, 将原有数组分成两个子数组A[p…q - 1],A[q + 1, r],使得前一个子数组都是小于等于A[q],后面的都是大于A[q]。<br>
-<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210415202513651.png" alt="image-20210415202513651"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">int</span>[] quickSort(<span class="keyword">int</span>[] array, <span class="keyword">int</span> p, <span class="keyword">int</span> r) &#123;</span><br><span class="line">    <span class="keyword">if</span> (p &lt; r) &#123;</span><br><span class="line">        <span class="keyword">int</span> q = partition(array, p, r);</span><br><span class="line">        quickSort(array, p, q - <span class="number">1</span>);</span><br><span class="line">        quickSort(array, q + <span class="number">1</span>, r);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> array;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">partition</span><span class="params">(<span class="keyword">int</span>[] array, <span class="keyword">int</span> p, <span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> x = array[r];</span><br><span class="line">    <span class="keyword">int</span> i = p - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = p; j &lt; r; j++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (array[j] &lt;= x) &#123;</span><br><span class="line">            i++;</span><br><span class="line">            swap(array, i, j);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    swap(array, i + <span class="number">1</span>, r);</span><br><span class="line">    <span class="keyword">return</span> i + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span>[] a, <span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> temp = a[i];</span><br><span class="line">    a[i] = a[j];</span><br><span class="line">    a[j] = temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>快速排序</p>
+        
+          <a class="article-more-a" href="/2021/04/15/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/#more">more >></a>
+        
       
 
       
@@ -872,83 +911,6 @@ nohup 不挂断地运行命令。<br>
 
 
   
-    <article id="post-输入URL后的全过程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/04/01/%E8%BE%93%E5%85%A5URL%E5%90%8E%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/">输入URL后的全过程</a>
-    </h1>
-  
-
-        
-        <a href="/2021/04/01/%E8%BE%93%E5%85%A5URL%E5%90%8E%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/" class="archive-article-date">
-  	<time datetime="2021-04-01T00:26:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>输入域名 -&gt; 域名解析 -&gt; TCP三次握手 -&gt; 建立TCP连接后发起HTTP请求 -&gt; 服务器处理HTTP请求，浏览器得到html代码 -&gt; 浏览器解析代码 -&gt; 浏览器对页面进行渲染呈现给用户。<br>
-<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%B0%8F%E5%B1%81%E7%8C%AAURL.jpg" style="zoom: 67%;" /></p>
-        
-          <a class="article-more-a" href="/2021/04/01/%E8%BE%93%E5%85%A5URL%E5%90%8E%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机网络</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/04/01/%E8%BE%93%E5%85%A5URL%E5%90%8E%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1046,10 +1008,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
@@ -1058,15 +1016,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
