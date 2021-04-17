@@ -17,7 +17,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321195726685.png">
 <meta property="article:published_time" content="2021-03-21T12:13:47.000Z">
-<meta property="article:modified_time" content="2021-04-16T08:38:29.472Z">
+<meta property="article:modified_time" content="2021-04-17T01:22:27.655Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="中间件">
 <meta name="twitter:card" content="summary">
@@ -288,15 +288,6 @@ nginx无缝重启命令:<code>sbin/nginx -s reload</code><br>
 <p>这个时候你去访问三个不同的路径将为有三个不同的展示。<br>
 下面设置负载均衡，轮询</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">   upstream group1 &#123;</span><br><span class="line">       server www.baidu.com weight&#x3D;2;</span><br><span class="line">       server www.taobao.com weight&#x3D;1;</span><br><span class="line">   &#125;</span><br><span class="line">   location &#x2F; &#123;</span><br><span class="line">    echo &quot;hello&quot;;</span><br><span class="line">&#125;</span><br><span class="line">location &#x2F;a &#123;</span><br><span class="line">    proxy_pass https:&#x2F;&#x2F;group1&#x2F;;</span><br><span class="line">&#125;</span><br><span class="line">location &#x2F;b &#123;</span><br><span class="line">    proxy_pass https:&#x2F;&#x2F;www.taobao.com&#x2F;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>安装Java环境，先去下载tar，然后上传解压，去profile添加环境变量,<code>vim /etc/profile</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME&#x3D;&#x2F;home&#x2F;wdz&#x2F;jdk1.8.0_221 </span><br><span class="line">export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</span><br><span class="line">export CLASSPATH&#x3D;.:$JAVA_HOME&#x2F;lib&#x2F;dt.jar:$JAVA_HOME&#x2F;lib&#x2F;tools.jar</span><br><span class="line">export JRE_HOME&#x3D;$JAVA_HOME&#x2F;jre</span><br></pre></td></tr></table></figure>
-<p>注意上面的第一个就是自己解压的目录<br>
-<code>source /etc/profile</code>刷新配置文件之后，就成功了。<br>
-安装Tomcat<br>
-上传压缩包，解压，然后进入bin中就可以执行了。<br>
-部署自己的项目<br>
-使用nginx。<br>
-安装MySQL  TODO</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
@@ -578,11 +569,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -611,10 +606,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
