@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210308202604235.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210309084224698.png">
 <meta property="article:published_time" content="2021-03-08T12:04:38.000Z">
-<meta property="article:modified_time" content="2021-03-30T08:04:04.699Z">
+<meta property="article:modified_time" content="2021-04-18T01:11:31.869Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Java基础">
 <meta name="twitter:card" content="summary">
@@ -235,8 +235,14 @@ Java是一种完全面向对象的语言。因此，包括数字、字符、日�
 <p><strong>小结：</strong></p>
 <ul>
 <li>“==” 运算符的两个操作数都是 包装器类型的引用，则是比较指向的是否是同一个对象，而如果其中有一个操作数是表达式（即包含算术运算）则比较的是数值（即会触发自动拆箱的过程）。</li>
-<li>另外，对于包装器类型，equals方法并不会进行类型转换。</li>
+<li>另外，对于包装器类型，equals方法并不会进行类型转换。<br>
+问题：<br>
+两个Integer类型如何比较，使用==还是equals(）</li>
 </ul>
+<p>==是比较基本数据类型是比较值，比较引用类型是比较地址；equals比较引用类型是比较值</p>
+<p>int与int比较，直接使用==比较</p>
+<p>Integer与int比较，==比较时，Integer将会发生自动拆箱(调用intValue()方法)</p>
+<p>两个Integer比较时，当它们都在[-128,127]之间，使用 == 比较和equals比较返回的都是true；在此区间范围之外 == 比较为false，equals比较为true。原因是因为Integer中有一个内部类IntegerCache，当处于此区间的值都是相同的地址和值，因此此区间的==与equals都为true</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
@@ -491,6 +497,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
@@ -499,15 +509,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
