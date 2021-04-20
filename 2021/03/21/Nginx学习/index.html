@@ -17,7 +17,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321195726685.png">
 <meta property="article:published_time" content="2021-03-21T12:13:47.000Z">
-<meta property="article:modified_time" content="2021-04-17T01:22:27.655Z">
+<meta property="article:modified_time" content="2021-04-20T11:55:23.299Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="中间件">
 <meta name="twitter:card" content="summary">
@@ -264,6 +264,8 @@ Apache: 创建多个进程或线程，而每个进程或线程都会为其分配
 优点：动态，根据节点状况实时变化；<br>
 缺点：提高了复杂度，每次连接断开需要进行计数；<br>
 实现：将连接数的倒数当权重值。</p>
+<p><strong>限流算法</strong><br>
+TODO</p>
 <h2 id="Nginx简单使用">Nginx简单使用</h2>
 <h3 id="安装到Linux">安装到Linux</h3>
 <p>1、通过yum安装</p>
@@ -288,11 +290,23 @@ nginx无缝重启命令:<code>sbin/nginx -s reload</code><br>
 <p>这个时候你去访问三个不同的路径将为有三个不同的展示。<br>
 下面设置负载均衡，轮询</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">   upstream group1 &#123;</span><br><span class="line">       server www.baidu.com weight&#x3D;2;</span><br><span class="line">       server www.taobao.com weight&#x3D;1;</span><br><span class="line">   &#125;</span><br><span class="line">   location &#x2F; &#123;</span><br><span class="line">    echo &quot;hello&quot;;</span><br><span class="line">&#125;</span><br><span class="line">location &#x2F;a &#123;</span><br><span class="line">    proxy_pass https:&#x2F;&#x2F;group1&#x2F;;</span><br><span class="line">&#125;</span><br><span class="line">location &#x2F;b &#123;</span><br><span class="line">    proxy_pass https:&#x2F;&#x2F;www.taobao.com&#x2F;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="配置动静分离">配置动静分离</h4>
+<p>动静分离在之前也介绍过了，就是把动态和静态的请求分开。方式主要有两种，一种 是纯粹把静态文件独立成单独的域名，放在独立的服务器上，也是目前主流推崇的方案。另外一种方法就是动态跟静态文件混合在一起发布， 通过 Nginx 配置来分开。<br>
+简单来说，将静态资源上传到 nginx 服务器指定目录下，然后通过 location 对请求url进行匹配。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;static&#x2F; &#123;</span><br><span class="line">    root &#x2F;usr&#x2F;local&#x2F;var&#x2F;www;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="一次线上的502错误排查问题">一次线上的502错误排查问题</h4>
+<p>主要参考文末链接<br>
+在项目中502错误的问题一般属于后台服务器挂掉的问题，例如：CPU使用过满、数据库连接数过大、内存不足、甚至是内存溢出等等因素诱发导致。<br>
+1、查询数据库最大连接数 <code>show variables like &quot;%max_connection%&quot;</code><br>
+2、</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--查询当前数据库不为Sleep且未被释放的语句:</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> information_schema.PROCESSLIST <span class="keyword">WHERE</span> COMMAND <span class="operator">&lt;&gt;</span> <span class="string">&#x27;sleep&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p>3、慢SQL优化。</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
 <p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br>
-<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/hafErlto-1N6ypYfOVIGBQ">可能是最详细的Nginx介绍了</a><br>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/hafErlto-1N6ypYfOVIGBQ">可能是最详细的Nginx介绍了！！！</a><br>
+<a target="_blank" rel="noopener" href="https://github.com/raymond-zhao/cat-mall/wiki/Nginx">raymond-zhao</a><br>
 <a target="_blank" rel="noopener" href="https://www.jb51.net/article/122310.htm">服务器负载均衡</a><br>
 <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/348024b6b3ab">nginx部署之后404</a><br>
 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/101961241">Nginx原理篇</a><br>

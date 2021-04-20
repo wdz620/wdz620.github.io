@@ -146,6 +146,86 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Nginx学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/Nginx%E5%AD%A6%E4%B9%A0/">Nginx学习</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/21/Nginx%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
+  	<time datetime="2021-03-21T12:13:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><em>道阻且长，行则将至，行而不辍，未来可期。</em><br>
+第一次自己尝试使用Nginx去部署VUE项目之后，非常好奇为什么Nginx为何这么强大，只通过一个简单的配置就能运行呢？VUE打包出来的dist文件怎么就能运行起来呢？<br>
+下面通过不断学习整理收集Nginx相关知识努力去解决自己心中的疑惑吧（主要记录自己那一年的那一个下午为了使用nginx部署的心酸吧。）</p>
+<p><strong>Nginx 是开源的轻量级 Web 服务器、反向代理服务器，以及负载均衡器和 HTTP 缓存器。其特点是高并发，高性能和低内存。</strong><br>
+跨平台、配置简单、非阻塞、高并发连接（官方检测能支持5w并发）、内存消耗小（开启10个Nginx才占用150M内存）、成本低廉且开源、性能稳定，宕机概率小。</p>
+        
+          <a class="article-more-a" href="/2021/03/21/Nginx%E5%AD%A6%E4%B9%A0/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">中间件</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/21/Nginx%E5%AD%A6%E4%B9%A0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-索引" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -906,96 +986,6 @@ lombok相关</li>
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/03/12/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-三次握手四次挥手" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/10/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/">三次握手四次挥手</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/10/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/" class="archive-article-date">
-  	<time datetime="2021-03-10T12:01:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>铺垫学习：</p>
-<ul>
-<li>单工：数据只在一个方向上传输，不能实现双方通信。</li>
-<li>半双工：允许数据在两个方向上传输，但是同一时间数据只能在一个方向上传输，其实际上是切换的单工。</li>
-<li>双全工：允许数据在两个方向上同时传输。<br>
-tcp属于双全工，在进行连接之后双方都可以进行数据传送。</li>
-</ul>
-<blockquote>
-<p>三次握手</p>
-</blockquote>
-<ul>
-<li>第一次握手：建立连接时，客户端发送syn包到服务器，并进入SYN_SENT状态，等待服务器确认；SYN：同步序列编号。</li>
-<li>第二次握手：服务器收到syn包，必须确认客户的syn，同时自己也发送一个syn包，即syn+ack，此时服务器进入SYN_RCVD状态</li>
-<li>第三次握手：客户端收到服务器的syn+ack包，向服务器发送确认包ack=k+1，此包发送完毕，客户端和服务器进入ESTABLISHED（TCP连接成功）状态，完成三次握手。</li>
-</ul>
-        
-          <a class="article-more-a" href="/2021/03/10/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机网络</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/10/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/">展开全文 >></a>
         </p>
       
 
