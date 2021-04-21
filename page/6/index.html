@@ -253,7 +253,7 @@
 <blockquote>
 <p>两者都是List接口的实现类，两者都是不同步的，也就是非线程安全的。<br>
 因为在我们正常得使用场景中，都是用来查询的，不会涉及太频繁的增删，如果涉及到频繁的增删，可以使用LinkedList，<br>
-如果需要线程安全的就是可以使用Vector，CopyOnWriteArrayList。原理都是給方法套个synchronized</p>
+如果需要线程安全的就是可以使用Vector，CopyOnWriteArrayList。原理加锁，后者读写分离。</p>
 </blockquote>
 <p>2.<strong>底层实现</strong>：</p>
         
