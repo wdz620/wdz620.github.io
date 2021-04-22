@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313082249695.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313085454760.png">
 <meta property="article:published_time" content="2021-03-12T11:39:00.000Z">
-<meta property="article:modified_time" content="2021-03-31T00:48:47.402Z">
+<meta property="article:modified_time" content="2021-04-22T06:13:16.463Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -267,14 +267,14 @@
 <p>在Java中对象的内存分布分为两种情况，非数组对象和数组对象，数组对象和非数组对象的区别在于对象头中，是否需要额外的空间存储数组的长度length。</p>
 <p>1、对象头</p>
 <ul>
-<li>MarkWord：用来存储对象自身的运行时数据，包括一系列的标志位，在32位系统中占四个字节，在64位系统中占8个字节</li>
+<li>MarkWord：用来存储对象自身的运行时数据，如哈希码(HashCode)、GC分代年龄、锁状态标志、线程持有的锁、偏向线程ID、偏向时间戳等。在32位系统中占四个字节，在64位系统中占8个字节。</li>
 <li>ClassPointer：类型指针，用来指向对象对应的Class对象的内存地址，在32位系统占4字节，在64位系统中占8字节</li>
 <li>Length：只在数组对象中存在，用来记录数组的长度，占用4个字节</li>
 </ul>
-<p>2、实例数据</p>
-<p>对象真正存储的有效信息，包括对象的所有成员变量，其大小由各个成员变量的大小决定。</p>
-<p>3、对齐填充</p>
-<p>这部分仅仅起占位符的作用。由于HotSpot虚拟机的自动内存管理系统要求对象起始地址必须是8字节的整数倍，所以为了完整，就需要通过对其填充来补全。</p>
+<p>2、实例数据<br>
+对象真正存储的有效信息，包括对象的所有成员变量，其大小由各个成员变量的大小决定。</p>
+<p>3、对齐填充<br>
+这部分仅仅起占位符的作用。由于HotSpot虚拟机的自动内存管理系统要求对象起始地址必须是8字节的整数倍，所以为了完整，就需要通过对其填充来补全。</p>
 <p><strong>分析：Object o = new Object()到底占用多少个字节？</strong></p>
 <p>其实这个就是在问对象的内存布局是怎样的：</p>
 <ul>
@@ -597,19 +597,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -646,6 +646,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Spring</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
               </li>
              
               <li class="article-tag-list-item">
