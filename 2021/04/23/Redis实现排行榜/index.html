@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2021 | 无雨无晴</title>
+  <title>Redis实现排行榜 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="无雨无晴">
-<meta property="og:url" content="http://example.com/archives/2021/page/5/index.html">
+  <meta name="description" content="1、学习Zset指令 2、排行榜案例实现 3、学习zset底层原理 自己的一些胡思乱想，想通过Redis实现一点东西！Orz">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis实现排行榜">
+<meta property="og:url" content="http://example.com/2021/04/23/Redis%E5%AE%9E%E7%8E%B0%E6%8E%92%E8%A1%8C%E6%A6%9C/index.html">
 <meta property="og:site_name" content="无雨无晴">
+<meta property="og:description" content="1、学习Zset指令 2、排行榜案例实现 3、学习zset底层原理 自己的一些胡思乱想，想通过Redis实现一点东西！Orz">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-23T07:01:23.000Z">
+<meta property="article:modified_time" content="2021-04-23T12:32:06.959Z">
 <meta property="article:author" content="一直默默潜行的修行者">
+<meta property="article:tag" content="Redis">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
@@ -144,409 +149,272 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Redis实现排行榜" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Redis实现排行榜
+    </h1>
+  
+
+        
+        <a href="/2021/04/23/Redis%E5%AE%9E%E7%8E%B0%E6%8E%92%E8%A1%8C%E6%A6%9C/" class="archive-article-date">
+  	<time datetime="2021-04-23T07:01:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-23</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>1、学习Zset指令<br>
+2、排行榜案例实现<br>
+3、学习zset底层原理<br>
+自己的一些胡思乱想，想通过Redis实现一点东西！Orz</p>
+<a id="more"></a>
+<p>首先明确这个功能就是通过Redis的zset指令进行完成。那么先来回顾一下zset的一些指令</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zadd key [NX|XX] [CH] [INCR] score member [socre member...]</span><br></pre></td></tr></table></figure>
+<p>XX: 仅仅更新存在的成员，不添加新成员。<br>
+NX: 不更新存在的成员。只添加新成员。<br>
+CH: 修改返回值为发生变化的成员总数，原始是返回新添加成员的总数 (CH 是 changed 的意思)。更改的元素是新添加的成员，已经存在的成员更新分数。 所以在命令中指定的成员有相同的分数将不被计算在内。注：在通常情况下，ZADD返回值只计算新添加成员的数量。<br>
+INCR: 当ZADD指定这个选项时，成员的操作就等同ZINCRBY命令，对成员的分数进行递增操作。</p>
+<blockquote>
+<p>key：String类型<br>
+value：数值类型<br>
+member ：String类型<br>
+zset底层根据value自动进行排序，当value相同，会根据member进行字典排序</p>
+</blockquote>
+<p>简单实例</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ZADD myzset <span class="number">1</span> &quot;one&quot;</span><br><span class="line">ZADD myzset <span class="number">1</span> &quot;uno&quot;</span><br><span class="line">ZADD myzset <span class="number">2</span> &quot;two&quot; <span class="number">3</span> &quot;three&quot;</span><br><span class="line">ZRANGE myzset <span class="number">0</span> -<span class="number">1</span> WITHSCORES</span><br><span class="line"># 返回</span><br><span class="line"><span class="number">1</span>) &quot;one&quot;</span><br><span class="line"><span class="number">2</span>) &quot;<span class="number">1</span>&quot;</span><br><span class="line"><span class="number">3</span>) &quot;uno&quot;</span><br><span class="line"><span class="number">4</span>) &quot;<span class="number">1</span>&quot;</span><br><span class="line"><span class="number">5</span>) &quot;two&quot;</span><br><span class="line"><span class="number">6</span>) &quot;<span class="number">2</span>&quot;</span><br><span class="line"><span class="number">7</span>) &quot;three&quot;</span><br><span class="line"><span class="number">8</span>) &quot;<span class="number">3</span>&quot;</span><br></pre></td></tr></table></figure>
+<p>再给出一个排行榜常用命令参考</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">zrange key <span class="number">0</span> -<span class="number">1</span> 遍历该key下的所有member(由低到高)</span><br><span class="line">zrevrange key <span class="number">0</span> -<span class="number">1</span> 遍历该key下的所有member(由高到低)</span><br><span class="line">zremrangeByRank key star(long) stop(long) 移除  升序key中某个范围外的 值(包含star和stop)</span><br><span class="line">zscore key member  获取key中member的分数</span><br><span class="line">zremrangeByScore key min max  移除key中分数在min 和max之间的值</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903795131056135">https://juejin.cn/post/6844903795131056135</a><br>
+通过学习这篇文章进行实际操练一下，加深理解。<br>
+1、能够记录每个球星的分数；<br>
+2、能够对球星的分数进行更新；<br>
+3、能够查询每个球星的分数和名次；<br>
+4、能够按名次查询排名前N名的球星；<br>
+5、能够查询排在指定球星前后M名的球星。<br>
+安装Redis可以参考之前的内容。</p>
+<h3 id="1、zadd——设置球星分数">1、<code>zadd</code>——设置球星分数</h3>
+<p>四名玩家：James-90、Kobe-95、Rose-98、Jordan-100</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zadd balllist <span class="number">90</span> James <span class="number">95</span> kobe <span class="number">98</span> Rose <span class="number">100</span> Jordan</span><br><span class="line">(integer) <span class="number">4</span></span><br></pre></td></tr></table></figure>
+<h3 id="2、-zscore——查看球星分数-更新">2、 <code>zscore</code>——查看球星分数/更新</h3>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zscore balllist kobe</span><br><span class="line">&quot;<span class="number">95</span>&quot;</span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zscore balllist jardan</span><br><span class="line">(nil)</span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zscore balllist Jordan</span><br><span class="line">&quot;<span class="number">100</span>&quot;</span><br><span class="line">##############################</span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zadd balllist <span class="number">96</span> kobe</span><br><span class="line">(integer) <span class="number">0</span></span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zscore balllist kobe</span><br><span class="line">&quot;<span class="number">96</span>&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="3、zrevrange——按名次查看分数和名次">3、<code>zrevrange</code>——按名次查看分数和名次</h3>
+<p>使用<code>zrevrange 排行榜名称 起始位置 结束位置 [withscores] </code> 带上withscores则会返回玩家分数。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 查看所有玩家分数</span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zrevrange balllist <span class="number">0</span> -<span class="number">1</span> withscores</span><br><span class="line"><span class="number">1</span>) &quot;Jordan&quot;</span><br><span class="line"><span class="number">2</span>) &quot;<span class="number">100</span>&quot;</span><br><span class="line"><span class="number">3</span>) &quot;Rose&quot;</span><br><span class="line"><span class="number">4</span>) &quot;<span class="number">98</span>&quot;</span><br><span class="line"><span class="number">5</span>) &quot;kobe&quot;</span><br><span class="line"><span class="number">6</span>) &quot;<span class="number">96</span>&quot;</span><br><span class="line"><span class="number">7</span>) &quot;James&quot;</span><br><span class="line"><span class="number">8</span>) &quot;<span class="number">90</span>&quot;</span><br><span class="line"># 查看前三名玩家分数</span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zrevrange balllist <span class="number">0</span> <span class="number">2</span> withscores</span><br><span class="line"><span class="number">1</span>) &quot;Jordan&quot;</span><br><span class="line"><span class="number">2</span>) &quot;<span class="number">100</span>&quot;</span><br><span class="line"><span class="number">3</span>) &quot;Rose&quot;</span><br><span class="line"><span class="number">4</span>) &quot;<span class="number">98</span>&quot;</span><br><span class="line"><span class="number">5</span>) &quot;kobe&quot;</span><br><span class="line"><span class="number">6</span>) &quot;<span class="number">96</span>&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="4、zrevrank——查看球星的排名">4、<code>zrevrank</code>——查看球星的排名</h3>
+<p><code>zrevrank</code> 排行榜名称 玩家标识<br>
+与zrevrange类似，zrevrank是以分数由高到低的排序返回球星排名（实际返回的是以0开始的索引），对应的zrank则是以分数由低到高的排序返回排名。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zrevrank balllist Rose</span><br><span class="line">(integer) <span class="number">1</span></span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zrevrank balllist Jordan</span><br><span class="line">(integer) <span class="number">0</span></span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; </span><br></pre></td></tr></table></figure>
+<h3 id="5、zincrby——增减球星分数">5、<code>zincrby</code>——增减球星分数</h3>
+<p><code>zincrby</code> 排行榜名称 分数增量 玩家标识<br>
+如果执行zincrby时玩家尚不在排行榜中，则认为其原始分数为0，相当于执行zdd。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">#先加入一个bug球员</span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zadd balllist <span class="number">10</span> curry</span><br><span class="line">(integer) <span class="number">1</span></span><br><span class="line"></span><br><span class="line">#查看排行</span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zrevrange balllist <span class="number">0</span> -<span class="number">1</span> withscores</span><br><span class="line"> <span class="number">1</span>) &quot;Jordan&quot;</span><br><span class="line"> <span class="number">2</span>) &quot;<span class="number">100</span>&quot;</span><br><span class="line"> <span class="number">3</span>) &quot;Rose&quot;</span><br><span class="line"> <span class="number">4</span>) &quot;<span class="number">98</span>&quot;</span><br><span class="line"> <span class="number">5</span>) &quot;kobe&quot;</span><br><span class="line"> <span class="number">6</span>) &quot;<span class="number">96</span>&quot;</span><br><span class="line"> <span class="number">7</span>) &quot;James&quot;</span><br><span class="line"> <span class="number">8</span>) &quot;<span class="number">90</span>&quot;</span><br><span class="line"> <span class="number">9</span>) &quot;curry&quot;</span><br><span class="line"><span class="number">10</span>) &quot;<span class="number">10</span>&quot;</span><br><span class="line"></span><br><span class="line">#增减查看</span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zincrby balllist <span class="number">100</span> curry</span><br><span class="line">&quot;<span class="number">110</span>&quot;</span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zrevrange balllist <span class="number">0</span> -<span class="number">1</span> withscores</span><br><span class="line"> <span class="number">1</span>) &quot;curry&quot;</span><br><span class="line"> <span class="number">2</span>) &quot;<span class="number">110</span>&quot;</span><br><span class="line"> <span class="number">3</span>) &quot;Jordan&quot;</span><br><span class="line"> <span class="number">4</span>) &quot;<span class="number">100</span>&quot;</span><br><span class="line"> <span class="number">5</span>) &quot;Rose&quot;</span><br><span class="line"> <span class="number">6</span>) &quot;<span class="number">98</span>&quot;</span><br><span class="line"> <span class="number">7</span>) &quot;kobe&quot;</span><br><span class="line"> <span class="number">8</span>) &quot;<span class="number">96</span>&quot;</span><br><span class="line"> <span class="number">9</span>) &quot;James&quot;</span><br><span class="line"><span class="number">10</span>) &quot;<span class="number">90</span>&quot;</span><br><span class="line"></span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zincrby balllist -<span class="number">30</span> curry</span><br><span class="line">&quot;<span class="number">80</span>&quot;</span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zrevrange balllist <span class="number">0</span> -<span class="number">1</span> withscores</span><br><span class="line"> <span class="number">1</span>) &quot;Jordan&quot;</span><br><span class="line"> <span class="number">2</span>) &quot;<span class="number">100</span>&quot;</span><br><span class="line"> <span class="number">3</span>) &quot;Rose&quot;</span><br><span class="line"> <span class="number">4</span>) &quot;<span class="number">98</span>&quot;</span><br><span class="line"> <span class="number">5</span>) &quot;kobe&quot;</span><br><span class="line"> <span class="number">6</span>) &quot;<span class="number">96</span>&quot;</span><br><span class="line"> <span class="number">7</span>) &quot;James&quot;</span><br><span class="line"> <span class="number">8</span>) &quot;<span class="number">90</span>&quot;</span><br><span class="line"> <span class="number">9</span>) &quot;curry&quot;</span><br><span class="line"><span class="number">10</span>) &quot;<span class="number">80</span>&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="6、zrem——移除某个玩家">6、<code>zrem</code>——移除某个玩家</h3>
+<p><code>zrem</code> 排行榜名称 玩家标识</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zrem balllist curry</span><br><span class="line">(integer) <span class="number">1</span></span><br><span class="line"><span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">6379</span>&gt; zrevrange balllist <span class="number">0</span> -<span class="number">1</span> withscores</span><br><span class="line"><span class="number">1</span>) &quot;Jordan&quot;</span><br><span class="line"><span class="number">2</span>) &quot;<span class="number">100</span>&quot;</span><br><span class="line"><span class="number">3</span>) &quot;Rose&quot;</span><br><span class="line"><span class="number">4</span>) &quot;<span class="number">98</span>&quot;</span><br><span class="line"><span class="number">5</span>) &quot;kobe&quot;</span><br><span class="line"><span class="number">6</span>) &quot;<span class="number">96</span>&quot;</span><br><span class="line"><span class="number">7</span>) &quot;James&quot;</span><br><span class="line"><span class="number">8</span>) &quot;<span class="number">90</span>&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="7、del——删除排行榜">7、<code>del</code>——删除排行榜</h3>
+<p><code>del</code> 排行榜名称</p>
+<h1>SpringBoot集成</h1>
+<p>通过renrenfast测试。<br>
+主要通过集成Jedis使用。<br>
+1、引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">jedis.version</span>&gt;</span>2.7.3<span class="tag">&lt;/<span class="name">jedis.version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>redis.clients<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jedis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;jedis.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>2、修改配置文件信息。主要就是host、port、password</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">    redis:</span><br><span class="line">        open: true  # 是否开启redis缓存  true开启   false关闭</span><br><span class="line">        database: 0</span><br><span class="line">        host: xxx.xxx.xxx.xxx</span><br><span class="line">        port: 6379</span><br><span class="line">        password: xxxxxxx    # 密码（默认为空）</span><br><span class="line">        timeout: 6000  # 连接超时时长（毫秒）</span><br><span class="line">        jedis:</span><br><span class="line">        pool:</span><br><span class="line">            maxTotal: 100</span><br><span class="line">            maxIdle: 10</span><br><span class="line">            maxWaitMillis: 100000</span><br></pre></td></tr></table></figure>
+<p>3、读取配置（因为我设置了密码，所以下面需要添加参数）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisConfig</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean(name= &quot;jedis.pool&quot;)</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> JedisPool <span class="title">jedisPool</span><span class="params">(<span class="meta">@Qualifier(&quot;jedis.pool.config&quot;)</span> JedisPoolConfig config,</span></span></span><br><span class="line"><span class="function"><span class="params">                               <span class="meta">@Value(&quot;$&#123;spring.redis.host&#125;&quot;)</span>String host,</span></span></span><br><span class="line"><span class="function"><span class="params">                               <span class="meta">@Value(&quot;$&#123;spring.redis.port&#125;&quot;)</span><span class="keyword">int</span> port,</span></span></span><br><span class="line"><span class="function"><span class="params">                               <span class="meta">@Value(&quot;$&#123;spring.redis.timeout&#125;&quot;)</span><span class="keyword">int</span> timeout,</span></span></span><br><span class="line"><span class="function"><span class="params">                               <span class="meta">@Value(&quot;$&#123;spring.redis.password&#125;&quot;)</span>String password)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> JedisPool(config, host, port, timeout, password);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(name= &quot;jedis.pool.config&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> JedisPoolConfig <span class="title">jedisPoolConfig</span> <span class="params">(<span class="meta">@Value(&quot;$&#123;spring.redis.jedis.pool.maxTotal&#125;&quot;)</span><span class="keyword">int</span> maxTotal,</span></span></span><br><span class="line"><span class="function"><span class="params">                                            <span class="meta">@Value(&quot;$&#123;spring.redis.jedis.pool.maxIdle&#125;&quot;)</span><span class="keyword">int</span> maxIdle,</span></span></span><br><span class="line"><span class="function"><span class="params">                                            <span class="meta">@Value(&quot;$&#123;spring.redis.jedis.pool.maxWaitMillis&#125;&quot;)</span><span class="keyword">int</span> maxWaitMillis)</span> </span>&#123;</span><br><span class="line">        JedisPoolConfig config = <span class="keyword">new</span> JedisPoolConfig();</span><br><span class="line">        config.setMaxTotal(maxTotal);</span><br><span class="line">        config.setMaxIdle(maxIdle);</span><br><span class="line">        config.setMaxWaitMillis(maxWaitMillis);</span><br><span class="line">        <span class="keyword">return</span> config;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4、测试</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith(SpringRunner.class)</span></span><br><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisTest</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> RedisUtils redisUtils;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> JedisPool jedisPool;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Test</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testZset</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		Jedis jedis = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			jedis = jedisPool.getResource();</span><br><span class="line">			Set&lt;Tuple&gt; balllist = jedis.zrevrangeWithScores(<span class="string">&quot;balllist&quot;</span>, <span class="number">0</span>, -<span class="number">1</span>);</span><br><span class="line">			<span class="keyword">for</span> (Tuple tuple : balllist) &#123;</span><br><span class="line">				System.out.println(tuple.getElement() + <span class="string">&quot; 评分：&quot;</span> + tuple.getScore());</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">			<span class="comment">//返还到连接池</span></span><br><span class="line">			jedis.close();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Test</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		redisUtils.set(<span class="string">&quot;k1&quot;</span>, <span class="string">&quot;v1&quot;</span>);</span><br><span class="line">		System.out.println(redisUtils.get(<span class="string">&quot;k1&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面通过一个实例</p>
+<h3 id="基于Redis实现商品排行榜">基于Redis实现商品排行榜</h3>
+<p>参考文末连接。自己主要进行解析。TODO通过人人框架实现。<br>
+1、从前端页面先分析。<br>
+主要有两个接口一个重置，一个点击增加。<br>
+2、主要用zset。 list主要为了能动态展示购买记录，zset才是为了实现排行榜。<br>
+3、重置的实现过程，直接将上面的两个类型删除。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    jedis.del(Constants.SALES_LIST); <span class="comment">// 类似枚举，减少命名</span></span><br><span class="line">    jedis.del(Constants.BUY_DYNAMIC);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4、增加的实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">buyPhone</span><span class="params">(<span class="keyword">int</span> phoneId)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 购买成功则对排行榜中该手机的销量进行加1</span></span><br><span class="line">    jedis.zincrby(Constants.SALES_LIST, <span class="number">1</span>, String.valueOf(phoneId));</span><br><span class="line">    <span class="comment">/*redisTemplate.opsForZSet().*/</span></span><br><span class="line">    <span class="comment">// 添加购买动态</span></span><br><span class="line">    <span class="keyword">long</span> currentTimeMillis = System.currentTimeMillis();</span><br><span class="line">    String msg = currentTimeMillis + Constants.separator + phones.get(phoneId - <span class="number">1</span>).getName();</span><br><span class="line">    <span class="comment">//将字符串添加到指定的key中存储列表的头部（LPUSH）或尾部（RPUSH）</span></span><br><span class="line">    jedis.lpush(Constants.BUY_DYNAMIC, msg);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>5、两个查询，一个查询动态信息，一个查询排行榜。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 动态信息</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;DynamicInfo&gt; <span class="title">getBuyDynamic</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    List&lt;DynamicInfo&gt; dynamicList = <span class="keyword">new</span> ArrayList&lt;DynamicInfo&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">       <span class="comment">/* jedis.lindex(String key,int index)</span></span><br><span class="line"><span class="comment">        * 返回存储在指定键中的列表的指定元素。0是第一个元素，1是第二个元素</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        String result = jedis.lindex(Constants.BUY_DYNAMIC, i);</span><br><span class="line">        <span class="keyword">if</span> (StringUtils.isEmpty(result)) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        String[] arr = result.split(Constants.separator);</span><br><span class="line">        <span class="keyword">long</span> time = Long.valueOf(arr[<span class="number">0</span>]);</span><br><span class="line">        String phone = arr[<span class="number">1</span>];</span><br><span class="line">        DynamicInfo vo = <span class="keyword">new</span> DynamicInfo();</span><br><span class="line">        vo.setPhone(phone);</span><br><span class="line">        vo.setTime(StringUtil.showTime(<span class="keyword">new</span> Date(time)));</span><br><span class="line">        dynamicList.add(vo);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 只保留队列中20个销售动态</span></span><br><span class="line">    jedis.ltrim(Constants.BUY_DYNAMIC, <span class="number">0</span>, <span class="number">19</span>);</span><br><span class="line">    <span class="keyword">return</span> dynamicList;</span><br><span class="line">&#125;   </span><br><span class="line"><span class="comment">// 排行榜 这里设置的是前五名</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;PhoneInfo&gt; <span class="title">getPhbList</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 按照销量多少排行，取出前五名</span></span><br><span class="line">    Set&lt;Tuple&gt; tuples = jedis.zrevrangeWithScores(Constants.SALES_LIST, <span class="number">0</span>, <span class="number">4</span>);</span><br><span class="line">    List&lt;PhoneInfo&gt; list = <span class="keyword">new</span> ArrayList&lt;PhoneInfo&gt;();</span><br><span class="line">    <span class="keyword">for</span> (Tuple tuple : tuples) &#123;</span><br><span class="line">        PhoneInfo vo = <span class="keyword">new</span> PhoneInfo();</span><br><span class="line">        <span class="comment">// 取出对应 phoneId 的手机名称</span></span><br><span class="line">        <span class="keyword">int</span> phoneId = Integer.parseInt(tuple.getElement());</span><br><span class="line">        vo.setName(phones.get(phoneId - <span class="number">1</span>).getName());</span><br><span class="line">        vo.setSales((<span class="keyword">int</span>) tuple.getScore());</span><br><span class="line">        list.add(vo);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 配合展示列表中的排名展示(其实没必要)</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">phoneRank</span><span class="params">(<span class="keyword">int</span> phoneId)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 如果是排名第一， 返回的是0 ，因此如果为null 即不在排行榜上则返回-1</span></span><br><span class="line">    Long zrank = jedis.zrevrank(Constants.SALES_LIST, String.valueOf(phoneId));</span><br><span class="line">    <span class="keyword">return</span> zrank == <span class="keyword">null</span> ? -<span class="number">1</span> : zrank.intValue();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>小结设计思路：<br>
+首先需要一个列表，然后通过点击列表中产品进行排行。所以需要使用两个基本数据list和zset。<br>
+主要指令：<br>
+1、列表展示第几名,如果为null 即不在排行榜上</p>
+<ul>
+<li><code>zrevrank 集合 产品id</code>  对应 <code>jedis.zrevrank(集合, 产品id);</code></li>
+</ul>
+<p>2、点击之后增加一个销售数量</p>
+<ul>
+<li><code>zincrby 集合 1 产品id</code> 对应 <code>jedis.zincrby(集合, 1, 产品id);</code></li>
+</ul>
+<p>3、排行榜前五名展示</p>
+<ul>
+<li><code>zrevrange 集合 0 4 withscores</code> 对应 <code>jedis.zrevrangeWithScores(集合, 0, 4);</code></li>
+</ul>
+<p>这里他为了动态展示所以使用了list。也简要分析。<br>
+jedis.lindex(Constants.BUY_DYNAMIC, i); 返回销售信息。因为存储的时候进行时间戳拼接。为了获取销售时间。(封装了一个时间工具类)。<br>
+只保留队列中20个销售动态 jedis.ltrim(Constants.BUY_DYNAMIC, 0, 19);</p>
+<h1>相同分数问题</h1>
+<p>可以使用时间戳进行解决。效仿文末参考连接，就是在进行添加排行榜的时候，将排行榜对应的信息通过时间戳，存储到list中，然后在取出的时候，按照拼接格式拆分开。大致就是这个思路，具体参考文末博主，不想自己造轮子了Orz</p>
+<blockquote>
+<p>参考连接</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903795131056135">Redis的有序集合实现排行榜功能</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/lizhiqiang1217/article/details/90139842">Jedis的API</a><br>
+<a target="_blank" rel="noopener" href="https://my.oschina.net/u/4309024/blog/3925636">springboot使用redis的配置application.yml连接池以及存取</a><br>
+<a target="_blank" rel="noopener" href="https://github.com/haoxiaoyong1014/springboot-redis-examples/tree/master/springboot-redis-ranking">基于Redis实现商品排行榜</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/04/%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/" class="archive-article-date">
-  	<time datetime="2021-03-04T10:23:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/04/%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/">项目部署</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">项目问题</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Redis</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/04/23/Redis%E5%AE%9E%E7%8E%B0%E6%8E%92%E8%A1%8C%E6%A6%9C/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" class="archive-article-date">
-  	<time datetime="2021-03-03T11:01:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-03</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2021/04/20/Synchronized%E4%BC%98%E5%8C%96%E5%92%8C%E9%94%81%E7%9B%B8%E5%85%B3/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Synchronized优化和锁相关</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程</a>
-    </h1>
+    <section id="comments" class="comments">
+      <style>
+        .comments{margin:30px;padding:10px;background:#fff}
+        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
+      </style>
+      <div id="vcomment" class="comment"></div> 
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<script>
+   var notify = 'false' == true ? true : false;
+   var verify = 'false' == true ? true : false;
+    window.onload = function() {
+        new Valine({
+            el: '.comment',
+            notify: notify,
+            verify: verify,
+            app_id: "Pcf0NAjXdaEBh1idVXCRepMY-gzGzoHsz",
+            app_key: "v9XAIwg5leNISwUAz5fXdQwd",
+            placeholder: "Just go go",
+            avatar:"retro"
+        });
+    }
+</script>
+
+  </section>
+
+
+  
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/02/StringBuffer-StringBuilder/" class="archive-article-date">
-  	<time datetime="2021-03-02T08:46:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-02</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/02/StringBuffer-StringBuilder/">StringBuffer-StringBuilder</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/01/30/B%E6%A0%91-B-%E6%A0%91/" class="archive-article-date">
-  	<time datetime="2021-01-30T02:23:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-30</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/30/B%E6%A0%91-B-%E6%A0%91/">B树/B+树</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">数据结构</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/01/20/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" class="archive-article-date">
-  	<time datetime="2021-01-20T01:59:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-20</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/20/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/01/19/%E5%9B%9E%E6%BA%AF%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2021-01-19T09:51:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-19</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/19/%E5%9B%9E%E6%BA%AF%E6%B3%95/">回溯法</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/" class="archive-article-date">
-  	<time datetime="2021-01-19T03:06:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-19</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/19/%E7%BA%A6%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/">约瑟夫问题</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/01/18/String/" class="archive-article-date">
-  	<time datetime="2021-01-18T12:03:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-18</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/18/String/">String</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/01/16/HashMap%E5%92%8CHashTable/" class="archive-article-date">
-  	<time datetime="2021-01-16T10:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-16</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/16/HashMap%E5%92%8CHashTable/">HashMap和HashTable</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/01/11/HashMap%E5%88%9D%E6%8E%A2/" class="archive-article-date">
-  	<time datetime="2021-01-11T05:46:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-11</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/11/HashMap%E5%88%9D%E6%8E%A2/">HashMap初探</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/2021/page/4/">&amp;laquo; Prev</a><a class="page-number" href="/archives/2021/">1</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2021/page/3/">3</a><a class="page-number" href="/archives/2021/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/archives/2021/page/6/">6</a><a class="extend next" rel="next" href="/archives/2021/page/6/">Next &amp;raquo;</a>
-    </nav>
   
 
 
@@ -570,8 +438,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
