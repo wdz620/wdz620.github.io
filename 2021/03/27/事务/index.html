@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327134548550.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327122027317.png">
 <meta property="article:published_time" content="2021-03-27T03:07:36.000Z">
-<meta property="article:modified_time" content="2021-04-22T11:02:28.646Z">
+<meta property="article:modified_time" content="2021-04-23T01:48:48.497Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -304,7 +304,7 @@ RR —— 在第一次读取数据时生成一个ReadView</p>
 <h3 id="MVCC实现">MVCC实现</h3>
 <p>MVCC的实现，是通过保存数据在某个时间节点的快照ReadView来实现的。</p>
 <h4 id="简单来说">简单来说</h4>
-<p>InnoDB的MVCC是通过在每行记录后面保存两个隐藏的列实现的。这两个列，一个保存了行的创建时间，一个保存行的过期时间(或删除时间)。当然存储的并不是实际的时间值，而是系统版本号。每开始一个新的事务，系统版本号都会自动递增。事务开始时刻的系统版本号会作为事务的版本号，用来和查询到的每行记录的版本号进行比较。主要通过以下的几个原则进行比较：<br>
+<p>通过阅读《高性能MySQL》这样介绍InnoDB的MVCC是通过在每行记录后面保存两个隐藏的列实现的。这两个列，一个保存了行的创建时间，一个保存行的过期时间(或删除时间)。当然存储的并不是实际的时间值，而是系统版本号。每开始一个新的事务，系统版本号都会自动递增。事务开始时刻的系统版本号会作为事务的版本号，用来和查询到的每行记录的版本号进行比较。主要通过以下的几个原则进行比较：<br>
 select：<br>
 InnoDB只会查找版本早于当前事务版本的数据行，这样可以确保事务读取的行，要么是在事务开始前已经存在的，要么是事务自身插入或者修改过的。<br>
 行的删除版本要么未定义,要么大于当前事务版本号。<br>
@@ -318,8 +318,8 @@ insert：<br>
 <h4 id="MVCC-解决幻读问题了吗？">MVCC 解决幻读问题了吗？</h4>
 <p>首先了解什么是快照读和当前读。</p>
 <p><strong>当前读</strong>就是它读取的是记录的最新版本，读取时还要保证其他并发事务不能修改当前记录，会对读取的记录进行加锁。</p>
-<p><strong>快照读</strong>的前提是隔离级别不是串行级别，串行级别下的快照读会退化成当前读；之所以出现快照读的情况，是基于提高并发性能的考虑，快照读的实现是基于多版本并发控制，即MVCC,可以认为MVCC是行锁的一个变种，但它在很多情况下，避免了加锁操作，降低了开销；既然是基于多版本，即快照读可能读到的并不一定是数据的最新版本，而有可能是之前的历史版本</p>
-<p>在一定程度上解决了幻读问题(<code>select</code>)，但是没有彻底解决幻读问题(<code>update</code>)。在 InnoDB 的 RR 级别下，通过 MVCC 虽然让数据变得可重复读，但是读到的数据是历史数据(事务开始前的快照，同一个事务内可重复读。)，而不是数据库最新的数据。读取历史数据的方式叫做<strong>快照读</strong>，而读取最新版本数据的方式，叫做<strong>当前读</strong>。<br>
+<p><strong>快照读</strong>的前提是隔离级别不是串行级别，串行级别下的快照读会退化成当前读；之所以出现快照读的情况，是基于提高并发性能的考虑，快照读的实现是基于多版本并发控制，即MVCC,可以认为MVCC是行锁的一个变种，但它在很多情况下，避免了加锁操作，降低了开销；既然是基于多版本，即快照读可能读到的并不一定是数据的最新版本，而有可能是之前的历史版本。</p>
+<p>MVCC在一定程度上解决了幻读问题(<code>select</code>)，但是没有彻底解决幻读问题(<code>update</code>)。在 InnoDB 的 RR 级别下，通过 MVCC 虽然让数据变得可重复读，但是读到的数据是历史数据(事务开始前的快照，同一个事务内可重复读。)，而不是数据库最新的数据。读取历史数据的方式叫做<strong>快照读</strong>，而读取最新版本数据的方式，叫做<strong>当前读</strong>。<br>
 在快照读中确实解决了幻读，但是在当前读中还没有解决幻读的问题。<br>
 比如下面这个场景：<br>
 1.a事务先select，b事务insert确实会加一个gap锁，但是如果b事务commit，这个gap锁就会释放（释放后a事务可以随意操作）<br>
@@ -498,7 +498,7 @@ D：事务的一致性通过前面的一些操作来实现<br>
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          念经
+          没什么东西
         
       </div>
     </a>
@@ -724,10 +724,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">念经</a>
               </li>
             
             <div class="clearfix"></div>
