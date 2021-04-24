@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Tag: Shiro | 无雨无晴</title>
+  <title>HTTP和HTTPS | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="无雨无晴">
-<meta property="og:url" content="http://example.com/tags/Shiro/index.html">
+  <meta name="description" content="主要通过一些关于HTTP和HTTPS的问题进行整理学习。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTP和HTTPS">
+<meta property="og:url" content="http://example.com/2021/04/24/HTTP%E5%92%8CHTTPS/index.html">
 <meta property="og:site_name" content="无雨无晴">
+<meta property="og:description" content="主要通过一些关于HTTP和HTTPS的问题进行整理学习。">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-24T12:05:12.000Z">
+<meta property="article:modified_time" content="2021-04-24T13:15:12.784Z">
 <meta property="article:author" content="一直默默潜行的修行者">
+<meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
@@ -144,60 +149,238 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-HTTP和HTTPS" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/07/shiro%E5%88%9D%E6%8E%A2/" class="archive-article-date">
-  	<time datetime="2021-04-07T01:48:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-07</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/07/shiro%E5%88%9D%E6%8E%A2/">shiro初探</a>
+    <h1 class="article-title" itemprop="name">
+      HTTP和HTTPS
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2021/04/24/HTTP%E5%92%8CHTTPS/" class="archive-article-date">
+  	<time datetime="2021-04-24T12:05:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>主要通过一些关于HTTP和HTTPS的问题进行整理学习。</p>
+<a id="more"></a>
+<h2 id="HTTP">HTTP</h2>
+<h3 id="HTTP状态码">HTTP状态码</h3>
+<ul>
+<li>
+<p>200 成功</p>
+</li>
+<li>
+<p>3XX 重定向</p>
+<ul>
+<li>301(永久移动)   请求的网页已永久移动到新位置。 服务器返回此响应（对 GET 或 HEAD 请求的响应）时，会自动将请求者转到新位置。</li>
+<li>302(临时移动)   服务器目前从不同位置的网页响应请求，但请求者应继续使用原有位置来进行以后的请求。</li>
+<li>304(未修改)  自从上次请求后，请求的网页未修改过。 服务器返回此响应时，不会返回网页内容。</li>
+</ul>
+</li>
+<li>
+<p>4XX 请求错误</p>
+<ul>
+<li>400    服务器不理解请求的语法。</li>
+<li>401   请求要求身份验证。 对于需要登录的网页，服务器可能返回此响应。</li>
+<li>403   服务器拒绝请求。</li>
+<li>404   服务器找不到请求的网页。</li>
+</ul>
+</li>
+<li>
+<p>5XX 服务器错误</p>
+<ul>
+<li>500   （服务器内部错误）  服务器遇到错误，无法完成请求。</li>
+<li>502   （错误网关） 服务器作为网关或代理，从上游服务器收到无效响应。</li>
+<li>503   （服务不可用） 服务器目前无法使用（由于超载或停机维护）。 通常，这只是暂时状态。</li>
+</ul>
+</li>
+</ul>
+<h3 id="如何理解HTTP协议是无状态的">如何理解HTTP协议是无状态的</h3>
+<p>HTTP协议是无状态的，指的是协议对于事务处理没有记忆能力，服务器不知道客户端是什么状态。也就是说，打开一个服务器上的网页和上一次打开这个服务器上的网页之间没有任何联系。HTTP是一个无状态的面向连接的协议，无状态不代表HTTP不能保持TCP连接，更不能代表HTTP使用的是UDP协议（无连接）。</p>
+<h3 id="HTTP协议与TCP-IP协议的关系">HTTP协议与TCP/IP协议的关系</h3>
+<p>HTTP的长连接和短连接本质上是TCP长连接和短连接。HTTP属于应用层协议，在传输层使用TCP协议，在网络层使用IP协议。 IP协议主要解决网络路由和寻址问题，TCP协议主要解决如何在IP层之上可靠地传递数据包，使得网络上接收端收到发送端所发出的所有包，并且顺序与发送顺序一致。TCP协议是可靠的、面向连接的。</p>
+<h3 id="什么是长连接、短连接？">什么是长连接、短连接？</h3>
+<p>在HTTP/1.0中默认使用<code>短连接</code>。也就是说，客户端和服务器每进行一次HTTP操作，就建立一次连接，任务结束就中断连接。<br>
+而从HTTP/1.1起，默认使用<code>长连接</code>，用以保持连接特性。使用长连接的HTTP协议，会在响应头加入这行代码：</p>
+<blockquote>
+<p>Connection:keep-alive</p>
+</blockquote>
+<p>在使用长连接的情况下，当一个网页打开完成后，客户端和服务器之间用于传输HTTP数据的TCP连接不会关闭，客户端再次访问这个服务器时，会继续使用这一条已经建立的连接。<br>
+Keep-Alive不会永久保持连接，它有一个保持时间，可以在不同的服务器软件（如Apache）中设定这个时间。实现长连接需要客户端和服务端都支持长连接。</p>
+<h4 id="长连接和短连接的优点和缺点">长连接和短连接的优点和缺点</h4>
+<p>长连接优点：<br>
+1、省去较多的TCP建立和关闭的操作，减少浪费，节约时间。<br>
+2、对于频繁请求资源的客户端适合使用长连接。<br>
+长连接缺点：<br>
+对服务器资源消耗问题，随着客户端连接越来越多，server早晚有扛不住的时候。</p>
+<p>短链接优点：管理较为简单，存在的连接都是有用的连接，不需要额外的控制手段。<br>
+缺点：客户请求频繁，将在TCP的建立和关闭操作上浪费时间和带宽。</p>
+<h4 id="长连接短连接操作过程">长连接短连接操作过程</h4>
+<p>短连接的操作步骤是：<br>
+建立连接——数据传输——关闭连接…建立连接——数据传输——关闭连接</p>
+<p>长连接的操作步骤是：<br>
+建立连接——数据传输…（保持连接）…数据传输——关闭连接</p>
+<h4 id="什么时候用长连接，短连接？">什么时候用长连接，短连接？</h4>
+<p>长连接多用于操作频繁，点对点的通讯，而且连接数不能太多情况。例如：数据库的连接用长连接。<br>
+WEB网站的http服务一般都用短连接。<br>
+因为长连接对于服务端来说会耗费一定的资源，而像WEB网站这么频繁的成千上万甚至上亿客户端的连接用短连接会更省一些资源，如果用长连接，而且同时有成千上万的用户，如果每个用户都占用一个连接的话，那可想而知吧。所以并发量大，但每个用户无需频繁操作情况下需用短连好。</p>
+<h3 id="HTTP1-0-1-1和-2-0">HTTP1.0 1.1和 2.0</h3>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/GICbiyJpINrHZ41u_4zT-A">https://mp.weixin.qq.com/s/GICbiyJpINrHZ41u_4zT-A</a>?</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Shiro</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机网络</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/04/24/HTTP%E5%92%8CHTTPS/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2021/04/23/Redis%E5%AE%9E%E7%8E%B0%E6%8E%92%E8%A1%8C%E6%A6%9C/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Redis实现排行榜</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+    <section id="comments" class="comments">
+      <style>
+        .comments{margin:30px;padding:10px;background:#fff}
+        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
+      </style>
+      <div id="vcomment" class="comment"></div> 
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<script>
+   var notify = 'false' == true ? true : false;
+   var verify = 'false' == true ? true : false;
+    window.onload = function() {
+        new Valine({
+            el: '.comment',
+            notify: notify,
+            verify: verify,
+            app_id: "Pcf0NAjXdaEBh1idVXCRepMY-gzGzoHsz",
+            app_key: "v9XAIwg5leNISwUAz5fXdQwd",
+            placeholder: "Just go go",
+            avatar:"retro"
+        });
+    }
+</script>
+
+  </section>
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -220,9 +403,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

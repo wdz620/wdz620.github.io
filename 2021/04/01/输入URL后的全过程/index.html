@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%B0%8F%E5%B1%81%E7%8C%AAURL.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%B0%8F%E5%B1%81%E7%8C%AAURL.jpg">
 <meta property="article:published_time" content="2021-04-01T00:26:56.000Z">
-<meta property="article:modified_time" content="2021-04-01T02:28:47.024Z">
+<meta property="article:modified_time" content="2021-04-24T12:42:20.057Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary">
@@ -172,15 +172,15 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>输入域名 -&gt; 域名解析 -&gt; TCP三次握手 -&gt; 建立TCP连接后发起HTTP请求 -&gt; 服务器处理HTTP请求，浏览器得到html代码 -&gt; 浏览器解析代码 -&gt; 浏览器对页面进行渲染呈现给用户。<br>
-<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%B0%8F%E5%B1%81%E7%8C%AAURL.jpg" style="zoom: 67%;" /></p>
+        <p>输入域名 -&gt; 域名解析 -&gt; TCP三次握手 -&gt; 建立TCP连接后发起HTTP请求 -&gt; 服务器处理HTTP请求，浏览器得到html代码 -&gt; 浏览器解析代码 -&gt; 浏览器对页面进行渲染呈现给用户。</p>
 <a id="more"></a>
+<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%B0%8F%E5%B1%81%E7%8C%AAURL.jpg" style="zoom: 67%;" />
 <p>简单说明URL的组成：协议、主机、端口、路径<br>
 <code>协议类型://服务器地址[:端口号]/路径/文件名[参数=值]</code></p>
 <h3 id="域名解析">域名解析</h3>
 <p>搜索自身DNS缓存。浏览器会发起一个DNS的系统调用(递归域名)。<br>
 <strong>细化分析：</strong><br>
-首先浏览器向本地的 DNS 服务器发起请求，如果本地DNS服务器没有缓存，不能将域名解析成 ip 地址，需要使用递归查询的方式依次向根域名服务器、顶级域名服务器等发起请求，直到找到一个或者一组ip地址返回。<br>
+首先浏览器向本地的 DNS 服务器发起请求，如果本地DNS服务器没有缓存，不能将域名解析成 ip 地址，需要使用递归查询的方式依次向<code>根域名服务器</code>、<code>顶级域名服务器</code>等发起请求，直到找到一个或者一组ip地址返回。<br>
 <strong>具体到每一步：</strong><br>
 1、首先搜索浏览器自身的 DNS 缓存，看自身的缓存中是否有 <code>www.wudz.top</code> 对应的条目，而且没有过期，如果有且没有过期则解析到此结束。</p>
 <blockquote>
@@ -194,7 +194,10 @@
 <blockquote>
 <p>hosts文件地址 C:\Windows\System32\drivers\etc</p>
 </blockquote>
-<p>4、如果在hosts文件中也没有找到对应的条目，浏览器就会发起一个 DNS 的系统调用，就会向本地配置的首选 DNS 服务器发起域名解析请求（通过的是UDP协议向DNS的53端口发起请求，这个请求是<strong>递归</strong>的请求，也就是运营商的 DNS 服务器必须得提供给我们该域名的IP地址），运营商的 DNS 服务器首先查找自身的缓存，找到对应的条目，且没有过期，则解析成功。如果没有找到对应的条目，则有运营商的 DNS 代我们的浏览器发起<strong>迭代</strong> DNS 解析请求，它首先是会找根域的 DNS 的 IP 地址，找到根域的 DNS 地址，就会向其发起请求（请问 <code>www.wudz.top</code> 这个域名的IP地址是多少啊？），根域发现这是一个顶级域 top 域的一个域名，于是就告诉运营商的 DNS 我不知道这个域名的 IP 地址，但是我知道 top 域的 IP 地址，你去找它去，于是运营商的 DNS 就得到了 top 域的 IP 地址，又向 top 域的 IP 地址发起了请求（请问 <code>www.wudz.top</code> 这个域名的 IP 地址是多少?）, top 域这台服务器告诉运营商的 DNS 我不知道 <code>www.wudz.top</code> 这个域名的IP地址，但是我知道 <code>wudz.top</code> 这个域的DNS地址，你去找它去，于是运营商的DNS又向 <code>wudz.top</code> 这个域名的 DNS 地址（这个一般就是由域名注册商提供的，我这个域名从阿里买的）发起请求（请问 <code>www.wudz.top</code> 这个域名的IP地址是多少？），这个时候 <code>wudz.top</code> 域的DNS服务器一查，诶，果真在我这里，于是就把找到的结果发送给运营商的DNS服务器，这个时候运营商的DNS服务器就拿到了 <code>www.wudz.top</code> 这个域名对应的IP地址，并返回给Windows系统内核，内核又把结果返回给浏览器，终于浏览器拿到了 <code>www.wudz.top </code> 对应的 IP 地址，该进行一步的动作了。</p>
+<p>4、如果在hosts文件中也没有找到对应的条目，浏览器就会发起一个 DNS 的系统调用，就会向本地配置的首选 DNS 服务器发起域名解析请求（通过的是UDP协议向DNS的53端口发起请求，这个请求是<strong>递归</strong>的请求，也就是运营商的 DNS 服务器必须得提供给我们该域名的IP地址），运营商的 DNS 服务器首先查找自身的缓存，找到对应的条目，且没有过期，则解析成功。<br>
+如果没有找到对应的条目，则有运营商的 DNS 代我们的浏览器发起<strong>迭代</strong> DNS 解析请求，它首先是会找根域的 DNS 的 IP 地址，找到根域的 DNS 地址，就会向其发起请求（请问 <code>www.wudz.top</code> 这个域名的IP地址是多少啊？），根域发现这是一个顶级域 top 域的一个域名，于是就告诉运营商的 DNS 我不知道这个域名的 IP 地址。<br>
+但是我知道 top 域的 IP 地址，你去找它去，于是运营商的 DNS 就得到了 top 域的 IP 地址，又向 top 域的 IP 地址发起了请求（请问 <code>www.wudz.top</code> 这个域名的 IP 地址是多少?）, top 域这台服务器告诉运营商的 DNS 我不知道 <code>www.wudz.top</code> 这个域名的IP地址，但是我知道 <code>wudz.top</code> 这个域的DNS地址，你去找它去。<br>
+于是运营商的DNS又向 <code>wudz.top</code> 这个域名的 DNS 地址（这个一般就是由域名注册商提供的，我这个域名从阿里买的）发起请求（请问 <code>www.wudz.top</code> 这个域名的IP地址是多少？），这个时候 <code>wudz.top</code> 域的DNS服务器一查，诶，果真在我这里，于是就把找到的结果发送给运营商的DNS服务器，这个时候运营商的DNS服务器就拿到了 <code>www.wudz.top</code> 这个域名对应的IP地址，并返回给Windows系统内核，内核又把结果返回给浏览器，终于浏览器拿到了 <code>www.wudz.top </code> 对应的 IP 地址，该进行一步的动作了。</p>
 <blockquote>
 <p>下面补充关于域名的知识：<br>
 先说说域名级别：以一个简单的示例进行解释，比如<code>hygl.12306.cn</code>其中com就是顶级域名、12306就是二级域名、hygl就是三级域名。<br>
@@ -218,7 +221,8 @@
 后序补充关于HTTP请求的知识TODO<br>
 这里还可以和Nginx联系起来TODO</p>
 <h3 id="浏览器解析html代码">浏览器解析html代码</h3>
-<p>浏览器拿到index.html文件后，就开始解析其中的html代码，遇到js/css/image等静态资源时，就向服务器端去请求下载（会使用多线程下载，每个浏览器的线程数不一样），这个时候就用上keep-alive特性了，建立一次HTTP连接，可以请求多个资源，下载资源的顺序就是按照代码里的顺序，但是由于每个资源大小不一样，而浏览器又多线程请求请求资源。<br>
+<p>浏览器拿到index.html文件后，就开始解析其中的html代码，遇到js/css/image等静态资源时，就向服务器端去请求下载（会使用多线程下载，每个浏览器的线程数不一样）。<br>
+这个时候就用上<code>keep-alive</code>特性了，建立一次HTTP连接，可以请求多个资源，下载资源的顺序就是按照代码里的顺序，但是由于每个资源大小不一样，而浏览器又多线程请求请求资源。<br>
 浏览器在请求静态资源时（在未过期的情况下），向服务器端发起一个http请求（询问自从上一次修改时间到现在有没有对资源进行修改），如果服务器端返回304状态码（告诉浏览器服务器端没有修改），那么浏览器会直接读取本地的该资源的缓存文件。</p>
 <h3 id="渲染呈现">渲染呈现</h3>
 <p>最后，浏览器利用自己内部的工作机制，把请求到的静态资源和html代码进行渲染，渲染之后呈现给用户。</p>
@@ -233,6 +237,7 @@
 <p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br>
 主要根据第一篇博主学习，站在巨人的肩膀上。<br>
 <a target="_blank" rel="noopener" href="https://blog.51cto.com/linux5588/1351007">一次完整的HTTP事务是怎样一个过程？</a><br>
+<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000006879700">从输入URL到页面加载发生了什么</a><br>
 <a target="_blank" rel="noopener" href="https://blog.51cto.com/15080023/2586796">HTTP缓存TODO</a><br>
 <a target="_blank" rel="noopener" href="https://blog.csdn.net/AngelDg/article/details/107994419">URL流程和五层模型的联系</a><br>
 <a href="www.baidu.com">HTTP请求方式</a><br>
@@ -497,6 +502,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
@@ -514,10 +523,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Redis</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
