@@ -15,14 +15,15 @@
 <meta property="og:site_name" content="无雨无晴">
 <meta property="og:description" content="软件工程中没有银弹。 主要记录一下关于索引的一些问题，方便自己随时翻阅。主要包括以下内容  索引分类 聚集索引和非聚集索引 最左匹配原则 什么样的值不能作为索引 建立索引的原则 explain命令 慢查询优化步骤 索引结构：B+树">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/41852-20200527114415853-650275518.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321090430025.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%B4%A2%E5%BC%95%E8%84%91%E5%9B%BE.png">
 <meta property="article:published_time" content="2021-03-21T02:09:14.000Z">
-<meta property="article:modified_time" content="2021-04-23T02:08:43.530Z">
+<meta property="article:modified_time" content="2021-04-24T03:07:05.042Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321090430025.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/41852-20200527114415853-650275518.jpg">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -197,16 +198,75 @@ explain命令<br>
 <strong>Secondary index</strong>：非聚集索引，又称非聚簇索引。<br>
 聚簇索引就是按照每张表的主键构造一棵B+树，同时叶子节点中存放的即为整张表的行记录信息，也将聚簇索引的叶子节点称为数据页。每个数据页都通过一个双向链表来进行链接。聚簇索引的存储并不是物理上连续的，而是逻辑上连续的。这其中有两点：一是前面说过的页通过双向链表链接，页按照主键的顺序排序；另一点就是每个页的记录也是通过双向链表进行维护的。聚簇索引的另一个好处就是，它对于主键的排序查找和范围查找速度特别快。如果没有主键，InnoDB会选择一个唯一的非空索引代替。</p>
 <p>非聚簇索引就是叶子节点并不包含行记录的全部数据，每张表上可以有多个非聚簇索引。当通过非聚簇索引来查找数据时，InnoDB存储引擎会遍历非聚簇索引并通过叶级别的指针获得指向主键索引的主键，然后通过主键索引来找到一个完整的行记录。</p>
+<blockquote>
+<p>其实按照定义，除了聚集索引以外的索引都是非聚集索引，只是人们想细分一下非聚集索引，分成普通索引，唯一索引，全文索引。</p>
+</blockquote>
 <h4 id="聚集索引的优点：">聚集索引的优点：</h4>
-<p>可以把相关数据保存在一起。<br>
-访问速度更快。<br>
-使用覆盖索引扫描的查询可以直接使用页节点中的主键值。</p>
+<p>1、可以把相关数据保存在一起。<br>
+2、访问速度更快。<br>
+3、使用覆盖索引扫描的查询可以直接使用页节点中的主键值。</p>
 <h4 id="聚集索引的缺点：">聚集索引的缺点：</h4>
-<p>插入速度严重依赖插入顺序。<br>
-聚集索引做大限度的提高了I/O密集型应用的性能，但是如果数据全部都放在内存中，则访问顺序就没那么重要了，聚集索引也就没有什么优势可言了。<br>
-基于聚簇索引的表在插入新行，或者主键被更新导致需要移动行的时候，可能面临“页分裂”问题。（当行的主键值要求必须将这一行插入到某个已经满的页中时，存储引擎会将该页分裂成两个页面来容纳该行，页分裂操作，会导致表占用更多的磁盘空间）<br>
-当行比较稀疏的时候，聚簇索引可能导致全表扫描变慢。<br>
-最后二级索引的访问需要两次查找，而不是一次。（原因在于二级索引中保存的“行指针”，保存的不是指向行的物理位置的指针，而是行的主键值。这就要求存储引擎需要找到二级索引的叶子节点获取对应的主键值，然后根据这个值去聚集索引中找到对应的行，这里做了重复的工作。对于InnoDB，自适应哈希索引能够减少这样的重复性工作。）</p>
+<p>1、插入速度严重依赖插入顺序。<br>
+2、聚集索引做大限度的提高了I/O密集型应用的性能，但是如果数据全部都放在内存中，则访问顺序就没那么重要了，聚集索引也就没有什么优势可言了。<br>
+3、基于聚簇索引的表在插入新行，或者主键被更新导致需要移动行的时候，可能面临“页分裂”问题。（当行的主键值要求必须将这一行插入到某个已经满的页中时，存储引擎会将该页分裂成两个页面来容纳该行，页分裂操作，会导致表占用更多的磁盘空间）<br>
+4、当行比较稀疏的时候，聚簇索引可能导致全表扫描变慢。</p>
+<h3 id="聚集索引和非聚集索引的取舍">聚集索引和非聚集索引的取舍</h3>
+<table>
+<thead>
+<tr>
+<th>动作</th>
+<th>聚集索引</th>
+<th>非聚集索引</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>列经常被分组排序</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>返回某范围内的数据</td>
+<td>Y</td>
+<td>N</td>
+</tr>
+<tr>
+<td>一个或极少不同值</td>
+<td>N</td>
+<td>N</td>
+</tr>
+<tr>
+<td>小数目的不同值</td>
+<td>Y</td>
+<td>N</td>
+</tr>
+<tr>
+<td>大数目的不同值</td>
+<td>N</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>频繁更新的列</td>
+<td>N</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>外键列</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>主键列</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>频繁修改索引列</td>
+<td>N</td>
+<td>Y</td>
+</tr>
+</tbody>
+</table>
 <h4 id="覆盖索引">覆盖索引</h4>
 <p>指从辅助索引(非聚集索引)中就能获取到需要的记录，而不需要查找聚簇索引中的记录。使用覆盖索引的一个好处是因为辅助索引不包括一条记录的整行信息，所以数据量较聚集索引要少，可以减少大量io操作。</p>
 <blockquote>
@@ -252,13 +312,56 @@ change buffer用的是buffer pool里的内存，因此不能无限增大，chang
 <p>redo log 主要节省的是<strong>随机写磁盘的 IO 消耗（转成顺序写）</strong>，而 change buffer 主要节省的是<strong>随机读磁盘的IO消耗</strong>。</p>
 </blockquote>
 <h1>最左匹配原则</h1>
-<p>假设某个表有一个联合索引（c1,c2,c3,c4）以下选项哪些字段使用了该索引：<br>
+<p>最左匹配原则也就是查询的时候如果where条件里面没有最左边的一到多列，索引就不会起作用。注意还有一些范围查询、前置模糊匹配、函数、计算、正则等都会让器失效。<br>
+简单例子：<br>
+假设某个表有一个联合索引（c1,c2,c3,c4）以下选项哪些字段使用了该索引：<br>
 A where c1=x and c2=x and c4&gt;x and c3=x<br>
 B where c1=x and c2=x and c4=x order by c3<br>
 C where c1=x and c4= x group by c3,c2<br>
 D where c1=? and c5=? order by c2,c3<br>
 E where c1=? and c2=? and c5=? order by c2,c3</p>
-<p>答：A使用了c1、c2、c3、c4索引。（其中注意c4这个，虽然是使用了范围查找，说明它右边的不会在被索引，但是c4这个字段还是可以被索引关联的）B使用了c1、c2两个字段的索引。C使用了c1一个字段的索引。D使用了c1一个字段的索引。E使用了c1、c2的索引。</p>
+<p>答：A使用了c1、c2、c3、c4索引。（其中注意c4这个，虽然是使用了范围查找，说明它右边的不会在被索引，但是c4这个字段还是可以被索引关联的）<br>
+B使用了c1、c2两个字段的索引。<br>
+C使用了c1一个字段的索引。<br>
+D使用了c1一个字段的索引。<br>
+E使用了c1、c2的索引。</p>
+<h4 id="测试过程">测试过程</h4>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> if <span class="keyword">exists</span> t;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t(</span><br><span class="line">c1 <span class="type">char</span>(<span class="number">1</span>) <span class="keyword">not</span> <span class="keyword">null</span> <span class="keyword">default</span> <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">c2 <span class="type">char</span>(<span class="number">1</span>) <span class="keyword">not</span> <span class="keyword">null</span> <span class="keyword">default</span> <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">c3 <span class="type">char</span>(<span class="number">1</span>) <span class="keyword">not</span> <span class="keyword">null</span> <span class="keyword">default</span> <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">c4 <span class="type">char</span>(<span class="number">1</span>) <span class="keyword">not</span> <span class="keyword">null</span> <span class="keyword">default</span> <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">c5 <span class="type">char</span>(<span class="number">1</span>) <span class="keyword">not</span> <span class="keyword">null</span> <span class="keyword">default</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">)engine<span class="operator">=</span>Innodb charset utf8 comment <span class="string">&#x27;测试索引&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> t <span class="keyword">add</span> index c1234(c1,c2,c3,c4);</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t <span class="keyword">values</span>(<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>,<span class="string">&#x27;d&#x27;</span>,<span class="string">&#x27;e&#x27;</span>),(<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>,<span class="string">&#x27;d&#x27;</span>,<span class="string">&#x27;e&#x27;</span>),(<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;c&#x27;</span>,<span class="string">&#x27;d&#x27;</span>,<span class="string">&#x27;e&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># A选项测试</span><br><span class="line">explain</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">from</span> t</span><br><span class="line"><span class="keyword">where</span> c1 <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span> <span class="keyword">and</span> c2 <span class="operator">=</span> <span class="string">&#x27;b&#x27;</span> <span class="keyword">and</span> c4 <span class="operator">&gt;</span> <span class="string">&#x27;a&#x27;</span> <span class="keyword">and</span> c3 <span class="operator">=</span> <span class="string">&#x27;c&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p>possible_keys,key,key_len这三项，possible_keys是指可能会用到的索引，key是当前sql使用到的索引，key_len是索引的使用字节数。<br>
+结果对应分别为c1234,c1234,12<br>
+因为字段类型是char(1)，字符集是utf8，所以每个字段的key_len 是 1*3=3，key_len现在等于12表示c1,c2,c3,c4这四个字段都用上了索引。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># B选项测试：</span><br><span class="line">explain</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">from</span> t <span class="keyword">where</span> c1 <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span> <span class="keyword">and</span> c2 <span class="operator">=</span> <span class="string">&#x27;b&#x27;</span> <span class="keyword">and</span> c4 <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span> <span class="keyword">order</span> <span class="keyword">by</span> c3;</span><br></pre></td></tr></table></figure>
+<p>结果对应分别为c1234,c1234,6<br>
+key=c1234，表示B使用了联合索引，key_len=6表示有两个字段使用了索引，这两个字段就是C1和c2，这个sql里面有一个order by c3，order by不能使用索引，但是却利用了索引</p>
+<blockquote>
+<p>如果我们改成order by c5<br>
+发现在Extra中的值使用了Using filesort。Using filesort表示在索引之外，需要额外进行外部的排序动作。因为c5的顺序是没有规律的，所以需要对其进行一次排序，而在order by c3的时候，c3其实在索引表里面已经是排好序的了，不需要再排序，所以说其实他利用上了索引。</p>
+</blockquote>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># C选项测试：</span><br><span class="line">explain</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">from</span> t</span><br><span class="line"><span class="keyword">where</span> c1 <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span> <span class="keyword">and</span> c4 <span class="operator">=</span> <span class="string">&#x27;d&#x27;</span> <span class="keyword">group</span> <span class="keyword">by</span> c3, c2;</span><br></pre></td></tr></table></figure>
+<p>key=c1234，表示C使用了联合索引，key_len=3表示有1个字段使用了索引，这个字段就是C1，与B语句不一样的是 Extra的值，C语句里面使用了临时表(Using temporary)。<br>
+因为组合索引是需要按顺序执行的，比如c1234组合索引，要想在c2上使用索引，必须先在c1上使用索引，要想在c3上使用索引，必须先在c2上使用索引，依此类推。回到B语句中，因为c2字段已经使用了索引，所以在order by c3的时候 c3其实在索引表里面已经是排好序的了，不需要建临时表，不需要再排序，所以说其实他利用上了索引。<br>
+而C语句中，group by 的顺序是先c3，再c2，在对c3进行group by的时候，c2字段上的索引并没用使用，所以索引在这里就断了，只用上了c1一个字段的索引。</p>
+<blockquote>
+<p>如果group by 的顺序改成c2,c3，会是什么样？<br>
+从结果中看没有用到临时表和filesort，因为c2,c3在索引表中本身就是有序的。</p>
+</blockquote>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># D选项测试：</span><br><span class="line">explain</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">from</span> t</span><br><span class="line"><span class="keyword">where</span> c1 <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span> <span class="keyword">and</span> c5 <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span> <span class="keyword">order</span> <span class="keyword">by</span> c2, c3;</span><br></pre></td></tr></table></figure>
+<p>key=c1234，表示B使用了联合索引，key_len=3表示有一个字段使用了索引，即C1字段。而c2，c3字段在order by中是顺序执行，所以也利用了索引。这里没有使用filesort就是因为c2，c3本身在索引表中就是有序的，所以不需要对其再排序。</p>
+<blockquote>
+<p>如果反之，先按c3排序，再按c2排序，会是什么情况<br>
+结果中看到使用了filesort，这里就无法合理的使用索引了。<br>
+举个例子来说，好比中国下的省是有序的，如果按照先找国家再找省那自然是顺序的，而如果反过来，先找省再找国家，那肯定是乱序的，自然也就不能利用索引了。</p>
+</blockquote>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># E选项测试：</span><br><span class="line">explain</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">from</span> t</span><br><span class="line"><span class="keyword">where</span> c1 <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span> <span class="keyword">and</span> c2 <span class="operator">=</span> <span class="string">&#x27;b&#x27;</span> <span class="keyword">and</span> c5 <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span> <span class="keyword">order</span> <span class="keyword">by</span> c2, c3;</span><br></pre></td></tr></table></figure>
+<p>E语句c1和c2使用了索引，c3在order by中利用了索引</p>
+<blockquote>
+<p>先按c3排序，再按c2排序会是什么情况？<br>
+按理说应该使用filesort，但从结果中看并没有使用，这是为什么呢？<br>
+注意仔细看查询条件，c1=‘a’ and c2=‘b’，那么在所有查询出来的行中，c2其实只有一个值，永远等于’b’，也就是说c2是一个常量，也就意味着order by c3,c2 相当于对c3和一个常量排序，可以写成这样order by c3,‘b’，所以order by c3,'b’说白了还是对c3进行排序，因为后面的‘b’永远都是一样的，他是一个常量，而常量对排序并没有影响，可以忽略不计，因此这里并没有使用filesort。</p>
+</blockquote>
+<p>第二个例子 TODO下面这个还需要自行实践一下，我认为可能有些问题<br>
+<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/41852-20200527114415853-650275518.jpg" alt="试一试"></p>
 <h1>MySQL什么样的值不能作为索引？</h1>
 <p>1、表记录太少<br>
 2、经常插入、删除、修改的表<br>
@@ -280,21 +383,72 @@ E where c1=? and c2=? and c5=? order by c2,c3</p>
 6、字符串与数字进行了比较<br>
 7、OR 条件连接时某些列没有加索引<br>
 8、MySQL 内部优化器如果估计全表扫描比索引更快，将放弃索引</p>
+<h3 id="联合索引实战测试">联合索引实战测试</h3>
+<blockquote>
+<p>题目一 <code>SELECT * FROM table WHERE a = 1 and b = 2 and c = 3;</code></p>
+</blockquote>
+<p>回答为对(a,b,c)建立索引，那都可以回去等通知了。<br>
+(a,b,c)或者(c,b,a)或者(b,a,c)都可以，重点要的是将区分度高的字段放在前面，区分度低的字段放后面。<br>
+例如假设区分度由大到小为b,a,c。那么我们就对(b,a,c)建立索引。在执行sql的时候，优化器会 帮我们调整where后a,b,c的顺序，让我们用上索引。</p>
+<blockquote>
+<p>题目二 <code>SELECT * FROM table WHERE a &gt; 1 and b = 2; </code></p>
+</blockquote>
+<p>回答为对(a,b)建立索引，那都可以回去等通知了。<br>
+对(b,a)建立索引。如果你建立的是(a,b)索引，那么只有a字段能用得上索引，毕竟最左匹配原则遇到范围查询就停止匹配。<br>
+如果对(b,a)建立索引那么两个字段都能用上，优化器会帮我们调整where后a,b的顺序，让我们用上索引。</p>
+<blockquote>
+<p>题目三 <code>SELECT * FROM table WHERE a &gt; 1 and b = 2 and c &gt; 3;</code></p>
+</blockquote>
+<p>(b,a)或者(b,c)都可以，要结合具体情况具体分析。</p>
+<blockquote>
+<p>题目四 <code>SELECT * FROM table WHERE a = 1 ORDER BY b;</code></p>
+</blockquote>
+<p>如何建立索引？<br>
+这还需要想？一看就是对(a,b)建索引，当a = 1的时候，b相对有序，可以避免再次排序！<br>
+那么<code>SELECT * FROM table WHERE a &gt; 1 ORDER BY b; </code><br>
+对(a)建立索引，因为a的值是一个范围，这个范围内b值是无序的，没有必要对(a,b)建立索引。<br>
+<strong>扩展</strong><br>
+<code>SELECT * FROM table WHERE a = 1 AND b = 2 AND c &gt; 3 ORDER BY c;</code><br>
+可以为(a,b)或者(b,a) 此时c排序使用不到索引，所以只建立a,b或者b,a即可，具体看a和b的区分。</p>
+<blockquote>
+<p>题目五 <code>SELECT * FROM table WHERE a IN (1,2,3) and b &gt; 1; </code></p>
+</blockquote>
+<p>还是对(a，b)建立索引，因为IN在这里可以视为等值引用，不会中止索引匹配，所以还是(a,b)!<br>
+如果 <code>SELECT * FROM table WHERE a = 1 AND b IN (1,2,3) AND c &gt; 3 ORDER BY c;</code><br>
+此时c排序是用不到索引的。</p>
 <h1>explain 命令</h1>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210321090430025.png" alt="image-20210321090430025"></p>
 <p>说明：<br>
-**id：**select识别符，这个是select的查询序列号。<br>
-**select_type：**select类型。主要包括：1、simple（简单select）2、primary（最外面的select）3、union（union中第二个或后面的select语句）4、dependent union（union中的第二个或后面的SELECT语句，取决于外面的查询）5、union result（union的结果）6、subquery（子查询中的第一个select）7、dependent subquery（子查询中的第一个select，取决于外面的查询）8、derived（导出表的select）<br>
-**table：**表名称<br>
-**partitions：**这一列只有在EXPLAIN PARTITIONS 语法中才会出现<br>
-<strong>type</strong>：联接类型。是SQL性能的非常重要的一个指标，结果值从好到坏依次是：system &gt; const &gt; eq_ref &gt; ref&gt;fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; range &gt; index &gt; ALL。<br>
-**possible_keys：**possible_keys列指出MySQL能使用哪个索引在该表中找到行。<br>
-**key：**key列显示MySQL实际决定使用的键(索引)。<br>
-**key_len：**key_len列显示MySQL决定使用的键长度。<br>
-**ref：**ref列显示使用哪个列或常数与key一起从表中选择行。<br>
-**rows：**rows列显示MySQL认为它执行查询时必须检查的行数。<br>
-**filtered：**符合某条件的记录数百分比。<br>
-**Extra：**该列包含MySQL解决查询的详细信息。主要包括：1、Distinct（MySQL发现第1个匹配行后，停止为当前的行组合搜索更多的行）2、Not exists（MySQL能够对查询进行LEFT JOIN优化，发现1个匹配LEFT JOIN标准的行后，不再为前面的的行组合在该表内检查更多的行。）3、Using filesort（MySQL需要额外的一次传递，以找出如何按排序顺序检索行。）4、Using index（从只使用索引树中的信息而不需要进一步搜索读取实际的行来检索表中的列信息。）5、Using temporary（为了解决查询，MySQL需要创建一个临时表来容纳结果）6、Using where（WHERE子句用于限制哪一个行匹配下一个表或发送到客户）</p>
+<strong>id</strong> select识别符，这个是select的查询序列号。<br>
+<strong>select_type</strong> select类型。</p>
+<ul>
+<li>1、simple（简单select）</li>
+<li>2、primary（最外面的select）</li>
+<li>3、union（union中第二个或后面的select语句）</li>
+<li>4、dependent union（union中的第二个或后面的SELECT语句，取决于外面的查询）</li>
+<li>5、union result（union的结果）</li>
+<li>6、subquery（子查询中的第一个select）</li>
+<li>7、dependent subquery（子查询中的第一个select，取决于外面的查询）</li>
+<li>8、derived（导出表的select）</li>
+</ul>
+<p><strong>table</strong> 表名称<br>
+<strong>partitions</strong> 这一列只有在EXPLAIN PARTITIONS 语法中才会出现<br>
+<strong>type</strong>：联接类型。是SQL性能的非常重要的一个指标，结果值从好到坏依次是：<code>system &gt; const &gt; eq_ref &gt; ref&gt;fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; range &gt; index &gt; ALL</code>。<br>
+<strong>possible_keys</strong>列指出MySQL能使用哪个索引在该表中找到行。<br>
+<strong>key</strong>列显示MySQL实际决定使用的键(索引)。<br>
+<strong>key_len</strong>列显示MySQL决定使用的键长度。<br>
+<strong>ref</strong>列显示使用哪个列或常数与key一起从表中选择行。<br>
+<strong>rows</strong>列显示MySQL认为它执行查询时必须检查的行数。<br>
+<strong>filtered</strong>符合某条件的记录数百分比。<br>
+<strong>Extra</strong>该列包含MySQL解决查询的详细信息。主要包括：</p>
+<ul>
+<li>1、Distinct（MySQL发现第1个匹配行后，停止为当前的行组合搜索更多的行）</li>
+<li>2、Not exists（MySQL能够对查询进行LEFT JOIN优化，发现1个匹配LEFT JOIN标准的行后，不再为前面的的行组合在该表内检查更多的行。）</li>
+<li>3、Using filesort（MySQL需要额外的一次传递，以找出如何按排序顺序检索行。）</li>
+<li>4、Using index（从只使用索引树中的信息而不需要进一步搜索读取实际的行来检索表中的列信息。）</li>
+<li>5、Using temporary（为了解决查询，MySQL需要创建一个临时表来容纳结果）</li>
+<li>6、Using where（WHERE子句用于限制哪一个行匹配下一个表或发送到客户）</li>
+</ul>
 <blockquote>
 <p>记录一个小知识点：explain分析出来的索引，它一定是最优的吗？这个是不一定的，因为它也可能会选错索引，因为我们在建立索引的时候，可能会涉及到一些回表操作还有一些排序差错 。<br>
 举个例子:如果走A索引要扫描100行，B所有只要20行，可能选择走A索引。一般走错都是因为优化器在选择的时候发现，走A索引没有额外的代价，比如走B索引并不能直接拿到我们的值，还需要回到主键索引才可以拿到，多了一次回表的过程，这个也是会被优化器考虑进去的。发现走A索引不需要回表，没有额外的开销，所有选错了。</p>
@@ -362,6 +516,7 @@ TODO<br>
 </blockquote>
 <p>本文主要通过学习下面各位博主的知识进行记录总结，仅供个人学习回顾使用，如有侵权留言联系删除！<br>
 <a target="_blank" rel="noopener" href="https://raymond-zhao.top/campus-interview/#/Database/MySQL">raymond</a><br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/starcrm/p/12971702.html">MySQL聚集索引和非聚集索引</a><br>
 <a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1615563">聚簇索引介绍</a><br>
 <a target="_blank" rel="noopener" href="https://blog.csdn.net/bigtree_3721/article/details/87478706">联合索引案例</a><br>
 <a target="_blank" rel="noopener" href="https://tech.meituan.com/2014/06/30/mysql-index.html">美团技术团队</a><br>
@@ -369,7 +524,6 @@ TODO<br>
 <a target="_blank" rel="noopener" href="https://www.jb51.net/article/80748.htm">query_cache</a><br>
 <a target="_blank" rel="noopener" href="https://blog.csdn.net/u012068483/article/details/105270813">key_len的计算</a><br>
 <a target="_blank" rel="noopener" href="https://blog.csdn.net/u013250861/article/details/109279131">索引结构参考</a><br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36756682/article/details/114483362">索引脑图原文</a><br>
 <a target="_blank" rel="noopener" href="https://blog.csdn.net/fhdsece/article/details/104974697">创建表的几种行格式</a><br>
 <a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903645125820424">索引和锁的一篇文章</a><br>
 <a target="_blank" rel="noopener" href="https://blog.csdn.net/kongmin_123/article/details/82055901">索引数据结构</a><br>

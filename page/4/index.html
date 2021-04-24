@@ -259,14 +259,6 @@
 <li>双全工：允许数据在两个方向上同时传输。<br>
 tcp属于双全工，在进行连接之后双方都可以进行数据传送。</li>
 </ul>
-<blockquote>
-<p>三次握手</p>
-</blockquote>
-<ul>
-<li>第一次握手：建立连接时，客户端发送syn包到服务器，并进入SYN_SENT状态，等待服务器确认；SYN：同步序列编号。</li>
-<li>第二次握手：服务器收到syn包，必须确认客户的syn，同时自己也发送一个syn包，即syn+ack，此时服务器进入SYN_RCVD状态</li>
-<li>第三次握手：客户端收到服务器的syn+ack包，向服务器发送确认包ack=k+1，此包发送完毕，客户端和服务器进入ESTABLISHED（TCP连接成功）状态，完成三次握手。</li>
-</ul>
         
           <a class="article-more-a" href="/2021/03/10/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/#more">more >></a>
         
