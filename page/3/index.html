@@ -146,6 +146,85 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-MySQL缓存池" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/25/MySQL%E7%BC%93%E5%AD%98%E6%B1%A0/">MySQL缓存池</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/25/MySQL%E7%BC%93%E5%AD%98%E6%B1%A0/" class="archive-article-date">
+  	<time datetime="2021-03-25T01:27:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>主要整理自掘金上一位博主，为知识付费购买义不容辞~~~<br>
+为什么需要缓存池？<br>
+MySQL的InnoDB存储引擎是基于磁盘存储的，并且是按照页的方式进行管理的，在数据库系统中，CPU速度和磁盘速度之间的差距是比较大的，为了弥补这种速度，提出了缓存池的概念，简单来说就是一块<code>内存区域</code>,通过内存的速度去弥补磁盘速度较慢，导致对数据库造成的性能影响。</p>
+<p><code>InnoDB</code>的设计者为了缓存磁盘中的页，在<code>MySQL</code>服务器启动的时候就向操作系统申请了一片连续的内存，他们给这片内存起了个名，叫做<code>Buffer Pool</code>（中文名是<code>缓冲池</code>）。默认大小为128M，最小也不能小于5M。</p>
+        
+          <a class="article-more-a" href="/2021/03/25/MySQL%E7%BC%93%E5%AD%98%E6%B1%A0/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/25/MySQL%E7%BC%93%E5%AD%98%E6%B1%A0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-锁" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -892,88 +971,6 @@ explain命令<br>
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Java三大特性" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/16/Java%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/">Java三大特性</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/16/Java%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/" class="archive-article-date">
-  	<time datetime="2021-03-16T02:40:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <ul>
-<li>封装<br>
-介绍<br>
-lombok相关</li>
-<li>继承</li>
-<li>多态</li>
-</ul>
-        
-          <a class="article-more-a" href="/2021/03/16/Java%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/16/Java%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/">展开全文 >></a>
         </p>
       
 
