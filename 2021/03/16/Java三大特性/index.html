@@ -16,7 +16,7 @@
 <meta property="og:description" content="封装 介绍 lombok相关 继承 多态">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-16T02:40:53.000Z">
-<meta property="article:modified_time" content="2021-04-12T05:47:22.606Z">
+<meta property="article:modified_time" content="2021-04-26T02:52:51.332Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Java基础">
 <meta name="twitter:card" content="summary">
@@ -260,6 +260,24 @@ lombok相关</li>
 原因就是多态的弊端，就是：不能使用子类特有的成员属性和子类特有的成员方法。</p>
 <p>一些问题</p>
 <h2 id="抽象类和接口的区别">抽象类和接口的区别</h2>
+<p>一个类只能继承一个抽象类，一个类可以同时实现多个接口</p>
+<p>接口是用interface声明，抽象类是用abstract修饰类，这是二者形式上的区别</p>
+<ul>
+<li>接口和抽象类都不能被实例化</li>
+<li>接口的方法不能在接口里实现（jdk1.8后可以有默认实现），抽象类中除了抽象方法也可以有非抽象方法</li>
+<li>接口除了static、final变量，不能有其他变量，抽象类可以</li>
+<li>接口的方法修饰符为public，抽象类还可以有protected、default（不能有private，不然没法被重写）</li>
+<li>一个类可以实现多个接口，但是只能实现一个抽象类</li>
+</ul>
+<ol>
+<li>jdk 7 或更早版本中，接口⾥⾯只能有常量变量和抽象⽅法。这些接⼝⽅法必须由选择实现接⼝的类实现。</li>
+<li>jdk 8 的时候接⼝可以有默认⽅法和静态⽅法功能。</li>
+<li>Jdk 9 在接⼝中引⼊了私有⽅法和私有静态⽅法。</li>
+</ol>
+<h3 id="组合">组合</h3>
+<p>如果新类和已有类需要具有一些相似的方法和属性时，就采用继承的形式；<br>
+如果新类只是为了借用已有类的一些方法和属性时，而两者没有很多相似之处时就需要采用组合的形式。<br>
+<a target="_blank" rel="noopener" href="http://www.itwanger.com/java/2019/11/06/java-code-fuyong.html">http://www.itwanger.com/java/2019/11/06/java-code-fuyong.html</a></p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
@@ -557,11 +575,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">创建者模式</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
