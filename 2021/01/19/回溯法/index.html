@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>回溯法 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="简述  首先感谢LeetCode上的这位博主:liweiwei1419，通过他的题解，收获了很多。如有需要通过文末的首个参考链接进行查看。 学习真的是一个不断抄袭、模仿、练习、创新的过程。 每一次用心仔细回味，都真的会有新的发现。真的体会到温故而知新的强大！ 回溯法 ：一种通过探索所有可能的候选解来找出所有的解的算法。如果候选解被确认不是一个解的话（或者至少不是最后一个解），回溯算法会通过在上一">
+  <meta name="description" content="不断学习！理解和会用是两回事！！！Orz 主要分为两部分 第一部分 遇到的回溯题目 第二部分 学习回溯算法">
 <meta property="og:type" content="article">
 <meta property="og:title" content="回溯法">
 <meta property="og:url" content="http://example.com/2021/01/19/%E5%9B%9E%E6%BA%AF%E6%B3%95/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="简述  首先感谢LeetCode上的这位博主:liweiwei1419，通过他的题解，收获了很多。如有需要通过文末的首个参考链接进行查看。 学习真的是一个不断抄袭、模仿、练习、创新的过程。 每一次用心仔细回味，都真的会有新的发现。真的体会到温故而知新的强大！ 回溯法 ：一种通过探索所有可能的候选解来找出所有的解的算法。如果候选解被确认不是一个解的话（或者至少不是最后一个解），回溯算法会通过在上一">
+<meta property="og:description" content="不断学习！理解和会用是两回事！！！Orz 主要分为两部分 第一部分 遇到的回溯题目 第二部分 学习回溯算法">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%BB%84%E5%90%88%E9%97%AE%E9%A2%98%E6%96%B9%E6%B3%951.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E7%BB%84%E5%90%88%E9%97%AE%E9%A2%98%E6%96%B9%E6%B3%952.png">
@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%AD%90%E9%9B%86%E5%9B%9E%E6%BA%AF%E6%80%9D%E6%83%B3.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%AD%90%E9%9B%86.png">
 <meta property="article:published_time" content="2021-01-19T09:51:39.000Z">
-<meta property="article:modified_time" content="2021-04-24T00:33:01.911Z">
+<meta property="article:modified_time" content="2021-04-26T11:51:25.869Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -175,7 +175,36 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
+        <p>不断学习！理解和会用是两回事！！！Orz<br>
+主要分为两部分<br>
+第一部分 遇到的回溯题目<br>
+第二部分 学习回溯算法</p>
+<a id="more"></a>
+<h2 id="第一部分">第一部分</h2>
+<ol start="306">
+<li>
+<p>累加数</p>
+</li>
+<li>
+<p>将数组拆分成斐波那契序列<br>
+输入：“123456579”<br>
+输出：[123,456,579]</p>
+</li>
+</ol>
+<p>输入: “11235813”<br>
+输出: [1,1,2,3,5,8,13]</p>
+<p>输入: “112358130”<br>
+输出: []<br>
+解释: 这项任务无法完成。</p>
+<p>输入：“0123”<br>
+输出：[]<br>
+解释：每个块的数字不能以零开头，因此 “01”，“2”，“3” 不是有效答案。</p>
+<p>输入: “1101111”<br>
+输出: [110, 1, 111]<br>
+解释: 输出 [11,0,11,11] 也同样被接受。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">splitIntoFibonacci</span><span class="params">(String S)</span> </span>&#123;</span><br><span class="line">    List&lt;Integer&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    backtrack(S.toCharArray(), res, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">backtrack</span><span class="params">(<span class="keyword">char</span>[] digit, List&lt;Integer&gt; res, <span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//边界条件判断，如果截取完了，并且res长度大于等于3，表示找到了一个组合。</span></span><br><span class="line">    <span class="keyword">if</span> (index == digit.length &amp;&amp; res.size() &gt;= <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = index; i &lt; digit.length; i++) &#123;</span><br><span class="line">        <span class="comment">//两位以上的数字不能以0开头</span></span><br><span class="line">        <span class="keyword">if</span> (digit[index] == <span class="string">&#x27;0&#x27;</span> &amp;&amp; i &gt; index) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//截取字符串转化为数字</span></span><br><span class="line">        <span class="keyword">long</span> num = subDigit(digit, index, i + <span class="number">1</span>);</span><br><span class="line">        <span class="comment">//如果截取的数字大于int的最大值，则终止截取</span></span><br><span class="line">        <span class="keyword">if</span> (num &gt; Integer.MAX_VALUE) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> size = res.size();</span><br><span class="line">        <span class="comment">//如果截取的数字大于res中前两个数字的和，说明这次截取的太大，直接终止，因为后面越截取越大</span></span><br><span class="line">        <span class="keyword">if</span> (size &gt;= <span class="number">2</span> &amp;&amp; num &gt; res.get(size - <span class="number">1</span>) + res.get(size - <span class="number">2</span>)) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (size &lt;= <span class="number">1</span> || num == res.get(size - <span class="number">1</span>) + res.get(size - <span class="number">2</span>)) &#123;</span><br><span class="line">            <span class="comment">//把数字num添加到集合res中</span></span><br><span class="line">            res.add((<span class="keyword">int</span>) num);</span><br><span class="line">            <span class="comment">//如果找到了就直接返回</span></span><br><span class="line">            <span class="keyword">if</span> (backtrack(digit, res, i + <span class="number">1</span>))</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            <span class="comment">//如果没找到，就会走回溯这一步，然后把上一步添加到集合res中的数字给移除掉</span></span><br><span class="line">            res.remove(res.size() - <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//相当于截取字符串S中的子串然后转换为十进制数字</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">long</span> <span class="title">subDigit</span><span class="params">(<span class="keyword">char</span>[] digit, <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> res = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = start; i &lt; end; i++) &#123;</span><br><span class="line">        res = res * <span class="number">10</span> + digit[i] - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="第二部分">第二部分</h2>
+<blockquote>
 <p>简述</p>
 </blockquote>
 <p>首先感谢LeetCode上的这位博主:liweiwei1419，通过他的题解，收获了很多。如有需要通过文末的首个参考链接进行查看。<br>
@@ -188,7 +217,6 @@ LeetCode：<br>
 二、 Flood Fill (733、200、130、79)<br>
 三、 字符串回溯问题 (17、784、22)<br>
 四、 游戏问题 (51、37、488、529)</p>
-<a id="more"></a>
 <p>首先明确一下，回溯和递归的关系。<br>
 递归是一种算法结构，递归会出现在子程序之中，形式上表示为直接或者间接自己调用自己。比如典型的例子就是阶乘，n! = n * (n - 1)!</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">fun</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> (n * fun(n - <span class="number">1</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -673,10 +701,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
@@ -685,15 +709,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">

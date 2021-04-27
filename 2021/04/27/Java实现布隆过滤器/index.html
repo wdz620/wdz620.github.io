@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Tag: Java集合 | 无雨无晴</title>
+  <title>Java实现布隆过滤器 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="无雨无晴">
-<meta property="og:url" content="http://example.com/tags/Java%E9%9B%86%E5%90%88/index.html">
+  <meta name="description" content="在学习Redis时，了解到缓存穿透可以使用布隆过滤器解决，先简单回顾布隆过滤器在SpringBoot中的使用。本文主要通过学习网上教程，通过Java实现一个布隆过滤器。然后学习Guava提供的布隆过滤器。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java实现布隆过滤器">
+<meta property="og:url" content="http://example.com/2021/04/27/Java%E5%AE%9E%E7%8E%B0%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/index.html">
 <meta property="og:site_name" content="无雨无晴">
+<meta property="og:description" content="在学习Redis时，了解到缓存穿透可以使用布隆过滤器解决，先简单回顾布隆过滤器在SpringBoot中的使用。本文主要通过学习网上教程，通过Java实现一个布隆过滤器。然后学习Guava提供的布隆过滤器。">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-27T07:02:02.000Z">
+<meta property="article:modified_time" content="2021-04-27T08:11:53.903Z">
 <meta property="article:author" content="一直默默潜行的修行者">
+<meta property="article:tag" content="Java基础">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
@@ -144,250 +149,216 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Java实现布隆过滤器" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java实现布隆过滤器
+    </h1>
+  
+
+        
+        <a href="/2021/04/27/Java%E5%AE%9E%E7%8E%B0%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" class="archive-article-date">
+  	<time datetime="2021-04-27T07:02:02.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-27</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在学习Redis时，了解到缓存穿透可以使用布隆过滤器解决，先简单回顾布隆过滤器在SpringBoot中的使用。本文主要通过学习网上教程，通过Java实现一个布隆过滤器。然后学习Guava提供的布隆过滤器。</p>
+<a id="more"></a>
+<h2 id="SpringBoot中的使用布隆过滤器">SpringBoot中的使用布隆过滤器</h2>
+<p>Redis 实现布隆过滤器的底层就是通过 bitmap 这种数据结构，至于如何实现，这里就不重复造轮子了，介绍业界比较好用的一个客户端工具——Redisson。<br>
+具体参看之间的 Redis 基础。Redisson 是用于在 Java 程序中操作 Redis 的库，利用Redisson 我们可以在程序中轻松地使用 Redis。</p>
+<blockquote>
+<p>jedis 和 Redisson 区别 文末介绍<br>
+基本就是连接之后直接调用api<br>
+1、安装依赖</p>
+</blockquote>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.redisson<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>redisson<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.11.6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>2、添加配置信息，注入</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> RedissonClient <span class="title">redisson</span><span class="params">()</span></span>&#123;</span><br><span class="line">    Config config = <span class="keyword">new</span> Config();</span><br><span class="line">    config.useSingleServer().setAddress(<span class="string">&quot;redis://&quot;</span> + <span class="string">&quot;redis数据库地址&quot;</span> + <span class="string">&quot;:&quot;</span> + <span class="number">6379</span>).setPassword(<span class="string">&quot;数据库密码&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> Redisson.create(config);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3、简单测试</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testRedisson</span><span class="params">()</span></span>&#123;</span><br><span class="line">    RBloomFilter&lt;Object&gt; bloomFilter = redissonClient.getBloomFilter(<span class="string">&quot;phoneList&quot;</span>);</span><br><span class="line">    <span class="comment">// 初始化布隆过滤器：预计元素为100000000L,误差率为3%</span></span><br><span class="line">    bloomFilter.tryInit(<span class="number">100000000L</span>, <span class="number">0.03</span>);</span><br><span class="line">    <span class="comment">// 将号码10086插入到布隆过滤器中</span></span><br><span class="line">    bloomFilter.add(<span class="string">&quot;10086&quot;</span>);</span><br><span class="line">    <span class="comment">// 判断下面号码是否在布隆过滤器中</span></span><br><span class="line">    System.out.println(bloomFilter.contains(<span class="string">&quot;123456&quot;</span>)); <span class="comment">//false</span></span><br><span class="line">    System.out.println(bloomFilter.contains(<span class="string">&quot;10086&quot;</span>)); <span class="comment">//true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Java实现简单布隆过滤器">Java实现简单布隆过滤器</h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BloomFileter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//使用加法hash算法，所以定义了一个8个元素的质数数组</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span>[] primes = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">17</span>, <span class="number">19</span>&#125;;</span><br><span class="line">    <span class="comment">//用八个不同的质数，相当于构建8个不同算法</span></span><br><span class="line">    <span class="keyword">private</span> Hash[] hashList = <span class="keyword">new</span> Hash[primes.length];</span><br><span class="line">    <span class="comment">//创建一个长度为10亿的比特位</span></span><br><span class="line">    <span class="keyword">private</span> BitSet bits = <span class="keyword">new</span> BitSet(<span class="number">256</span> &lt;&lt; <span class="number">22</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">BloomFileter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; primes.length; i++) &#123;</span><br><span class="line">            <span class="comment">//使用8个质数，创建八种算法</span></span><br><span class="line">            hashList[i] = <span class="keyword">new</span> Hash(primes[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//添加元素</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(String value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (Hash f : hashList) &#123;</span><br><span class="line">            <span class="comment">//算出8个信息指纹，对应到2的32次方个比特位上</span></span><br><span class="line">            bits.set(f.hash(value), <span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//判断是否在布隆过滤器中</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(String value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (value == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">boolean</span> ret = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (Hash f : hashList) &#123;</span><br><span class="line">            <span class="comment">//查看8个比特位上的值</span></span><br><span class="line">            ret = ret &amp;&amp; bits.get(f.hash(value));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//加法hash算法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Hash</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> prime;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Hash</span><span class="params">(<span class="keyword">int</span> prime)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.prime = prime;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> hash, i;</span><br><span class="line">            <span class="keyword">for</span> (hash = key.length(), i = <span class="number">0</span>; i &lt; key.length(); i++) &#123;</span><br><span class="line">                hash += key.charAt(i);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> (hash % prime);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        BloomFileter bloomFileter = <span class="keyword">new</span> BloomFileter();</span><br><span class="line">        System.out.println(bloomFileter.contains(<span class="string">&quot;5324512515&quot;</span>));</span><br><span class="line">        bloomFileter.add(<span class="string">&quot;5324512515&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//维护1亿个在线用户</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span> ; i &lt; <span class="number">100000000</span> ; i ++)&#123;</span><br><span class="line">            bloomFileter.add(String.valueOf(i));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">long</span> begin = System.currentTimeMillis();</span><br><span class="line">        System.out.println(begin);</span><br><span class="line">        System.out.println(bloomFileter.contains(<span class="string">&quot;5324512515&quot;</span>));</span><br><span class="line">        <span class="keyword">long</span> end = System.currentTimeMillis();</span><br><span class="line">        System.out.println(end);</span><br><span class="line">        System.out.println(<span class="string">&quot;判断5324512515是否在线使用了:&quot;</span> + (begin - end));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码是构建了一个10亿位的bitSet，然后把一亿个userId加入到了我们的布隆过滤器中，最近判断5324512515这个userId是否登录，打出代码的执行时间。</p>
+<h2 id="Guava提供的布隆过滤器">Guava提供的布隆过滤器</h2>
+<p>1、引用依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.guava<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>guava<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>29.0-jre<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>2、测试</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">   <span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testGuavaBloomFilter</span><span class="params">()</span></span>&#123;</span><br><span class="line">	BloomFilter&lt;Integer&gt; filter = BloomFilter.create(Funnels.integerFunnel(), <span class="number">500</span>, <span class="number">0.01</span>);</span><br><span class="line">	filter.put(<span class="number">1</span>);</span><br><span class="line">	filter.put(<span class="number">2</span>);</span><br><span class="line">	filter.put(<span class="number">3</span>);</span><br><span class="line">	System.out.println(filter.mightContain(<span class="number">1</span>)); <span class="comment">// true</span></span><br><span class="line">	System.out.println(filter.mightContain(<span class="number">100</span>)); <span class="comment">// false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Jedis-和-Redisson-有哪些区别？">Jedis 和 Redisson 有哪些区别？</h2>
+<h3 id="1、可伸缩性">1、可伸缩性</h3>
+<p>Jedis使用阻塞的I/O，且其方法调用都是同步的，程序流需要等到sockets处理完I/O才能执行，不支持异步。Jedis客户端实例不是线程安全的，所以需要通过连接池来使用Jedis。<br>
+Redisson使用非阻塞的I/O和基于Netty框架的事件驱动的通信层，其方法调用是异步的。Redisson的API是线程安全的，所以可以操作单个Redisson连接来完成各种操作。</p>
+<h3 id="2、数据结构">2、数据结构</h3>
+<p>Jedis仅支持基本的数据类型如：String、Hash、List、Set、Zset。<br>
+Redisson不仅提供了一系列的分布式Java常用对象，基本可以与Java的基本数据结构通用。其中包括（BitSet, Set, Multimap, SortedSet, Map, List, Queue, BlockingQueue, Deque, BlockingDeque, Semaphore, Lock, AtomicLong, CountDownLatch, Publish / Subscribe, Bloom filter, Remote service, Spring cache, Executor service, Live Object service, Scheduler service）。<br>
+在分布式开发中，Redisson可提供更便捷的方法。</p>
+<h3 id="3、第三方框架整合">3、第三方框架整合</h3>
+<ul>
+<li>Redisson完整的实现了Spring框架里的缓存机制；</li>
+<li>Redisson在Redis的基础上实现了Java缓存标准规范；</li>
+<li>Redisson为Apache Tomcat集群提供了基于Redis的非黏性会话管理功能。该功能支持Apache Tomcat的6、7和8版。</li>
+<li>Redisson还提供了Spring Session会话管理器的实现。</li>
+</ul>
+<blockquote>
+<p>参考链接</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7634eaea3e26">Java实现简单布隆过滤器</a><br>
+<a target="_blank" rel="noopener" href="https://www.baeldung.com/guava-bloom-filter">guava-bloom-filter官方文档</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/04/ConcurrentHashMap%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
-  	<time datetime="2021-04-04T02:35:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/04/ConcurrentHashMap%E5%AD%A6%E4%B9%A0/">ConcurrentHashMap学习</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java基础</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/04/27/Java%E5%AE%9E%E7%8E%B0%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/26/HashMap%E6%B7%B1%E7%A9%B6/" class="archive-article-date">
-  	<time datetime="2021-03-26T05:41:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-26</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2021/04/26/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Redis数据结构</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/26/HashMap%E6%B7%B1%E7%A9%B6/">HashMap深究</a>
-    </h1>
+    <section id="comments" class="comments">
+      <style>
+        .comments{margin:30px;padding:10px;background:#fff}
+        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
+      </style>
+      <div id="vcomment" class="comment"></div> 
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<script>
+   var notify = 'false' == true ? true : false;
+   var verify = 'false' == true ? true : false;
+    window.onload = function() {
+        new Valine({
+            el: '.comment',
+            notify: notify,
+            verify: verify,
+            app_id: "Pcf0NAjXdaEBh1idVXCRepMY-gzGzoHsz",
+            app_key: "v9XAIwg5leNISwUAz5fXdQwd",
+            placeholder: "Just go go",
+            avatar:"retro"
+        });
+    }
+</script>
+
+  </section>
+
+
+  
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/15/PriorityQueue%E7%9A%84%E4%BD%BF%E7%94%A8/" class="archive-article-date">
-  	<time datetime="2021-03-15T05:40:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/15/PriorityQueue%E7%9A%84%E4%BD%BF%E7%94%A8/">PriorityQueue的使用</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/01/16/HashMap%E5%92%8CHashTable/" class="archive-article-date">
-  	<time datetime="2021-01-16T10:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-16</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/16/HashMap%E5%92%8CHashTable/">HashMap和HashTable</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/01/11/HashMap%E5%88%9D%E6%8E%A2/" class="archive-article-date">
-  	<time datetime="2021-01-11T05:46:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-11</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/11/HashMap%E5%88%9D%E6%8E%A2/">HashMap初探</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/01/07/ArrayList%E5%92%8CLinkedList%E5%8C%BA%E5%88%AB/" class="archive-article-date">
-  	<time datetime="2021-01-07T13:37:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-07</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/07/ArrayList%E5%92%8CLinkedList%E5%8C%BA%E5%88%AB/">ArrayList和LinkedList</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -410,9 +381,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
