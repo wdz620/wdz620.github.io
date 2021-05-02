@@ -495,14 +495,8 @@ lombok相关</li>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Java集合中的Queue是队列结构，其中常用的队列如下：</p>
-<ul>
-<li>ArrayBlockingQueue : 基于数组数据结构实现的有界阻塞队列</li>
-<li>LinkedBlockingQueue ： 基于链表数据结构实现的有界阻塞队列</li>
-<li>PriorityBlockingQueue ：基于优先级排序的无界阻塞队列</li>
-<li>DelayQueue ：支持延迟操作的无界阻塞队列</li>
-<li>SynchronousQueue ：用于线程同步的阻塞队列</li>
-</ul>
+        <p>PriorityQueue 默认使用小根堆，首先出去的是最小的，如果需要改成大根堆，需要重写。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认小根堆</span></span><br><span class="line">Queue&lt;Integer&gt; queue = <span class="keyword">new</span> PriorityQueue&lt;&gt;(); </span><br><span class="line"><span class="comment">// 重写大根堆</span></span><br><span class="line">Queue&lt;Integer&gt; queue1 = <span class="keyword">new</span> PriorityQueue&lt;&gt;(((o1, o2) -&gt; &#123;</span><br><span class="line">            <span class="keyword">return</span> o2 - o1;</span><br><span class="line">&#125;));</span><br></pre></td></tr></table></figure>
         
           <a class="article-more-a" href="/2021/03/15/PriorityQueue%E7%9A%84%E4%BD%BF%E7%94%A8/#more">more >></a>
         
@@ -1095,11 +1089,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color1">Shiro</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Shiro</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1111,11 +1105,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
