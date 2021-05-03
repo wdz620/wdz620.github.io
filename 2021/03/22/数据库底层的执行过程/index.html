@@ -15,13 +15,13 @@
 <meta property="og:site_name" content="无雨无晴">
 <meta property="og:description" content="数据库底层的执行 一:MySQL执行过程 二:MySQL执行过程中的状态 三:MySQL执行的顺序">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://img2020.cnblogs.com/blog/1066538/202010/1066538-20201016015745814-1815633939.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210416085224398.png">
 <meta property="article:published_time" content="2021-03-22T10:30:57.000Z">
-<meta property="article:modified_time" content="2021-04-20T06:35:06.795Z">
+<meta property="article:modified_time" content="2021-05-03T05:37:33.855Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img2020.cnblogs.com/blog/1066538/202010/1066538-20201016015745814-1815633939.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210416085224398.png">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -181,17 +181,19 @@
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wyq178/p/11576065.html">原文链接</a></p>
 </blockquote>
 <p>整体的执行过程：<br>
-<img src="https://img2020.cnblogs.com/blog/1066538/202010/1066538-20201016015745814-1815633939.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210416085224398.png" alt=""></p>
 <h4 id="连接器">连接器</h4>
-<p>1、负责和客户端的通信，而且是属于半双工的通信，就是说在同一时刻，要么就是客户端向服务端发送请求，要么就是服务端向客户端发送数据。就是说没办法进行流量控制，有一个较为形象的比喻就是“消防水管喝水”，被动且无奈。<br>
+<p>1、负责和客户端的通信，而且是属于<strong>半双工</strong>的通信，就是说在同一时刻，要么就是客户端向服务端发送请求，要么就是服务端向客户端发送数据。就是说没办法进行流量控制，有一个较为形象的比喻就是“消防水管喝水”，被动且无奈。<br>
 2、验证请求用户的账户和密码正确性。<br>
 3、验证权限，主要通过MySQL自带的四张表，user表、db表、tables_priv表、columns_priv表。按顺序进行，如果说在user表中找到为Y，那么就代表具有所有数据库的权限，不在继续往后找，如果没有，查找db表，以此类推。如果在任何一个过程中权限验证不通过,都会报错。</p>
 <h4 id="缓存">缓存</h4>
 <p>在MySQL8.0之后删除这一部分，因为最开始引入的目的是为了加快查询的速度，但是经过验证发现，对于写多读少的环境中，缓存大部分失效，而且对于数据库的压力也是不小的。所以在MySQL8.0之后移除。比较推荐的一种做法是将缓存放在客户端，性能大概会提升5倍左右。</p>
 <h4 id="分析器">分析器</h4>
-<p>主要作用是将客户端发过来的sql语句进行分析，这将包括预处理与解析过程，在这个阶段会解析sql语句的语义，并进行关键词和非关键词进行提取、解析，并组成一个解析树。在分析器中就通过语义规则器将select from where这些关键词提取和匹配出来,mysql会自动判断关键词和非关键词，将用户的匹配字段和自定义语句识别出来。这个阶段也会做一些校验:比如校验当前数据库是否存在user表，同时假如User表中不存在userId这个字段同样会报错：unknown column in field list.</p>
+<p>主要作用是将客户端发过来的sql语句进行分析，这将包括<code>预处理</code>与<code>解析</code>过程。<br>
+在这个阶段会解析sql语句的语义，并进行关键词和非关键词进行提取、解析，并组成一个解析树。在分析器中就通过语义规则器将<code>select</code> <code>from</code> <code>where</code>这些关键词提取和匹配出来,mysql会自动判断关键词和非关键词，将用户的匹配字段和自定义语句识别出来。这个阶段也会做一些校验:比如校验当前数据库是否存在user表，同时假如User表中不存在userId这个字段同样会报错：unknown column in field list.</p>
 <h4 id="优化器">优化器</h4>
-<p>能够进入到优化器阶段表示sql是符合mysql的标准语义规则的并且可以执行的，此阶段主要是进行sql语句的优化，会根据执行计划进行最优的选择,匹配合适的索引,选择最佳的执行方案。但是注意的是，MySQL选择的也不一定就是最优的，因为MySQL在索引上分为聚簇索引和非聚簇索引，而在非聚簇索引上可能会出现一些回表操作。比如两个计划，A、B。A查100条数据，B查20条数据，这个时候可能就会选择100条的，因为B回表操作。</p>
+<p>能够进入到优化器阶段表示sql是符合mysql的标准语义规则的并且可以执行的，此阶段主要是进行sql语句的优化，会根据执行计划进行最优的选择,匹配合适的索引,选择最佳的执行方案。<br>
+但是注意的是，MySQL选择的也不一定就是最优的，因为MySQL在索引上分为聚簇索引和非聚簇索引，而在非聚簇索引上可能会出现一些回表操作。比如两个计划，A、B。A查100条数据，B查20条数据，这个时候可能就会选择100条的，因为B回表操作。</p>
 <h4 id="执行器">执行器</h4>
 <p>在执行器的阶段,此时会调用存储引擎的API,API会调用存储引擎，主要有一下存储的引擎，不过常用的还是myisam和innodb</p>
 <h4 id="SQL执行流程">SQL执行流程</h4>
@@ -216,16 +218,16 @@
 <li>接着通过ON 条件进行筛选，虚拟表 vt1-1 作为输入，输出虚拟表 vt1-2；</li>
 <li>添加外部行。我们使用的是左连接、右链接或者全连接，就会涉及到外部行，也就是在虚拟表 vt1-2 的基础上增加外部行，得到虚拟表 vt1-3</li>
 </ul>
-<p><strong>过滤数据 ( where )</strong></p>
-<p>经过上面的步骤，我们得到了一张最终的虚拟表vt1，在此表之上作用where过滤，通过筛选条件过滤掉不满足条件的数据，从而得到虚拟表vt2。</p>
-<p><strong>分组 ( group by )</strong></p>
-<p>经过where过滤操作之后，得到vt2。接下来进行group by操作，得到中间的虚拟表vt3。</p>
-<p><strong>分组过滤 ( having )</strong></p>
-<p>在虚拟表vt3的基础之上，使用having过滤掉不满足条件的聚合数据，得到vt4。</p>
-<p><strong>返回查询字段 ( select )</strong></p>
-<p>当我们完成了条件筛选部分之后，就可以筛选表中提取的字段，也就是进入到 select 和 distinct 阶段。首先在 select 阶段会提取目标字段，然后在 distinct 阶段过滤掉重复的行，分别得到中间的虚拟表 vt5-1 和 vt5-2。</p>
-<p><strong>排序与分页 ( order by &amp; limit / offset )</strong></p>
-<p>当我们提取了想要的字段数据之后，就可以按照指定的字段进行排序，也就是 order by 阶段，得到虚拟表 vt6。最后在 vt6 的基础上，取出指定行的记录，也就是 limit 阶段，得到最终的结果，对应的是虚拟表 vt7</p>
+<p><strong>过滤数据 ( where )</strong><br>
+经过上面的步骤，我们得到了一张最终的虚拟表vt1，在此表之上作用where过滤，通过筛选条件过滤掉不满足条件的数据，从而得到虚拟表vt2。</p>
+<p><strong>分组 ( group by )</strong><br>
+经过where过滤操作之后，得到vt2。接下来进行group by操作，得到中间的虚拟表vt3。</p>
+<p><strong>分组过滤 ( having )</strong><br>
+在虚拟表vt3的基础之上，使用having过滤掉不满足条件的聚合数据，得到vt4。</p>
+<p><strong>返回查询字段 ( select )</strong><br>
+当我们完成了条件筛选部分之后，就可以筛选表中提取的字段，也就是进入到 select 和 distinct 阶段。首先在 select 阶段会提取目标字段，然后在 distinct 阶段过滤掉重复的行，分别得到中间的虚拟表 vt5-1 和 vt5-2。</p>
+<p><strong>排序与分页 ( order by &amp; limit / offset )</strong><br>
+当我们提取了想要的字段数据之后，就可以按照指定的字段进行排序，也就是 order by 阶段，得到虚拟表 vt6。最后在 vt6 的基础上，取出指定行的记录，也就是 limit 阶段，得到最终的结果，对应的是虚拟表 vt7</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
@@ -481,15 +483,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -501,19 +503,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Shiro</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Shiro</a>
               </li>
              
               <li class="article-tag-list-item">

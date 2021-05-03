@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210307082751819.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210307082832093.png">
 <meta property="article:published_time" content="2021-01-30T02:23:39.000Z">
-<meta property="article:modified_time" content="2021-03-30T08:04:04.700Z">
+<meta property="article:modified_time" content="2021-05-02T11:01:20.274Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta property="article:tag" content="数据结构">
@@ -243,8 +243,9 @@ MYISAM这个存储引擎他的查找的一个大致过程就是，先看条件�
 <p>InnoDB的索引查找过程<br>
 它也是一个B+Tree，但是它的叶子节点和MYISAM有点区别，它存储的是索引所在行的所有字段。<br>
 这个好处是是什么？不用回表了，性能应该比MYISAM高，你看MYISAM查找到索引所在行记录的磁盘地址后还要回MYD文件读取一次。</p>
-<h2 id="聚集索引-非聚集索引聚集索引-聚簇索引，叶子节点包含了完整的数据记录，InnoDB的主键索引就是一个聚集索引，他的索引和数据是绑定在一起的（叶子节点）。MYISAM的是非聚集索引，索引和数据是分开存储的。InnoDB的主键索引我们叫做聚集索引。">聚集索引/非聚集索引<br>
-聚集索引/聚簇索引，叶子节点包含了完整的数据记录，InnoDB的主键索引就是一个聚集索引，他的索引和数据是绑定在一起的（叶子节点）。MYISAM的是非聚集索引，索引和数据是分开存储的。InnoDB的主键索引我们叫做聚集索引。</h2>
+<p>聚集索引/非聚集索引<br>
+聚集索引/聚簇索引，叶子节点包含了完整的数据记录，InnoDB的主键索引就是一个聚集索引，他的索引和数据是绑定在一起的（叶子节点）。MYISAM的是非聚集索引，索引和数据是分开存储的。InnoDB的主键索引我们叫做聚集索引。</p>
+<hr>
 <p>自己能力有限，没太看懂，继续重复理解翻阅把！！！<br>
 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/ibigboy/p/12373978.html">联合索引在B+树上的存储结构及数据查找方式</a></p>
 <blockquote>
@@ -517,15 +518,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -537,19 +538,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Shiro</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Shiro</a>
               </li>
              
               <li class="article-tag-list-item">
