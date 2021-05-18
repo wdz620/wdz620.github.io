@@ -17,7 +17,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/1102222-20180613124448502-1358465417.png">
 <meta property="article:published_time" content="2021-04-24T12:05:12.000Z">
-<meta property="article:modified_time" content="2021-04-26T10:52:27.012Z">
+<meta property="article:modified_time" content="2021-05-17T12:18:12.702Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary">
@@ -189,7 +189,7 @@
 <li>
 <p>4XX 请求错误</p>
 <ul>
-<li>400    服务器不理解请求的语法。</li>
+<li>400   服务器不理解请求的语法。</li>
 <li>401   请求要求身份验证。 对于需要登录的网页，服务器可能返回此响应。</li>
 <li>403   服务器拒绝请求。</li>
 <li>404   服务器找不到请求的网页。</li>
@@ -368,6 +368,14 @@ Cache-Control Cache-Control与Expires的作用一致。只不过Cache-Control的
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$ &#123;</span><br><span class="line">    #过期时间为30天，</span><br><span class="line">    #图片文件不怎么更新，过期可以设大一点，</span><br><span class="line">    #如果频繁更新，则可以设置得小一点。</span><br><span class="line">    expires 30d;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">location ~ .*\.(js|css)$ &#123;</span><br><span class="line">    expires 10d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kevingrace/p/9364404.html">TODONginx结合长连接</a></p>
+</blockquote>
+<h3 id="HTTP缓存机制">HTTP缓存机制</h3>
+<p>首先记录url是一个地址，uri是一个资源。</p>
+<p>HTTP缓存的类型很多，根据是否需要重新向服务器发起请求来分类包括两种：强制缓存和对比缓存。</p>
+<p>强制缓存的 HTTP 相关头部 Cache-Control，Exipres（HTTP1.0），浏览器直接读本地缓存，不会再跟服务器端交互，状态码 200。 强制缓存对请求方式有一个要求: 在URI输入栏中输入然后回车/通过书签访问。</p>
+<p>对比缓存的 HTTP 相关头部 Last-Modified / If-Modified-Since， Etag  /  If-None-Match (优先级比Last-Modified / If-Modified-Since高)，每次请求需要让服务器判断一下资源是否更新过，从而决定浏览器是否使用缓存，如果是，则返回304，否则重新完整响应。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/news/588770">HTTP 缓存机制</a></p>
 </blockquote>
 <h2 id="HTTPS">HTTPS</h2>
 <h3 id="SSL握手">SSL握手</h3>
@@ -658,11 +666,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -674,11 +682,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
