@@ -17,7 +17,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210315140946837.png">
 <meta property="article:published_time" content="2021-03-15T05:40:41.000Z">
-<meta property="article:modified_time" content="2021-05-02T10:28:30.563Z">
+<meta property="article:modified_time" content="2021-05-21T10:53:46.345Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Java集合">
 <meta name="twitter:card" content="summary">
@@ -224,6 +224,13 @@ Java集合框架中提供了 PriorityQueue 和 PriorityBlockingQueue 两种类�
 重写了优先队列中的比较方法，其中 (o1, o2)：o1 表示 [1, 2]；o2 表示 [3, 5]；<br>
 double x = ((o2[0] + 1) / (o2[1] + 1) - o2[0] / o2[1])：其中 o2[0] 表示当前 classes[i] 中的 passi，o2[1] 表示当前 totali；<br>
 x，y 表示在不同班级分别加入一个学生后对年级平均通过率增长产生的影响。</p>
+<h3 id="692-前K个高频单词">692. 前K个高频单词</h3>
+<p>返回的答案应该按单词出现频率由高到低排序。如果不同的单词有相同出现频率，按字母顺序排序。<br>
+输入: [“i”, “love”, “leetcode”, “i”, “love”, “coding”], k = 2<br>
+输出: [“i”, “love”]<br>
+解析: “i” 和 “love” 为出现次数最多的两个单词，均为2次。<br>
+注意，按字母顺序 “i” 在 “love” 之前。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">topKFrequent</span><span class="params">(String[] words, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        Map&lt;String, Integer&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (String word : words) &#123;</span><br><span class="line">            map.put(word, map.getOrDefault(word, <span class="number">0</span>) + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        PriorityQueue&lt;String&gt; queue = <span class="keyword">new</span> PriorityQueue&lt;&gt;((o1, o2) -&gt; &#123;</span><br><span class="line">            <span class="comment">// 先进行次数比较，然后按字母顺序排序</span></span><br><span class="line">            <span class="keyword">if</span> (map.get(o1) != map.get(o2)) &#123;</span><br><span class="line">                <span class="keyword">return</span> map.get(o1) - map.get(o2);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> o2.compareTo(o1);</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">for</span> (String s : map.keySet()) &#123;</span><br><span class="line">            queue.offer(s);</span><br><span class="line">            <span class="keyword">if</span> (queue.size() &gt; k) &#123;</span><br><span class="line">                queue.poll();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        LinkedList&lt;String&gt; list = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">        <span class="keyword">while</span> (!queue.isEmpty()) &#123;</span><br><span class="line">            list.add(queue.poll());</span><br><span class="line">        &#125;</span><br><span class="line">        Collections.reverse(list); <span class="comment">// 你可以思考一下为什么这里需要翻转</span></span><br><span class="line">        <span class="keyword">return</span> list;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 法二：</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">topKFrequent1</span><span class="params">(String[] words, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        Map&lt;String, Integer&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (String word : words) &#123;</span><br><span class="line">            map.put(word, map.getOrDefault(word, <span class="number">0</span>) + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        List&lt;String&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;(map.keySet());</span><br><span class="line">        Collections.sort(res, <span class="keyword">new</span> Comparator&lt;String&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(String o1, String o2)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (map.get(o1).equals(map.get(o2))) &#123;</span><br><span class="line">                    <span class="keyword">return</span> o1.compareTo(o2);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> map.get(o2) - map.get(o1);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">return</span> res.subList(<span class="number">0</span>, k);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
@@ -500,11 +507,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -516,11 +523,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
