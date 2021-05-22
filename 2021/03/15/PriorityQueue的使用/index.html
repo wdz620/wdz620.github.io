@@ -17,7 +17,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210315140946837.png">
 <meta property="article:published_time" content="2021-03-15T05:40:41.000Z">
-<meta property="article:modified_time" content="2021-05-21T10:53:46.345Z">
+<meta property="article:modified_time" content="2021-05-21T12:58:06.191Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Java集合">
 <meta name="twitter:card" content="summary">
@@ -224,6 +224,7 @@ Java集合框架中提供了 PriorityQueue 和 PriorityBlockingQueue 两种类�
 重写了优先队列中的比较方法，其中 (o1, o2)：o1 表示 [1, 2]；o2 表示 [3, 5]；<br>
 double x = ((o2[0] + 1) / (o2[1] + 1) - o2[0] / o2[1])：其中 o2[0] 表示当前 classes[i] 中的 passi，o2[1] 表示当前 totali；<br>
 x，y 表示在不同班级分别加入一个学生后对年级平均通过率增长产生的影响。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 二维数组的排序</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span>[][] intervals = <span class="keyword">new</span> <span class="keyword">int</span>[][]&#123;&#123;<span class="number">1</span>, <span class="number">3</span>&#125;, &#123;<span class="number">2</span>, <span class="number">3</span>&#125;, &#123;<span class="number">0</span>, <span class="number">1</span>&#125;, &#123;<span class="number">1</span>, <span class="number">2</span>&#125;&#125;;</span><br><span class="line">    Collections.sort(Arrays.asList(intervals), (a, b) -&gt; a[<span class="number">0</span>] &lt; b[<span class="number">0</span>] ? -<span class="number">1</span> : a[<span class="number">0</span>] == b[<span class="number">0</span>] ? a[<span class="number">1</span>] - b[<span class="number">1</span>] : <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span>[] in : intervals) &#123;</span><br><span class="line">        System.out.println(in[<span class="number">0</span>] + <span class="string">&quot; &quot;</span> + in[<span class="number">1</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="692-前K个高频单词">692. 前K个高频单词</h3>
 <p>返回的答案应该按单词出现频率由高到低排序。如果不同的单词有相同出现频率，按字母顺序排序。<br>
 输入: [“i”, “love”, “leetcode”, “i”, “love”, “coding”], k = 2<br>
@@ -238,7 +239,8 @@ x，y 表示在不同班级分别加入一个学生后对年级平均通过率�
 <a target="_blank" rel="noopener" href="https://baijiahao.baidu.com/s?id=1665383380422326763&amp;wfr=spider&amp;for=pc">优先级介绍</a><br>
 <a target="_blank" rel="noopener" href="https://blog.csdn.net/j3T9Z7H/article/details/85823329">优先级队列</a><br>
 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/dalianpai/p/14282030.html">PriorityQueue底层是什么，初始容量是多少，扩容方式呢</a><br>
-<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximum-average-pass-ratio/solution/zui-da-ping-jun-tong-guo-lu-you-xian-dui-8mpm/">LC周赛题目</a></p>
+<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximum-average-pass-ratio/solution/zui-da-ping-jun-tong-guo-lu-you-xian-dui-8mpm/">LC周赛题目</a><br>
+<a target="_blank" rel="noopener" href="https://www.codenong.com/cs106985298/">Comparator接口/compare方法的介绍与使用</a></p>
 
       
 
