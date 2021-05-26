@@ -20,8 +20,9 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/97A6DE98FF0359D70255CBB5EF053DF5">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/1FF89677EDF103456F5BD07DF4A400EF">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210328192146510.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png">
 <meta property="article:published_time" content="2021-03-28T11:43:13.000Z">
-<meta property="article:modified_time" content="2021-05-23T11:30:27.441Z">
+<meta property="article:modified_time" content="2021-05-25T02:06:09.395Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="创建文章">
 <meta name="twitter:card" content="summary">
@@ -179,17 +180,25 @@
 仅供个人学习回顾使用，如有侵权留言联系删除！</p>
 <a id="more"></a>
 <h1>Java</h1>
-<p><strong>两个Integer类型如何比较</strong><br>
-==是比较基本数据类型是比较值，比较引用类型是比较地址；equals比较引用类型是比较值。<br>
+<h3 id="synchronized-和-ReentrantLock两个的区别？">synchronized 和 ReentrantLock两个的区别？</h3>
+<p>synchronized 是基于 JVM 层面的，ReentrantLock 是基于 JDk 层面的。ReentrantLock 采用的是显式获取锁，采用乐观锁机制，CAS 自旋。JDK1.6 之前的 synchronized 使用的是悲观锁，JDK1.6 之后就优化成了一个锁升级的机制，锁状态会慢慢的从无锁升级成偏向锁，轻量级锁，重量级锁。并且锁只可单向膨胀。</p>
+<h3 id="synchronized-在-JVM-里面是怎么实现的么？">synchronized 在 JVM 里面是怎么实现的么？</h3>
+<p>synchronized 通过 Monitor 来实现线程同步，Monitor 是依赖于底层的操作系统的 Mutex Lock 来实现的线程同步。而 Monitor 又会根据对象头中的 Mark Word 判断该对象的锁状态，Mark Word 里面保存了当前对象的 HashCode，锁状态，锁标记，以及 GC 年龄。</p>
+<h3 id="为什么有了锁状态还要有一个锁标记">为什么有了锁状态还要有一个锁标记</h3>
+<p>锁状态占有 2 个 bit，按照排列组合最多能够表示 4 种状态，其中00，01，10，11分别代表轻量级锁、无锁/偏向锁、重量级锁、GC标记。我们还需要标识是否为偏向锁，所以需要一个辅助字段来标识，加上锁标记的 1 bit，刚好能够标识所有的锁状态。</p>
+<h3 id="两个Integer类型如何比较">两个Integer类型如何比较</h3>
+<p>==是比较基本数据类型是比较值，比较引用类型是比较地址；equals比较引用类型是比较值。<br>
 int与int比较，直接使用==比较<br>
 Integer与int比较，==比较时，Integer将会发生自动拆箱(调用intValue()方法)<br>
-两个Integer比较时，当它们都在[-128,127]之间，使用 == 比较和equals比较返回的都是true；在此区间范围之外 == 比较为false，equals比较为true。原因是因为Integer中有一个内部类IntegerCache，当处于此区间的值都是相同的地址和值，因此此区间的==与equals都为true<br>
-<strong>String s = new String(“a”);创建了几个对象？分别在哪？</strong><br>
-回看笔记<br>
-<strong>Java内存模型</strong><br>
-程序计数器、Java虚拟机栈、本地方法栈、Java堆和方法区。</p>
-<p><strong>抽象类跟接口区别</strong><br>
-一个类只能继承一个抽象类，一个类可以同时实现多个接口<br>
+两个Integer比较时，当它们都在[-128,127]之间，使用 == 比较和equals比较返回的都是true；在此区间范围之外 == 比较为false，equals比较为true。原因是因为Integer中有一个内部类IntegerCache，当处于此区间的值都是相同的地址和值，因此此区间的==与equals都为true</p>
+<h3 id="String-s-new-String-“a”-创建了几个对象？分别在哪？">String s = new String(“a”);创建了几个对象？分别在哪？</h3>
+<p>回看笔记</p>
+<h3 id="Java内存模型">Java内存模型</h3>
+<p>程序计数器、Java虚拟机栈、本地方法栈、Java堆和方法区。</p>
+<h3 id="方法区会存静态变量吗">方法区会存静态变量吗</h3>
+<p>从《Java虚拟机规范》所定义的概念模型来看，所有Class相关的信息都应该存放在方法区之中，但方法区该如何实现，《Java虚拟机规范》并未做出规定，这就成了一件允许不同虚拟机自己灵活把握的事情。JDK7及其以后版本的HotSpot虚拟机选择把静态变量与类型在Java语言一端的映射class对象存放在一起，存储于Java堆之中。</p>
+<h3 id="抽象类跟接口区别">抽象类跟接口区别</h3>
+<p>一个类只能继承一个抽象类，一个类可以同时实现多个接口<br>
 接口是用interface声明，抽象类是用abstract修饰类，这是二者形式上的区别。</p>
 <ul>
 <li>接口和抽象类都不能被实例化</li>
@@ -203,28 +212,28 @@ Integer与int比较，==比较时，Integer将会发生自动拆箱(调用intVal
 <li>jdk 8 的时候接⼝可以有默认⽅法和静态⽅法功能。</li>
 <li>Jdk 9 在接⼝中引⼊了私有⽅法和私有静态⽅法。</li>
 </ol>
-<p><strong>类加载、双亲委派机制原理</strong></p>
+<h3 id="类加载、双亲委派机制原理">类加载、双亲委派机制原理</h3>
 <p>类加载机制就是将Java虚拟机将这个描述类的数据加载到内存，然后经过校验、准备和解析，最终形成一个可以被虚拟机直接使用的Java类型。</p>
 <p>具体来说，加载做了三件事：根据全限定类名获取此类的二进制字节流；根据这个字节流代表的静态结构转换成方法区运行时的数据结构；在内存分配一个Class对象，作为方法区访问这个类的入口。连接：校验准备和解析。校验的重要性，四个校验、文件格式、元数据、字符码、符号引用。准备：两个事情；一个是位类变量分配内存，一个是设置初始值。 解析，将符号引用转成直接引用。最后进行初始化。</p>
 <p>双亲委派就是一个加载器收到一个加载请求，首先委派给父加载器，然后每一层都是这样去处理，那么最后就会到达启动类加载器，如果父加载器处理不了，这时才让子类加载器去处理。好处就是避免类的重复加载，第二个避免核心API被修改。比如我们自己定义一个Object类，那么程序运行就会出现多个不同的Object类。<strong>tomcat破坏了双亲委派</strong></p>
-<p><strong>进程和线程区别</strong><br>
-根本区别：进程是操作系统资源分配的基本单位，而线程是任务调度和执行的基本单位。<br>
+<h3 id="进程和线程区别">进程和线程区别</h3>
+<p>根本区别：进程是操作系统资源分配的基本单位，而线程是任务调度和执行的基本单位。<br>
 包含关系：线程是进程的一部分。<br>
 内存分配：系统为每个进程分配不同的内存空间；而对线程而言，除了CPU外，系统不会为线程分配内存，线程组之间只能共享资源。<br>
 所处环境：在操作系统中能同时运行多个进程（程序）；而在同一个进程（程序）中有多个线程同时执行（通过CPU调度，在每个时间片中只有一个线程执行）。<br>
 开销方面：每个进程都有独立的代码和数据空间（程序上下文），<strong>进程之间切换开销大</strong>；线程可以看做轻量级的进程，同一类线程共享代码和数据空间，每个线程都有自己独立的运行栈和程序计数器（PC），<strong>线程之间切换的开销小</strong>。</p>
-<p><strong>B树跟B+树区别</strong></p>
+<h3 id="B树跟B-树区别">B树跟B+树区别</h3>
 <p>首先B+树的所有数据都存在在叶子节点，并且叶子节点使用有序链表进行连接。<br>
 首先从性能来说，B+树更稳定，因为所有数据都在叶子节点。B+树可以方便范围查找。</p>
-<p><strong>讲下final修饰符</strong><br>
-Java中final修饰符既可以修饰类、方法，也可以修饰变量。<br>
+<h3 id="讲下final修饰符">讲下final修饰符</h3>
+<p>Java中final修饰符既可以修饰类、方法，也可以修饰变量。<br>
 用final修饰的类不能被继承。断子绝孙类：String<br>
 用final修饰的方法不可重写。<br>
 用final修饰的变量最多只能赋值一次，值不可变。表示该属性一旦被初始化便不可改变，这里不可改变的意思对基本类型来说是其值不可变，而对对象属性来说其引用不可再变。<br>
 final修饰符通常和static修饰符一起使用来创建类常量。<br>
 finally主要是用来关闭资源（数据库连接，网络连接，磁盘文件等），不管是否发生异常，资源都必须进行关闭。通常写在try…catch…后面，无论try…catch…块中出现什么异常，finally的语句块都将会执行，除非关闭JVM，它才不会执行。</p>
-<p><strong>GC垃圾回收算法、垃圾收集器</strong><br>
-四大引用：强引用、软引用、弱引用、虚引用<br>
+<h3 id="GC垃圾回收算法、垃圾收集器">GC垃圾回收算法、垃圾收集器</h3>
+<p>四大引用：强引用、软引用、弱引用、虚引用<br>
 ​	引用计数法<br>
 ​	可达性分析算法：GC Root判断 ：1、虚拟机栈中的对象 2、方法区中静态属性和常量引用的对象  3、Java虚拟机内部的引用 4、被同步锁持有的对象</p>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210412105019801.png" alt="image-20210412105019801"></p>
@@ -246,7 +255,31 @@ CMS收集器<br>
 Garbage First收集器<br>
 JDK1.8 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）<br>
 <img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210412105345691.png" alt="image-20210412105345691" style="zoom:80%;" /></p>
+<h3 id="CMS垃圾收集器">CMS垃圾收集器</h3>
+<p>CMS 关注的是以获取最短回收停顿时间为目的的收集器，主要使用的是标记清除算法。主要过程分为四个部分</p>
+<p>1、<code>初次标记</code> 标记GC Roots能直接关联到的对象。需要暂停用户线程</p>
+<p>2、<code>并发标记</code> 从GC Roots的直接关联对象开始遍历整个对象图，耗时较长但是不需要停顿用户线程，可以与垃圾收集线程一起并发运行。</p>
+<p>3、<code>重新标记</code> 为了解决上一步因用户程序继续运行而导致标记产生变动的那部分对象。停顿时间通常会比初始标记阶段稍长，但远比并发标记阶段的时间短。</p>
+<p>4、<code>并发清除</code> 清理删除掉标记阶段判断的已经死亡的对象，由于不需要移动存活对象，所以这个阶段也可以与用户线程同时并发。</p>
+<p>在整个过程中初次标记和重新标记的时间很短，整个过程垃圾收集器线程和用户线程可以一起工作，所以总体来说是停顿时间比较短的。</p>
+<p><strong>缺点：</strong></p>
+<p>基于<strong>标记-清除</strong>算法实现的收集器，收集结束时可能会有大量空间碎片产生，将会给<strong>大对象分配</strong>带来很大麻烦，往往会出现老年代还有很多剩余空间，但就是无法找到足够大的连续空间来分配当前对象，而不得不提前触发一次Full GC的情况。</p>
+<p><strong>浮动垃圾:</strong> 在CMS的并发标记和并发清理阶段，用户线程仍在继续运行的，程序在运行自然就还会伴随有新的垃圾对象不断产生，但这一部分垃圾对象是出现在标记过程结束以后，CMS无法在当次收集中处理掉它们，只好下一次垃圾收集时再清理掉。</p>
+<blockquote>
+<p>为什么CMS采用标记清除算法<br>
+CMS主要关注低延迟，因而采用并发方式，清理垃圾时，应用程序还在运行，如何采用压缩算法，则涉及到要移动应用程序的存活对象，此时不停顿，是很难处理的，一般需要停顿下，移动存活对象，再让应用程序继续运行，但这样停顿时间变长，延迟变大，所以CMS采用清除算法。</p>
+</blockquote>
 <h1>数据库</h1>
+<h2 id="三大范式">三大范式</h2>
+<h2 id="保证某一属性唯一的几种方式">保证某一属性唯一的几种方式</h2>
+<p>DISTINCT + Group by</p>
+<h2 id="MySQL-中的-page-结构？">MySQL 中的 page 结构？</h2>
+<p>从InnoDB存储引擎的逻辑结构看，所有数据都被逻辑地存放在一个空间内，称为表空间(tablespace)，而表空间由段（sengment）、区（extent）、页（page）组成。 在一些文档中extend又称块（block）。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.haohtml.com/archives/19232">MySQL中的page页</a></p>
+</blockquote>
+<h2 id="为什么一个叶子节点为16K">为什么一个叶子节点为16K?</h2>
+<p>TODO一个叶子节点就是一页数据，innodb一页的大小默认就是16k</p>
 <h2 id="数据库事务有哪些特性？">数据库事务有哪些特性？</h2>
 <p>数据库事务的四大特性ACID<br>
 Atomicity 原子性： 要么都做，要么不做。<br>
@@ -316,6 +349,21 @@ InnoDB使用的是聚簇索引，InnoDB之所以可以锁行，是因为Innodb�
 <img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/1FF89677EDF103456F5BD07DF4A400EF" alt="图片说明"></p>
 <h2 id="什么是聚簇索引？">什么是聚簇索引？</h2>
 <p>聚簇索引就是按照每张表的主键构造一棵B+树，同时叶子节点中存放的即为整张表的行记录信息，也将聚簇索引的叶子节点称为数据页。每个数据页都通过一个双向链表来进行链接。聚簇索引的存储并不是物理上连续的，而是逻辑上连续的。这其中有两点：一是前面说过的页通过双向链表链接，页按照主键的顺序排序；另一点就是每个页的记录也是通过双向链表进行维护的。</p>
+<h3 id="聚簇索引优缺点">聚簇索引优缺点</h3>
+<p><strong>优点：</strong><br>
+1.当你需要取出一定范围内的数据时，用聚簇索引也比用非聚簇索引好。<br>
+2.当通过聚簇索引查找目标数据时理论上比非聚簇索引要快，因为非聚簇索引定位到对应主键时还要多一次目标记录寻址,即多一次I/O。<br>
+3.使用覆盖索引扫描的查询可以直接使用页节点中的主键值。</p>
+<p><strong>缺点：</strong><br>
+1.<code>插入速度严重依赖于插入顺序</code>，按照主键的顺序插入是最快的方式，否则将会出现页分裂，严重影响性能。因此，对于InnoDB表，我们一般都会定义一个自增的ID列为主键。<br>
+2.<code>更新主键的代价很高，因为将会导致被更新的行移动</code>。因此，对于InnoDB表，我们一般定义主键为不可更新。<br>
+3.<code>二级索引访问需要两次索引查找，第一次找到主键值，第二次根据主键值找到行数据</code>。二级索引的叶节点存储的是主键值，而不是行指针（非聚簇索引存储的是指针或者说是地址），这是为了减少当出现行移动或数据页分裂时二级索引的维护工作，但会让二级索引占用更多的空间。<br>
+4.<code>采用聚簇索引插入新值比采用非聚簇索引插入新值的速度要慢很多</code>，因为插入要保证主键不能重复，判断主键不能重复，采用的方式在不同的索引下面会有很大的性能差距，聚簇索引遍历所有的叶子节点，非聚簇索引也判断所有的叶子节点，但是聚簇索引的叶子节点除了带有主键还有记录值，记录的大小往往比主键要大的多。这样就会导致聚簇索引在判定新记录携带的主键是否重复时进行昂贵的I/O代价。</p>
+<h2 id="聚簇索引和非聚簇索引">聚簇索引和非聚簇索引</h2>
+<p>聚集索引与非聚集索引的区别是：叶节点是否存放一整行记录<br>
+InnoDB 主键使用的是聚簇索引，MyISAM 不管是主键索引，还是二级索引使用的都是非聚簇索引</p>
+<p>对于<code>非聚簇索引</code>表来说，表数据和索引是分成两部分存储的，主键索引和二级索引存储上没有任何区别。使用的是B+树作为索引的存储结构，所有的节点都是索引，<code>叶子节点存储的是索引+索引对应的记录的数据</code>。</p>
+<p>对于<code>聚簇索引</code>表来说，表数据是和主键一起存储的，主键索引的叶结点存储行数据(包含了主键值)，二级索引的叶结点存储行的主键值。使用的是B+树作为索引的存储结构，非叶子节点都是索引关键字，但非叶子节点中的关键字中不存储对应记录的具体内容或内容地址。<code>叶子节点上的数据是主键与具体记录(数据内容)</code>。</p>
 <h2 id="覆盖索引">覆盖索引</h2>
 <p>指从辅助索引(非聚集索引)中就能获取到需要的记录，而不需要查找聚簇索引中的记录。使用覆盖索引的一个好处是因为辅助索引不包括一条记录的整行信息，所以数据量较聚集索引要少，可以减少大量io操作。</p>
 <h2 id="多列索引的结构字符串类型和数字类型索引的效率？">多列索引的结构字符串类型和数字类型索引的效率？</h2>
@@ -408,6 +456,7 @@ not in 不走索引的，因此不能用。not exists走索引的。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RU级别下，当一个事务修改之后(未提交),另一个事务不能修改，会处于&#96;X排他锁&#96;等待。</span><br><span class="line">因为前一个事务更新完并没有释放排他锁。这里你会产生疑问，为什么没有释放，那么在RU还能读取到修改的脏数据。</span><br><span class="line">查阅官方文档得到&#96;读取UNCOMMITTED事务也不被排他锁阻止&#96;。</span><br></pre></td></tr></table></figure>
 <p><strong>小结：read uncommitted 读不加锁，写加排他锁，并到事务结束之后释放。</strong></p>
 <h2 id="MySQL的事务隔离和Spring事务隔离区别">MySQL的事务隔离和Spring事务隔离区别</h2>
+<p>TODO</p>
 <h2 id="InnoDB支持的三个行锁方式">InnoDB支持的三个行锁方式</h2>
 <p>首先明确，InnoDB的行锁只是针对于索引情况。<br>
 1、行锁Record Lock:锁直接加在索引记录上面，锁住的是key。<br>
@@ -465,6 +514,24 @@ CHAR和VARCHAR最大的不同就是一个是固定长度，一个是可变长度
 <li>2）在子进程中，fork返回0；</li>
 <li>3）如果出现错误，fork返回一个负值；</li>
 </ul>
+<h1>计算机网络</h1>
+<h3 id="如何将一个长URL转换为一个短URL？">如何将一个长URL转换为一个短URL？</h3>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1181632">https://cloud.tencent.com/developer/article/1181632</a></p>
+<h3 id="校验ca证书的合法性">校验ca证书的合法性</h3>
+<p><code>数字证书</code>：就是互联网通讯中标志通讯各方身份信息的一串数字，提供了一种在互联网上验证通信实体身份的方式。</p>
+<p>通俗的讲：数字证书不是数字身份证，而是身份认证机构盖在数字身份证上的一个章或印（或者说加在数字身份证上的一个签名）。其作用类似于现实生活中司机的驾驶执照或日常生活中的身份证。</p>
+<p>上面提到的数字证书就是CA发行的。<code>CA</code>是Certificate Authority的缩写，也叫<code>证书授权中心</code>。它是负责管理和签发证书的第三方机构，作用是检查证书持有者身份的合法性，并签发证书，以防证书被伪造或篡改。</p>
+<p>通俗的讲：CA实际上是一个机构，负责“证件”印制核发。就像负责颁发身份证的公安局、负责发放行驶证、驾驶证的车管所。</p>
+<p><code>CA证书</code>也就我们常说的数字证书，包含证书拥有者的身份信息，CA机构的签名，公钥和私钥。身份信息用于证明证书持有者的身份；CA签名用于保证身份的真实性；公钥和私钥用于通信过程中加解密，从而保证通讯信息的安全性。</p>
+<p>通俗的讲：CA是权威可信的第三方机构，是“发证机关”。CA证书是CA发的“证件”，用于证明自身身份，就像身份证和驾驶证。</p>
+<p><strong>CA证书的合法性校验流程</strong></p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png" alt="img"></p>
+<p>1、CA机构有自己的根公钥和根私钥。</p>
+<p>2、在证书颁发之前，机构会用根私钥将这个证书内容加密得到一个签名，这个签名只能用对应的根公钥去解密。</p>
+<p>3、在客户端（浏览器）收到服务端发过来的证书以后，我们首先从浏览器中拿到机构的根公钥，用这个根公钥去解析证书的签名得到一个哈希值H1，这个H1代表证书的原始内容，假设这个证书上的签名是不法分子伪造的，但是伪造的签名不可能是根私钥加密生成的（因为根私钥是CA机构私有），所以根公钥也不可能去解密任何第三方生成的签名（加密内容只能由对应的公钥私钥解析）。然后我们再用同样的哈希算法对收证书内容进行计算得到哈希值H2，通过对比H1和H2是否相等就知道证书有没有被篡改过了。</p>
+<h3 id="Git学习">Git学习</h3>
+<p>git cherrypick的作用<br>
+<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1354993">https://cloud.tencent.com/developer/article/1354993</a></p>
 
       
 
@@ -749,11 +816,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">

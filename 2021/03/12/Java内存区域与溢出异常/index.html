@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313082249695.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313085454760.png">
 <meta property="article:published_time" content="2021-03-12T11:39:00.000Z">
-<meta property="article:modified_time" content="2021-04-30T06:35:11.822Z">
+<meta property="article:modified_time" content="2021-05-26T08:31:39.057Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -194,8 +194,12 @@
 <li>字节码解释器通过改变程序计数器来依次读取指令，从而实现代码的流程控制，如：顺序执行、选择、循环、异常处理。</li>
 <li>在多线程的情况下，程序计数器用于记录当前线程执行的位置，从而当线程被切换回来的时候能够知道该线程上次运行到哪儿了。</li>
 </ul>
+<blockquote>
+<p>程序计数器为什么被设置为线程私有的？</p>
+</blockquote>
+<p>由于JVM的多线程是通过线程轮流切换并分配处理器执行时间的方式来实现的，在任何一个确定的时刻，一个处理器都只会执行一条线程中的指令。因此为了能够准确的记录各个线程正在执行的当前字节码指令地址，最好的办法自然就是为每一个线程都分配一个PC寄存器。这样各条线程之间计数器互不影响，独立存储。</p>
 <h2 id="Java虚拟机栈">Java虚拟机栈</h2>
-<p>主要描述的是Java方法执行的线程内存模型：每个方法被执行的时候，Java虚拟机都会同步创建一个栈帧用于存储<strong>局部变量表、操作数栈、动态连接、方法出口等信息</strong>。其中每个方法被调用直至完成的过程，就意味着一个战阵在虚拟机栈中从入栈到出栈的过程。其中最受关注的就是局部变量表，其中存放了编译期间可知的各种虚拟机基本数据类型、对象引用和returnAddress类型。<br>
+<p>主要描述的是Java方法执行的线程内存模型：每个方法被执行的时候，Java虚拟机都会同步创建一个栈帧用于存储<strong>局部变量表、操作数栈、动态连接、方法出口等信息</strong>。其中每个方法被调用直至完成的过程，就意味着一个栈帧在虚拟机栈中从入栈到出栈的过程。其中最受关注的就是局部变量表，其中存放了编译期间可知的各种虚拟机基本数据类型、对象引用和returnAddress类型。<br>
 Java虚拟机规范允许Java栈的大小是动态的或者是固定不变的，在内存区域中规定了两类异常情况：</p>
 <ul>
 <li>StackOverFlowError：如果采用<code>固定大小的Java虚拟机栈</code>，那每一个线程的Java虚拟机栈容量可以在线程创建的时候独立选定。如果线程请求分配的栈容量超过Java虚拟机栈允许的最大容量，Java虚拟机将会抛出一个StackOverflowError异常；</li>
@@ -210,7 +214,9 @@ Java堆是垃圾收集器管理的内存区域，从垃圾回收的角度，由�
 Java堆可以处于物理上不连续的内存空间，但在逻辑上它应该被视为连续的。<br>
 大部分情况，对象都会首先在 Eden 区域分配，在一次新生代垃圾回收后，如果对象还存活，则会进入 s0 或者 s1，并且对象的年龄还会加 1(Eden区-&gt;Survivor 区后对象的初始年龄变为1)，当它的年龄增加到一定程度（默认为15岁），就会被晋升到老年代中。对象晋升到老年代的年龄阈值，可以通过参数 <code>-XX:MaxTenuringThreshold</code> 来设置。</p>
 <blockquote>
-<p>为什么是15岁，这个就和对象头有关了，在对象头划分为Mark Word 和 Class Point ，其中的Mark Word中包括24位哈希码、4位年龄分代、2位锁状态标志还有1个锁偏向和1位锁时间。其中的4位年龄分代能代表的最大就是15.所以默认就是15，也可以通过设置成小于15</p>
+<p>为什么是15岁，这个就和对象头有关了，在对象头划分为Mark Word 和 Class Point ，其中的Mark Word中包括24位哈希码、4位年龄分代、2位锁状态标志还有1个锁偏向和1位锁时间。其中的4位年龄分代能代表的最大就是15.所以默认就是15，也可以通过设置成小于15<br>
+<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903669251440653">卡表</a><br>
+JVM避免MinorGC扫描全堆 使用 卡表</p>
 </blockquote>
 <h2 id="方法区">方法区</h2>
 <p>与Java堆一样，是各个线程共享的内存区域，它用于存储已被虚拟机加载的类型信息、常量、静态变量、即时编译器编译后的代码缓存等数据。该区域的内存回收目标主要是针对常量池的回收和对类型的卸载。如果方法区无法满足新的内存分配需求时，将抛出OutOfMemoryError异常。<br>
@@ -364,13 +370,18 @@ TLAB（本地线程缓存池），TLAB的好处就是防止不同线程创建对
 要dump堆的内存镜像，可以采用如下两种方式：</p>
 <ul>
 <li>设置JVM参数-XX:+HeapDumpOnOutOfMemoryError，设定当发生OOM时自动dump出堆信息。不过该方法需要JDK5以上版本。</li>
-<li>使用JDK自带的jmap命令。“jmap -dump:format=b,file=heap.bin <pid>”   其中pid可以通过jps获取。</li>
+<li>使用JDK自带的jmap命令。“jmap -dump:format=b,file=heap.bin pid”   其中pid可以通过jps获取。</li>
 </ul>
 <p>dump堆内存信息后，需要对dump出的文件进行分析，从而找到OOM的原因。常用的工具有：</p>
 <ul>
 <li>mat: eclipse memory analyzer, 基于eclipse RCP的内存分析工具。</li>
 <li>jhat：JDK自带的Java heap analyze tool，可以将堆中的对象以html的形式显示出来，包括对象的数量，大小等等，并支持对象查询语言OQL，分析相关的应用后，可以通过http://localhost:7000来访问分析结果。不推荐使用，因为在实际的排查过程中，一般是先在生产环境 dump出文件来，然后拉到自己的开发机器上分析，所以，不如采用高级的分析工具比如前面的mat来的高效。</li>
 </ul>
+<blockquote>
+<p>JVM 堆内存溢出后，其他线程是否可继续工作？</p>
+</blockquote>
+<p>当一个线程抛出OOM异常后，它所占据的内存资源会全部被释放掉，从而不会影响其他线程的运行！<br>
+发生OOM的线程一般情况下会死亡，也就是会被终结掉，该线程持有的对象占用的heap都会被gc了，释放内存。因为发生OOM之前要进行gc，就算其他线程能够正常工作，也会因为频繁gc产生较大的影响。</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
@@ -662,11 +673,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
