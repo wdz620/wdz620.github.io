@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210424164846818.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B.gif">
 <meta property="article:published_time" content="2021-03-18T00:29:02.000Z">
-<meta property="article:modified_time" content="2021-04-24T08:49:35.145Z">
+<meta property="article:modified_time" content="2021-06-04T01:50:43.734Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary">
@@ -263,11 +263,11 @@ UDP不属于连接协议，具有资源消耗少，处理速度快的优点。�
 1、添加seq/ack机制，确保数据发送到对端<br>
 2、添加发送和接收缓冲区，主要用于用户超时重传。<br>
 3、添加超时重传机制。<br>
-详细说明：送端发送数据时，生成一个随机seq=x，然后每一片按照数据大小分配seq。数据到达接收端后接收端放入缓存，并发送一个ack=x+1的包，表示对方已经收到了数据。发送端收到了ack包后，删除缓冲区对应的数据。如果超过一定时间还没收到ack，那么重传数据。<br>
+详细说明：发送端发送数据时，生成一个随机seq=x，然后每一片按照数据大小分配seq。数据到达接收端后接收端放入缓存，并发送一个ack=x+1的包，表示对方已经收到了数据。发送端收到了ack包后，删除缓冲区对应的数据。如果超过一定时间还没收到ack，那么重传数据。<br>
 目前有如下开源程序利用udp实现了可靠的数据传输。分别为RUDP、RTP、UDT。</p>
 <p>2、为什么TCP是面向字节流的，UDP是面向报文的？<br>
 首先明确字节流和报文：<em>字节就是散乱的数据 报文就是添加了标记，封装后的数据。</em><br>
-就我个人理解而言：主要还是由于两者的传输过程不一致，TCP属于可靠传输，也就是说在连接持续的过程中，发送端只要确保自己传输的数据接收端有序接受到就可以了，至于接收端是一次全部接受还是分为多次接受，都是接收端的事情。唯一的作用就是确保双方的通信数据没有丢失即可。而UDP属于不可靠传输，采用无连接协议。应用层交给UDP多长的报文，UDP就照样发送，即一次发送一个报文。报文的长度也要合适，打个比方，IPA给服务器发送一个报文P1，此时IPB也给服务端发送一个报文P2，如果服务端一次读取超过一个报文的数据，那么将P1和P2的数据合并在一起，那么这样的数据也是毫无意义可言的。<br>
+就我个人理解而言：主要还是由于两者的传输过程不一致，TCP属于可靠传输，也就是说在连接持续的过程中，发送端只要确保自己传输的数据接收端有序接受到就可以了，至于接收端是一次全部接受还是分为多次接受，都是接收端的事情。唯一的作用就是确保双方的通信数据没有丢失即可。而UDP属于不可靠传输，采用无连接协议。应用层交给UDP多长的报文，UDP就照样发送，即一次发送一个报文。报文的长度也要合适，打个比方，ipA给服务器发送一个报文P1，此时ipB也给服务端发送一个报文P2，如果服务端一次读取超过一个报文的数据，那么将P1和P2的数据合并在一起，那么这样的数据也是毫无意义可言的。<br>
 其实就我感觉而言，还是因为两者的连接方式不同。无连接，不可靠，如果一次发送过多数据，将会导致分片重组或者丢失等问题。而连接可靠一般情况下不需要考虑这些问题。所以TCP使用字节流，UDP使用报文。</p>
 <p>3、简要介绍七层模型的各个作用？<br>
 <code>应用层</code>是计算机网络与用户交互的接口或者界面，直接向用户提供服务。解决的问题就是如何为用户提供服务，以及提供高效、可靠、满意的服务。<br>
@@ -587,15 +587,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Redis</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -607,11 +607,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
