@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%AD%90%E9%9B%86%E5%9B%9E%E6%BA%AF%E6%80%9D%E6%83%B3.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%AD%90%E9%9B%86.png">
 <meta property="article:published_time" content="2021-01-19T09:51:39.000Z">
-<meta property="article:modified_time" content="2021-05-08T00:56:49.248Z">
+<meta property="article:modified_time" content="2021-06-07T02:08:32.833Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -181,7 +181,17 @@
 第二部分 学习回溯算法</p>
 <a id="more"></a>
 <h2 id="第一部分">第一部分</h2>
-<h3 id="967">967</h3>
+<h2 id="494、目标和">494、目标和</h2>
+<p>输入：nums = [1,1,1,1,1], target = 3<br>
+输出：5<br>
+解释：一共有 5 种方法让最终目标和为 3 。<br>
+-1 + 1 + 1 + 1 + 1 = 3<br>
++1 - 1 + 1 + 1 + 1 = 3<br>
++1 + 1 - 1 + 1 + 1 = 3<br>
++1 + 1 + 1 - 1 + 1 = 3<br>
++1 + 1 + 1 + 1 - 1 = 3</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">findTargetSumWays</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    dfs(nums, target, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> count;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target, <span class="keyword">int</span> index, <span class="keyword">int</span> sum)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(index == nums.length) &#123;</span><br><span class="line">        <span class="keyword">if</span>(sum == target) &#123;</span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        dfs(nums, target, index + <span class="number">1</span>, sum + nums[index]);</span><br><span class="line">        dfs(nums, target, index + <span class="number">1</span>, sum - nums[index]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="TODO-967-连续差相同的数字">TODO 967 连续差相同的数字</h3>
 <p>输入：n = 3, k = 7<br>
 输出：[181,292,707,818,929]<br>
 解释：注意，070 不是一个有效的数字，因为它有前导零。</p>
@@ -735,11 +745,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -751,11 +761,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -763,11 +773,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
