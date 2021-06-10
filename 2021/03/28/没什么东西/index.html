@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210328192146510.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png">
 <meta property="article:published_time" content="2021-03-28T11:43:13.000Z">
-<meta property="article:modified_time" content="2021-06-08T02:52:20.051Z">
+<meta property="article:modified_time" content="2021-06-10T07:01:39.818Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="创建文章">
 <meta name="twitter:card" content="summary">
@@ -208,6 +208,32 @@
 <li>对象年龄超过虚拟机 MaxTenuringThreshold 的设置值，最大为 15，</li>
 <li>Survivor 空间中相同年龄所有对象大小的总和大于 Survivor 空间的一半（TargetSurvivorRatio），年龄大于或等于该年龄的对象直接进入老年代。</li>
 </ul>
+<h3 id="性能调优">性能调优</h3>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6919127548542582797">性能调优</a></p>
+</blockquote>
+<h4 id="新生代">新生代</h4>
+<p>1、合理分配内存降低YoungGC频率<br>
+2、保证Survivor空间足够<br>
+3、优化对象年龄阀值<br>
+4、优化大对象阈值<code>-XX:PretenureSizeThreshold=1M</code><br>
+5、选择垃圾回收器</p>
+<h4 id="老年代">老年代</h4>
+<p>首先说明老年代主要使用CMS垃圾收集器(小知识，CMS有个默认92%的阈值)<br>
+1、多久触发一次 FullGC<br>
+2、CMS并发失败<br>
+3、CMS回收后碎片整理频率<br>
+4、CMS提升FullGC的性能<br>
+5、禁用System.gc<br>
+6、元空间GC优化</p>
+<h4 id="大内存机器调优">大内存机器调优</h4>
+<p>1、使用大内存机器的场景<br>
+2、大内存机器的问题：使用不同垃圾收集器解决<br>
+3、G1回收器调优：G1内存布局、GC停顿时间、MixedGC优化</p>
+<h3 id="元空间OOM">元空间OOM</h3>
+<p>在JDK1.8之后取消了永久代，取而代之的是元空间。从功能上来看，元空间和永久代是相似的，都是用来存储类元数据。但是实际的机制还是有很大的差别的。<br>
+首先，元空间默认的最大值是整个机器的物理大小。所以元空间不断扩张会导致Java程序不断侵占系统的可用内存，最终导致系统没有内存可以使用。而永久代则有着固定大小，不会扩张到整个机器的可用内存。<br>
+其次，当内存耗尽时，两者均会发生FullGC。不同的是永久代在进行FullGC时，以堆内存回收的机制进行回收永久代中的类元数据(Class对象)只要是根不可答的都要进行回收。而元空间则不同，其是根据这些类元数据的ClassLoader是否可以回收来进行判断，只要ClassLoader不回收，其加载的类元数据就不能被回收。这也能解释为什么会出现元空间的OOM，因为主线程的ClassLoader在程序还在运行期间并没有回收，所以其加载的代理类也不会回收，所以导致OOM</p>
 <h3 id="synchronized-和-ReentrantLock两个的区别？">synchronized 和 ReentrantLock两个的区别？</h3>
 <p>synchronized 是基于 JVM 层面的，ReentrantLock 是基于 JDk 层面的。ReentrantLock 采用的是显式获取锁，采用乐观锁机制，CAS 自旋。JDK1.6 之前的 synchronized 使用的是悲观锁，JDK1.6 之后就优化成了一个锁升级的机制，锁状态会慢慢的从无锁升级成偏向锁，轻量级锁，重量级锁。并且锁只可单向膨胀。</p>
 <h3 id="synchronized-在-JVM-里面是怎么实现的么？">synchronized 在 JVM 里面是怎么实现的么？</h3>
@@ -305,8 +331,19 @@ CMS主要关注低延迟，因而采用并发方式，清理垃圾时，应用�
 <h1>数据库</h1>
 <h2 id="线上环境RR隔离级别下可能出现的问题？">线上环境RR隔离级别下可能出现的问题？</h2>
 <h2 id="INT-10-和-INT-11-有什么区别？">INT(10) 和 INT(11) 有什么区别？</h2>
-<p>int (10) 和 int (11) 没有任何区别，就是显示宽度不同。</p>
+<p>int (10) 和 int (11) 没有任何区别，就是显示宽度不同。<br>
+补充：<br>
+int(10)的10表示显示的数据的长度，不是存储数据的大小；<br>
+char(10)和varchar(10)的10表示存储数据的大小，即表示存储多少个字符。<br>
+int(10) 10位的数据长度 9999999999，占32个字节，int型4位<br>
+char(10) 10位固定字符串，不足补空格 最多10个字符<br>
+varchar(10) 10位可变字符串，不足补空格 最多10个字符<br>
+char(10)表示存储定长的10个字符，不足10个就用空格补齐，占用更多的存储空间<br>
+varchar(10)表示存储10个变长的字符，存储多少个就是多少个，空格也按一个字符存储，这一点是和char(10)的空格不同的，char(10)的空格表示占位不算一个字符</p>
 <h2 id="三大范式">三大范式</h2>
+<p>第一范式：每个列都不可以再拆分。<br>
+第二范式：在第一范式的基础上，非主键列完全依赖于主键，而不能是依赖于主键的一部分。<br>
+第三范式：在第二范式的基础上，非主键列只依赖于主键，不依赖于其他非主键。</p>
 <h2 id="保证某一属性唯一的几种方式">保证某一属性唯一的几种方式</h2>
 <p>DISTINCT + Group by</p>
 <h2 id="MySQL-中的-page-结构？">MySQL 中的 page 结构？</h2>
@@ -536,7 +573,8 @@ varchar：不定长，效率偏低。</p>
 </code></pre>
 <p>VARCHAR类型的实际长度是它的值的实际长度+1。为什么”+1″呢？这一个字节用于保存实际使用了多大的长度。 从空间上考虑，用varchar合适；从效率上考虑，用char合适，关键是根据实际情况找到权衡点。</p>
 <p><strong>总结</strong><br>
-CHAR和VARCHAR最大的不同就是一个是固定长度，一个是可变长度。由于是可变长度，因此实际存储的时候是实际字符串再加上一个记录 字符串长度的字节(如果超过255则需要两个字节)。如果分配给CHAR或VARCHAR列的值超过列的最大长度，则对值进行裁剪以使其适合。如果被裁掉 的字符不是空格，则会产生一条警告。如果裁剪非空格字符，则会造成错误(而不是警告)并通过使用严格SQL模式禁用值的插入。</p>
+CHAR和VARCHAR最大的不同就是一个是固定长度，一个是可变长度。由于是可变长度，因此实际存储的时候是实际字符串再加上一个记录 字符串长度的字节(如果超过255则需要两个字节)。如果分配给CHAR或VARCHAR列的值超过列的最大长度，则对值进行裁剪以使其适合。如果被裁掉 的字符不是空格，则会产生一条警告。如果裁剪非空格字符，则会造成错误(而不是警告)并通过使用严格SQL模式禁用值的插入。<br>
+对于经常需要变更的数据来说，char比varchar更好，因为char不容易产生碎片。</p>
 <h2 id="设计一个sql表-微博评论-一级评论二级评论">设计一个sql表 微博评论 一级评论二级评论</h2>
 <p>可以分成两种情况来讨论吧。一种是只使用一张表，另一种使用两个表。<br>
 首先说一张表的情况：基本字段就不说了(主键、评论人id、评论人名称、文章id、文章标题、评论内容、评论状态(逻辑删除)、置顶等等)。主要就是需要一个父级评论id(确保一级评论)、评论级别备用(确定一级评论，其他的都是二级评论)。<br>
