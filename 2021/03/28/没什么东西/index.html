@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210328192146510.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png">
 <meta property="article:published_time" content="2021-03-28T11:43:13.000Z">
-<meta property="article:modified_time" content="2021-06-11T02:15:42.158Z">
+<meta property="article:modified_time" content="2021-06-11T02:37:26.630Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="创建文章">
 <meta name="twitter:card" content="summary">
@@ -232,6 +232,22 @@
 <p>在JDK1.8之后取消了永久代，取而代之的是元空间。从功能上来看，元空间和永久代是相似的，都是用来存储类元数据。但是实际的机制还是有很大的差别的。<br>
 首先，元空间默认的最大值是整个机器的物理大小。所以元空间不断扩张会导致Java程序不断侵占系统的可用内存，最终导致系统没有内存可以使用。而永久代则有着固定大小，不会扩张到整个机器的可用内存。<br>
 其次，当内存耗尽时，两者均会发生FullGC。不同的是永久代在进行FullGC时，以堆内存回收的机制进行回收永久代中的类元数据(Class对象)只要是根不可答的都要进行回收。而元空间则不同，其是根据这些类元数据的ClassLoader是否可以回收来进行判断，只要ClassLoader不回收，其加载的类元数据就不能被回收。这也能解释为什么会出现元空间的OOM，因为主线程的ClassLoader在程序还在运行期间并没有回收，所以其加载的代理类也不会回收，所以导致OOM</p>
+<h3 id="内存泄漏排查及CopyOnWriteArrayLsit">内存泄漏排查及CopyOnWriteArrayLsit</h3>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/fishinhouse/article/details/80781673">Java内存泄漏的排查总结</a></p>
+</blockquote>
+<p>内存排查过程：<br>
+1、使用jps查询正在运行的虚拟机进程号。<br>
+2、使用jstat查看虚拟机运行状态信息。<br>
+3、找出频繁GC的原因。可以使用jmap或者MAT工具等。</p>
+<p>简单回顾CopyOnWriteArrayList<br>
+<strong>如何做到线程安全</strong>：CopyOnWriteArrayList使用了一种叫写时复制的方法，当有新元素添加到CopyOnWriteArrayList时，先从原有的数组中拷贝一份出来，然后在新的数组做写操作，写完之后，再将原来的数组引用指向到新数组。<br>
+其在add操作时加锁，如果此时又读操作，分为以下几种情况：<br>
+1、写操作未完成，那么直接读取原数组的数据。<br>
+2、写操作完成，但是还未更新引用，那么也是读取原数组的数据。<br>
+3、写操作完成，并且引用已经指向了新的数组，那么直接从新数组中读取数据。<br>
+读操作没有加锁。<br>
+缺点：1、只能保证最终一致性，不能保证实时性。2、写操作复制需要额外空间，消耗内存。</p>
 <h3 id="synchronized-和-ReentrantLock两个的区别？">synchronized 和 ReentrantLock两个的区别？</h3>
 <p>synchronized 是基于 JVM 层面的，ReentrantLock 是基于 JDk 层面的。ReentrantLock 采用的是显式获取锁，采用乐观锁机制，CAS 自旋。JDK1.6 之前的 synchronized 使用的是悲观锁，JDK1.6 之后就优化成了一个锁升级的机制，锁状态会慢慢的从无锁升级成偏向锁，轻量级锁，重量级锁。并且锁只可单向膨胀。</p>
 <h3 id="synchronized-在-JVM-里面是怎么实现的么？">synchronized 在 JVM 里面是怎么实现的么？</h3>
@@ -894,11 +910,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
