@@ -17,8 +17,11 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210506195743527.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210506201123658.png">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/g6hBZ0jzZb0Zb0XiaaR6bGaN80wicXIIP7WIOWyzXHCzPhr4bNJzH3QdYF8R4v27XuIWCqsg8PWGCGg39lTIe3LA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/g6hBZ0jzZb0Zb0XiaaR6bGaN80wicXIIP7nibCkJgvSO9H4ABiaCHe32ORXjVo1QAz0qIbtkqdZW7VIwnw0MHlP1wA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/g6hBZ0jzZb0Zb0XiaaR6bGaN80wicXIIP7xgecNQ4nvH3PDdibyB4FVTVIq8VARFUy6sicxRoI7czmLib03DnNTmqCA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
 <meta property="article:published_time" content="2021-04-26T06:29:13.000Z">
-<meta property="article:modified_time" content="2021-05-19T01:43:29.899Z">
+<meta property="article:modified_time" content="2021-06-15T06:19:06.582Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Redis">
 <meta name="twitter:card" content="summary">
@@ -178,19 +181,17 @@
 <a id="more"></a>
 <p>先来总体总结一下<br>
 redis的数据类型一般不是直接存储到内存中，而是放到了一个dictentry结构中，里面包括key指针，value指针，next指针，next指针指向下一个dictentry结构，key指针的话指向一个SDS结构，里面包括len表示数组使用了多少字节，free表示还没使用的，char类型的数组存储数据；value指针的话指向一个redisObject结构，里面包括ptr指针指向一个SDS结构，type表示value的类型，encoding表示value的内存编码，refcount计算value被引用的次数，lru最后一次修改数据的时间，5样</p>
-<p>String是我们最常用的类型，内存编码有三种int类型，embstr类型，raw类型，如果是数字并且没有超过8字节会使用int类型，如果&lt;=39字节会使用embstr类型，如果大于39字节会使用raw类型，然后我说了为啥是39字节，因为redisObject + sds + 39正好是64字节，那么我们的redis的内存分配器jemolloc 就可以分配64字节了；<br>
-List列表，有序并且是可以重复的，内存编码有 压缩链表 和 有序集合 实现的<br>
-Hash：无序，内存编码有 压缩链表 和 哈希表 实现的<br>
-set集合：是无序并且不可以重复的，内存编码有 整数集合 和 哈希表 实现的；<br>
-zset集合：有序集合，内存编码有 压缩链表 和 跳表 实现的；</p>
+<p><code>String</code>是我们最常用的类型，内存编码有三种int类型，embstr类型，raw类型，如果是数字并且没有超过8字节会使用int类型，如果&lt;=39字节会使用embstr类型，如果大于39字节会使用raw类型，然后我说了为啥是39字节，因为redisObject + sds + 39正好是64字节，那么我们的redis的内存分配器jemolloc 就可以分配64字节了；<br>
+<code>List</code>列表，有序并且是可以重复的，内存编码有 压缩链表 和 有序集合 实现的<br>
+<code>Hash</code>：无序，内存编码有 压缩链表 和 哈希表 实现的<br>
+<code>set</code>集合：是无序并且不可以重复的，内存编码有 整数集合 和 哈希表 实现的；<br>
+<code>zset</code>集合：有序集合，内存编码有 压缩链表 和 跳表 实现的；</p>
 <blockquote>
-<p>为甚么占用39或者44字节<br>
+<p>为什么占用39或者44字节<br>
 redis3.2之前字符串长度如果小于39的话，则采取embstr存储，否则采取raw类型存储。redis3.2之后是44字节。<br>
-为啥是39？原因：对象头占16字节，空的sdshdr占用9字节，也就是一个数据至少占用16+9=25<br>
-字节，其次操作系统使用jmalloc和tmalloc进行内存的分配，而内存分配的单位都是2的N次方，所以是2,4,8,16,32,64等字节，但是redis如果采取32的话，那么32-25=7，也太他妈少了，所以Redis采取的是64字节，所以：64-25=39<br>
-Redis3.2版本之后的sds结构发生了变化【最小的是sdshdr5，空的话占用3字<br>
-节+1个空白=4字节，16+4=20；64-20=44</p>
+为啥是39？原因：对象头占16字节，空的sdshdr占用9字节，也就是一个数据至少占用16+9=25字节，其次操作系统使用jmalloc和tmalloc进行内存的分配，而内存分配的单位都是2的N次方，所以是2,4,8,16,32,64等字节，但是redis如果采取32的话，那么32-25=7，也太少了，所以Redis采取的是64字节，所以：64-25=39</p>
 </blockquote>
+<p>Redis3.2版本之后的sds结构发生了变化最小的是sdshdr5，空的话占用3字节+1个空白=4字节，16+4=20；64-20=44</p>
 <h2 id="简单动态字符串">简单动态字符串</h2>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span> &#123;</span></span><br><span class="line">    <span class="comment">// 等于SDS所保存字符串的长度</span></span><br><span class="line">    <span class="keyword">int</span> len;</span><br><span class="line">    <span class="comment">// 记录buf数组中未使用字节的数量</span></span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">free</span>;</span><br><span class="line">    <span class="comment">// 字节数组，用于保存字符串</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="简单动态字符串与C字符串的区别">简单动态字符串与C字符串的区别</h4>
@@ -213,8 +214,23 @@ Redis中<code>列表键</code>就是使用链表做为底层实现原理。</p>
 <p>Redis的链表实现的特性总结如下：<br>
 1、双端。  2、无环。  3、带表头指针和表尾指针。  4、带链表长度计数器。  5、多态。</p>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210506201123658.png" alt="image-20210506201123658"></p>
+<h2 id="压缩链表">压缩链表</h2>
+<p>如果在一个链表节点中存储一个小数据，比如一个字节。那么对应的就要保存头节点，前后指针等额外的数据。<br>
+这样就浪费了空间，同时由于反复申请与释放也容易导致内存碎片化。这样内存的使用效率就太低了。<br>
+于是，压缩链表出现了。<br>
+<img src="https://mmbiz.qpic.cn/mmbiz_png/g6hBZ0jzZb0Zb0XiaaR6bGaN80wicXIIP7WIOWyzXHCzPhr4bNJzH3QdYF8R4v27XuIWCqsg8PWGCGg39lTIe3LA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt=""><br>
+它是经过特殊编码，专门为了提升内存使用效率设计的。所有的操作都是通过指针与解码出来的偏移量进行的。<br>
+并且压缩列表的内存是连续分配的，遍历的速度很快。</p>
 <h2 id="字典">字典</h2>
+<p>Redis 作为 K-V 型数据库，所有的键值都是用字典来存储的。<br>
+日常学习中使用的字典你应该不会陌生，想查找某个词通过某个字就可以直接定位到，速度非常快。这里所说的字典原理上是一样的，通过某个 key 可以直接获取到对应的value。<br>
+字典又称为哈希表，这点没什么可说的。哈希表的特性大家都很清楚，能够在 O(1) 时间复杂度内取出和插入关联的值。</p>
 <h2 id="跳表">跳表</h2>
+<p>作为 Redis 中特有的数据结构-跳跃表，其在链表的基础上增加了多级索引来提升查找效率。<br>
+<img src="https://mmbiz.qpic.cn/mmbiz_png/g6hBZ0jzZb0Zb0XiaaR6bGaN80wicXIIP7nibCkJgvSO9H4ABiaCHe32ORXjVo1QAz0qIbtkqdZW7VIwnw0MHlP1wA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt=""><br>
+每一层都有一条有序的链表，最底层的链表包含了所有的元素。这样跳跃表就可以支持在 O(logN) 的时间复杂度里查找到对应的节点。<br>
+下面这张是跳表真实的存储结构，和其它数据结构一样，都在头节点里记录了相应的信息，减少了一些不必要的系统开销。<br>
+<img src="https://mmbiz.qpic.cn/mmbiz_png/g6hBZ0jzZb0Zb0XiaaR6bGaN80wicXIIP7xgecNQ4nvH3PDdibyB4FVTVIq8VARFUy6sicxRoI7czmLib03DnNTmqCA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt=""></p>
 
       
 
