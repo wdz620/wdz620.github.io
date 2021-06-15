@@ -16,7 +16,7 @@
 <meta property="og:description" content="关于Linux环境搭建的记录">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-04-17T00:59:33.000Z">
-<meta property="article:modified_time" content="2021-04-17T06:09:59.130Z">
+<meta property="article:modified_time" content="2021-06-15T07:38:23.149Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="项目问题">
 <meta name="twitter:card" content="summary">
@@ -206,7 +206,10 @@
 <p><code>nohup java -jar xxx.jar &gt;/dev/null &amp;</code><br>
 其中/dev/null:表示的是一个黑洞,通常用于丢弃不需要的数据输出,或者用于输入流的空文件。<br>
 nohup 不挂断地运行命令。<br>
-&amp; 在后台运行</p>
+&amp; 在后台运行<br>
+经常出现 <code>nohup: ignoring input and appending output to ‘nohup.out’</code><br>
+解决办法：<code>nohup java -jar xxx.jar &gt;/dev/null 2&gt;&amp;1 &amp;</code><br>
+例如： <code>nohup java -Xms500m -Xmx500m -Xmn300m -Xss256k -jar ability-foster-platform-0.0.1-SNAPSHOT.jar &gt;/dev/null 2&gt;&amp;1 &amp;</code></p>
 <h3 id="重新部署">重新部署</h3>
 <p>jps 查看进程号<br>
 直接kill</p>
