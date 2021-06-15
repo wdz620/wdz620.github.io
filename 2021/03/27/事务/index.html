@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210327122027317.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210523195002514.png">
 <meta property="article:published_time" content="2021-03-27T03:07:36.000Z">
-<meta property="article:modified_time" content="2021-05-23T12:18:30.898Z">
+<meta property="article:modified_time" content="2021-06-15T02:20:59.491Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -418,9 +418,9 @@ read view :用来判断当前版本数据的可见性<br>
 A：事务的原子性通过undo log实现<br>
 C：事务的一致性通过redo log实现<br>
 I：事务的隔离性通过锁和MVCC实现<br>
-D：事务的一致性通过前面的一些操作来实现<br>
+D：事务的持久性通过前面的一些操作来实现<br>
 原子性的实现，要么成功，要么失败，而undo log主要就是通过回滚进行操作，这里的undo log是逻辑日志，就像之前说的，只是做了相反的工作，而非物理地恢复到执行语句或事务之前的样子。<br>
-为了提升性能InnoDB提供了缓冲池(Buffer Pool)，Buffer Pool中包含了磁盘数据页的映射，可以当做缓存来使用。但是它也带来了新的问题，当MySQL系统宕机，断电的时候可能会丢数据。而且避免性能上的缺陷（每次将所有数据页都刷新、随机IO）,引入了redo log。<br>
+持久性：为了提升性能InnoDB提供了缓冲池(Buffer Pool)，Buffer Pool中包含了磁盘数据页的映射，可以当做缓存来使用。但是它也带来了新的问题，当MySQL系统宕机，断电的时候可能会丢数据。而且避免性能上的缺陷（每次将所有数据页都刷新、随机IO）,引入了redo log。<br>
 隔离性：使用锁以及MVCC,运用的优化思想有读写分离，读读并行，读写并行<br>
 一致性：通过回滚，以及恢复，和在并发环境下的隔离做到一致性。</p>
 <h4 id="关于MVCC的一些反思">关于MVCC的一些反思</h4>
@@ -431,11 +431,9 @@ D：事务的一致性通过前面的一些操作来实现<br>
 <p>在快照读读的情况下，使用MVCC能够避免幻读，这一点没什么问题。但是在MVCC模式下解决不了当前读读的问题也是确实存在的。<br>
 为此我查看官方文档的资料中发现，作者说可以通过next-key lock (record locks(索引加锁) 和 gap locks(间隙锁，每次锁住的不光是需要使用的数据，还会锁住这些数据附近的数据)。) 去解决当前读读的问题。具体是否还有例外，自己没有证实过，不敢妄下断言。<br>
 <a target="_blank" rel="noopener" href="https://github.com/Yhzhtk/note/issues/42">讨论社区</a></p>
-<h4 id="RC、RR级别下的InnoDB的非阻塞读如何实现-TODO">RC、RR级别下的InnoDB的非阻塞读如何实现 TODO</h4>
+<h4 id="RC、RR级别下的InnoDB的非阻塞读如何实现">RC、RR级别下的InnoDB的非阻塞读如何实现</h4>
 <p>其实两者都是用的MVCC技术实现的非阻塞读。<br>
-先谈谈RC级别<br>
-<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/66320138">https://www.zhihu.com/question/66320138</a></p>
-<p><a target="_blank" rel="noopener" href="http://m.imooc.com/article/details?article_id=17290">http://m.imooc.com/article/details?article_id=17290</a></p>
+首先简单说说两者在MVVC下的不同点，因为生成ReadView生成的时机不同，也就造成了两者解决并发问题的不同。比如RC只是解决了脏读的问题，而RR则解决脏读、不可重复读和部分幻读的问题。因为RC每次读取的时候都生成一个新的ReadView，所以每次都是读取最新的已提交数据。而RR则是只生成一次ReadView，所以能解决不可重复读的问题。RR在MVVC的帮助下解决了部分幻读的问题，也就是快照读的问题，而没有解决当前读的问题，比如事务一读取数据，事务二修改的时候会产生行锁，但是当其提交之后会锁释放，如果此时事务一进行修改，那么就要获取最新的数据，此时就会产生幻读的问题。而RR通过引入间隙锁next-key lock去解决当前读的问题。</p>
 <h4 id="MySQL-为什么选用-RR-做默认隔离级别？TODO"><a target="_blank" rel="noopener" href="https://raymond-zhao.top/campus-interview/#/Database/MySQL?id=mysql-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E7%94%A8-rr-%E5%81%9A%E9%BB%98%E8%AE%A4%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%9F">MySQL 为什么选用 RR 做默认隔离级别？</a>TODO</h4>
 <p><a target="_blank" rel="noopener" href="https://raymond-zhao.top/campus-interview/#/Database/MySQL?id=mysql-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E7%94%A8-rr-%E5%81%9A%E9%BB%98%E8%AE%A4%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%9F">https://raymond-zhao.top/campus-interview/#/Database/MySQL?id=mysql-为什么选用-rr-做默认隔离级别？</a></p>
 <blockquote>
