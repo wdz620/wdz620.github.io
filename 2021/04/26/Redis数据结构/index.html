@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>Redis数据结构 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1、简单动态字符串 2、链表 3、字典">
+  <meta name="description" content="1、简单动态字符串 2、链表 3、字典 4、跳表">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis数据结构">
 <meta property="og:url" content="http://example.com/2021/04/26/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="1、简单动态字符串 2、链表 3、字典">
+<meta property="og:description" content="1、简单动态字符串 2、链表 3、字典 4、跳表">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210506195743527.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210506201123658.png">
@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/g6hBZ0jzZb0Zb0XiaaR6bGaN80wicXIIP7nibCkJgvSO9H4ABiaCHe32ORXjVo1QAz0qIbtkqdZW7VIwnw0MHlP1wA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
 <meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/g6hBZ0jzZb0Zb0XiaaR6bGaN80wicXIIP7xgecNQ4nvH3PDdibyB4FVTVIq8VARFUy6sicxRoI7czmLib03DnNTmqCA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
 <meta property="article:published_time" content="2021-04-26T06:29:13.000Z">
-<meta property="article:modified_time" content="2021-06-15T11:59:30.315Z">
+<meta property="article:modified_time" content="2021-06-16T07:06:41.654Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Redis">
 <meta name="twitter:card" content="summary">
@@ -177,7 +177,8 @@
       
         <p>1、简单动态字符串<br>
 2、链表<br>
-3、字典</p>
+3、字典<br>
+4、跳表</p>
 <a id="more"></a>
 <p>先来总体总结一下<br>
 redis的数据类型一般不是直接存储到内存中，而是放到了一个dictentry结构中，里面包括key指针，value指针，next指针，next指针指向下一个dictentry结构，key指针的话指向一个SDS结构，里面包括len表示数组使用了多少字节，free表示还没使用的，char类型的数组存储数据；value指针的话指向一个redisObject结构，里面包括ptr指针指向一个SDS结构，type表示value的类型，encoding表示value的内存编码，refcount计算value被引用的次数，lru最后一次修改数据的时间，5样</p>
@@ -516,11 +517,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
               </li>
              
               <li class="article-tag-list-item">

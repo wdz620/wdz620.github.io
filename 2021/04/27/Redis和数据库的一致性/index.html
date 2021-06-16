@@ -6,17 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>如何保证Redis和数据库的一致性 | 无雨无晴</title>
+  <title>Redis和数据库的一致性 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="对于热点数据（经常被查询，但不经常被修改的数据），我们可以将其放入redis缓存中，以增加查询效率，但需要保证从redis中读取的数据与数据库中存储的数据最终是一致的。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="如何保证Redis和数据库的一致性">
-<meta property="og:url" content="http://example.com/2021/04/27/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81Redis%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7/index.html">
+<meta property="og:title" content="Redis和数据库的一致性">
+<meta property="og:url" content="http://example.com/2021/04/27/Redis%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7/index.html">
 <meta property="og:site_name" content="无雨无晴">
 <meta property="og:description" content="对于热点数据（经常被查询，但不经常被修改的数据），我们可以将其放入redis缓存中，以增加查询效率，但需要保证从redis中读取的数据与数据库中存储的数据最终是一致的。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-04-27T10:28:18.000Z">
-<meta property="article:modified_time" content="2021-04-27T11:06:53.823Z">
+<meta property="article:modified_time" content="2021-06-16T12:05:28.261Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Redis">
 <meta name="twitter:card" content="summary">
@@ -149,19 +149,19 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-如何保证Redis和数据库的一致性" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Redis和数据库的一致性" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      如何保证Redis和数据库的一致性
+      Redis和数据库的一致性
     </h1>
   
 
         
-        <a href="/2021/04/27/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81Redis%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7/" class="archive-article-date">
+        <a href="/2021/04/27/Redis%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7/" class="archive-article-date">
   	<time datetime="2021-04-27T10:28:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-27</time>
 </a>
         
@@ -171,13 +171,119 @@
       
         <p>对于热点数据（经常被查询，但不经常被修改的数据），我们可以将其放入redis缓存中，以增加查询效率，但需要保证从redis中读取的数据与数据库中存储的数据最终是一致的。</p>
 <a id="more"></a>
-<p>主要学习<a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/712285">dtstack太阳</a>这位博主，方便自行阅读。<br>
-TODO文末文章学习</p>
+<h2 id="介绍">介绍</h2>
+<p>针对放入redis中缓存的热点数据，当客户端想读取的数据在缓存中就直接返回数据，即命中缓存(cache hit)，当读取的数据不在缓存内，就需要从数据库中将数据读入缓存，即未命中缓存(cache miss)。所以<code>读操作并不会导致缓存与数据库中的数据不一致</code>。</p>
+<p>对于写操作(DML)，缓存与数据库中的内容都需要被修改，但两者的执行必定存在一个<code>先后顺序</code>，这可能会导致缓冲与数据库中的数据不再一致。主要有两个问题：<br>
+1、执行顺序的问题：先更新缓存还是先更新数据库？<br>
+2、更新缓存的策略问题：当缓存中的内容变化时，是选择修改缓存(update)，还是直接淘汰缓存(delete)？</p>
+<p>针对上述两个问题，可能出现的四种解决方案：<br>
+ 1、先更新缓存，再更新数据库；<br>
+ 2、先更新数据库，再更新缓存；<br>
+ 3、先淘汰缓存，再更新数据库；<br>
+ 4、先更新数据库，再淘汰缓存。</p>
+<h2 id="更新cache还是淘汰cache？">更新cache还是淘汰cache？</h2>
+<p><code>淘汰cache</code>：<br>
+优点实现简单，直接将旧值淘汰即可。缺点是下一次一定无法在缓存中命中，必然要查数据库。</p>
+<p><code>更新cache</code>：更新chache的意思就是将更新操作也放到缓冲中执行，并不是数据库中的值更新后再将最新值传到缓存。<br>
+优点：命中率高，直接更新缓存，不会有cache miss的情况。缺点：更新cache消耗较大。</p>
+<p>综合来说：更新操作的逻辑较复杂时，需要涉及到其它数据。所以还是直接淘汰的好！最多会有一次缓存失效。</p>
+<p>对于上文列举的四种方案的前两种，即：<br>
+    1、先更新(update)缓存，再更新数据库；<br>
+    2、先更新数据库，再更新(update)缓存；<br>
+当并发较大，同时有两个线程需要对同一个数据进行更新时，可能会出现以下问题：<br>
+<strong>方案一</strong>、先更新(update)缓存，再更新数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">线程A更新了缓存</span><br><span class="line">线程B更新了缓存</span><br><span class="line">线程B更新了数据库</span><br><span class="line">线程A更新了数据库</span><br></pre></td></tr></table></figure>
+<p><strong>方案二</strong>、先更新数据库，再更新(update)缓存</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">线程A更新了数据库</span><br><span class="line">线程B更新了数据库</span><br><span class="line">线程B更新了缓存</span><br><span class="line">线程A更新了缓存</span><br></pre></td></tr></table></figure>
+<h4 id="结论：更新cache的消耗更大，且很有可能造成数据的不一致，所以推荐直接淘汰cache">结论：更新cache的消耗更大，且很有可能造成数据的不一致，所以推荐直接淘汰cache</h4>
+<h2 id="执行顺序的问题">执行顺序的问题</h2>
+<p>经过上面的讨论我们知道了，应该尽量选择<code>淘汰cache</code>。那么顺序该怎么选取呢？究竟是先淘汰缓存还是先更新数据库？</p>
+<p>主要从两个方面进行考虑：<br>
+1、考虑执行失败：无论是先淘汰缓存还是先更新数据库，如果有一个执行失败，必然会导致数据不一致的问题，那么就要考虑哪个执行顺序对数据的影响最小。<br>
+2、不考虑执行失败：更新数据库与淘汰缓存必然存在一个先后顺序，在上一个操作执行完毕，下一个操作还未完成时，如果并发较大，仍旧会导致数据库与缓存中的数据不一致，在这种情况下，用哪种方案影响最小。</p>
+<h3 id="前提数据库是单节点">前提数据库是单节点</h3>
+<p><strong>情景一：可能出现执行失败</strong></p>
+<p><code>方案一</code>：先淘汰缓存、在更新数据库<br>
+如果第一步淘汰缓存成功，第二步更新数据库失败，此时再次查询缓存，最多会有一次cache miss<br>
+<code>方案二</code>：先更新数据库，再淘汰缓存<br>
+如果第一步更新数据库成功，第二部淘汰缓存失败，则会出现数据库中是新数据，缓存中是旧数据，即数据不一致。<br>
+解决办法：为确保缓存删除成功，需要用到“重试机制”，即当删除缓存失效后，返回一个错误，由业务代码再次重试，直到缓存被删除。<br>
+虽然方案二导致数据不一致的可能性更大，但在业务中，无论是淘汰缓存还是更新数据库，我们都需要确保它们真正完成了，所以个人认为在情景一下两种方案并没有什么优劣之分。</p>
+<h4 id="总结来说：虽然方案二导致数据不一致的可能性更大，但在业务中，无论是淘汰缓存还是更新数据库，我们都需要确保它们真正完成了，所以个人认为在情景一下两种方案并没有什么优劣之分。">总结来说：虽然方案二导致数据不一致的可能性更大，但在业务中，无论是淘汰缓存还是更新数据库，我们都需要确保它们真正完成了，所以个人认为在情景一下两种方案并没有什么优劣之分。</h4>
+<hr>
+<p><strong>情景二：假设不可能出现执行失败，在并发情况下出现的数据不一致问题</strong></p>
+<p><code>方案一</code>：先淘汰缓存，再更新数据库<br>
+1、在正常情况下，A、B两个线程先后对同一个数据进行读写操作：<br>
+  A线程进行写操作，先淘汰缓存，再更新数据库<br>
+  B线程进行读操作，发现缓存中没有想要的数据，从数据库中读取更新后的新数据<br>
+<code>此时没有问题</code></p>
+<p>2、在并发量较大的情况下，采用<code>同步更新缓存</code>的策略：<br>
+  A线程进行写操作，先成功淘汰缓存，但由于网络或其它原因，还未更新数据库或正在更新<br>
+  B线程进行读操作，发现缓存中没有想要的数据，从数据库中读取数据，但此时A线程还未完成更新操作，所以读取到的是<code>旧数据</code>，并且B线程将旧数据放入缓存。注意<code>此时是没有问题的</code>，因为数据库中的数据还未完成更新，所以数据库与缓存此时存储的都是旧值，数据没有不一致<br>
+  在B线程将旧数据读入缓存后，A线程终于将数据更新完成，<code>此时是有问题的</code>，数据库中是更新后的新数据，缓存中是更新前的旧数据，数据不一致。如果在缓存中没有对该值设置过期时间，旧数据将一直保存在缓存中，数据将一直不一致，直到之后再次对该值进行修改时才会在缓存中淘汰该值<br>
+<code>此时可能会导致cache与数据库的数据一直或很长时间不一致</code></p>
+<p>3、在并发量较大的情况下，采用<code>异步更新缓存</code>的策略：<br>
+  A线程进行写操作，先成功淘汰缓存，但由于网络或其它原因，还未更新数据库或正在更新<br>
+  B线程进行读操作，发现缓存中没有想要的数据，从数据库中读取数据，但B线程只是从数据库中读取想要的数据，并不将这个数据放入缓存中，所以并不会导致缓存与数据库的不一致<br>
+  A线程更新数据库后，通过订阅binlog来异步更新缓存<br>
+<code>此时数据库与缓存的内容将一直都是一致的</code></p>
+<p>进一步分析：<br>
+如果采取同步更新缓存的策略，即如果缓存中没有数据，就读取数据库并将数据直接放入缓存，可能会导致数据长时间的不一致。<br>
+优化的方法：1、用串行化的思路(参考文末链接)。2、延时双删+设置缓存的超时时间。<br>
+<code>延时双删</code><br>
+  不一致的原因是，在淘汰缓存之后，旧数据再次被读入缓存，且之后没有淘汰策略，所以解决思路就是，在旧数据再次读入缓存后，再次淘汰缓存，即淘汰缓存两次(延迟双删)<br>
+引入延时双删后，执行步骤变为下面这种情形：<br>
+  A线程进行写操作，先成功淘汰缓存，但由于网络或其它原因，还未更新数据库或正在更新<br>
+  B线程进行读操作，从数据库中读入旧数据，共耗时N秒<br>
+  在B线程将旧数据读入缓存后，A线程将数据更新完成，此时数据不一致<br>
+  A线程将数据库更新完成后，休眠M秒(M比N稍大即可)，然后再次淘汰缓存，此时缓存中即使有旧数据也会被淘汰，此时可以<code>保证数据的一致性</code><br>
+  其它线程进行读操作时，缓存中无数据，从数据库中读取的是更新后的新数据</p>
+<p>利用延迟双删，可以很好的解决数据不一致的问题，其中A<code>线程休眠</code>的M秒，需要根据业务上读取的时间来衡量，只要比正常读取消耗的实际稍大就可以。但是个人感觉实际业务中需要根据场景来设置休眠的时间，这个不好确定。</p>
+<p><code>延时双删的问题</code><br>
+  1、A线程需要在更新数据库后，还要休眠M秒再次淘汰缓存，等所有操作都执行完，这一个更新操作才真正完成，降低了更新操作的吞吐量。<br>
+解决办法：用“异步淘汰”的策略，将休眠M秒以及二次淘汰放在另一个线程中，A线程在更新完数据库后，可以直接返回成功而不用等待。<br>
+  2、如果第二次缓存淘汰失败，则不一致依旧会存在<br>
+解决办法：用“重试机制”，即当二次淘汰失败后，报错并继续重试，直到执行成功个人</p>
+<h4 id="总结：在单节点下，用“先删缓存，再更新”的策略，如果采用同步更新缓存的策略，可能会导致数据长时间的不一致，可以通过一些方法来尽量避免不一致；如果采用异步更新缓存的策略，就不会导致数据不一致">总结：在单节点下，用“先删缓存，再更新”的策略，如果采用同步更新缓存的策略，可能会导致数据长时间的不一致，可以通过一些方法来尽量避免不一致；如果采用异步更新缓存的策略，就不会导致数据不一致</h4>
+<hr>
+<p><code>方案二</code>：先更新数据库，再淘汰缓存<br>
+1、正常情况下：<br>
+  A线程进行写操作，更新数据库，淘汰缓存。<br>
+  B线程进行读操作，从数据库中读取新的数据。<br>
+<code>不会有问题</code></p>
+<p>2、在并发较大的情况下，情形1：<br>
+  A线程进行写操作，更新数据库，还未淘汰缓存<br>
+  B线程从缓存中可以读取到旧数据，此时数据不一致<br>
+  A线程完成淘汰缓存操作<br>
+  其它线程进行读操作，从数据库中读入最新数据，此时数据一致<br>
+不过这种情况并没有什么大问题，因为数据不一致的时间很短，数据最终是一致的。</p>
+<p>3、在并发较大的情况下，情形2：<br>
+  A线程进行写操作，更新数据库，但更新较慢，缓存也未淘汰<br>
+  B线程进行读操作，读取了缓存中的旧数据<br>
+但这种情况没什么问题，毕竟更新操作都还未完成，数据库与缓存中都是旧数据，没有数据不一致</p>
+<p>4、在并发较大的情况下，情形3：<br>
+  A线程进行读操作，缓存中没有相应的数据，将从数据库中读数据到缓存<br>
+此时分为两种情况，还未读取数据库的数据，已读取数据库的数据，不过由于网络等问题数据还未传输到缓存<br>
+  B线程执行写操作，更新数据库，淘汰缓存<br>
+  B线程写操作完成后，A线程才将数据库的数据读入缓存，对于第一种情况，A线程读取的是B线程修改后的新数据，没有问题，对于第二种情况，A线程读取的是旧数据，此时数据会不一致<br>
+不过这种情况发生的概率极低，因为一般读操作要比写操作要更快<br>
+万一担心存在这种可能，可以用“延迟双删”策略，在A线程读操作完成后再淘汰一次缓存</p>
+<h4 id="总结：">总结：</h4>
+<p>在该方案下，无论是采用同步更新缓存(从数据库读取的数据直接放入缓存中)，还是异步更新缓存(数据库中的数据更新完成后，再将数据同步到缓存中)，都不会导致数据的不一致。更新完成后，再将数据同步到缓存中，都不会导致数据的不一致。<br>
+该方案主要只需要担心一个问题：如果第二步淘汰缓存失败，则数据会不一致<br>
+解决办法之前也提到过，用“重试机制”就可以，如果淘汰缓存失败就报错，然后重试直到成功</p>
+<h2 id="最终结论">最终结论</h2>
+<p><strong>先淘汰cache，再更新数据库：</strong><br>
+  采用<code>同步更新缓存</code>的策略，可能会导致数据长时间不一致，如果用延迟双删来优化，还需要考虑究竟需要延时多长时间的问题——读的效率较高，但数据的一致性需要靠其它手段来保证<br>
+  采用<code>异步更新缓存</code>的策略，不会导致数据不一致，但在数据库更新完成之前，都需要到数据库层面去读取数据，读的效率不太好——<code>保证了数据的一致性，适用于对一致性要求高的业务</code></p>
+<p><strong>先更新数据库，再淘汰cache：</strong>（最优答案）<br>
+  无论是同步/异步更新缓存，都不会导致数据的最终不一致，在更新数据库期间，cache中的旧数据会被读取，可能会有一段时间的数据不一致，但读的效率很好——保证了数据读取的效率，如果业务对一致性要求不是很高，这种方案最合适</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yeluo_vinager/article/details/106094081?utm_medium=distribute.pc_relevant.none-task-blog-baidujs_baidulandingword-0&amp;spm=1001.2101.3001.4242">redis与DB数据同步问题</a><br>
-<a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/712285">dtstack太阳</a><br>
+<p><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/712285">dtstack太阳</a><br>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?spm=a2c6h.12873639.0.0.2020fe8dt3YOua&amp;__biz=MjM5ODYxMDA5OQ==&amp;mid=404202261&amp;idx=1&amp;sn=1b8254ba5013952923bdc21e0579108e&amp;scene=21#wechat_redirect">缓存与数据库一致性：串行化解决</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/yeluo_vinager/article/details/106094081?utm_medium=distribute.pc_relevant.none-task-blog-baidujs_baidulandingword-0&amp;spm=1001.2101.3001.4242">redis与DB数据同步问题</a><br>
 <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/650cdf126cf4">具体场景</a><br>
 <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/945446317e7a">面试高频</a></p>
 
@@ -249,7 +355,7 @@ TODO文末文章学习</p>
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/04/27/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81Redis%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/04/27/Redis%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -439,11 +545,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
               </li>
              
               <li class="article-tag-list-item">
