@@ -6,20 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>内存管理 | 无雨无晴</title>
+  <title>调度算法 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="https:&#x2F;&#x2F;www.cnblogs.com&#x2F;wkfvawl&#x2F;p&#x2F;11733057.html https:&#x2F;&#x2F;github.com&#x2F;mio4&#x2F;learn-java&#x2F;blob&#x2F;master&#x2F;Note&#x2F;interview.md#12-内存管理">
+  <meta name="description" content="主要记录调度算法，包括，作业调度、进程调度、页面置换、磁盘调度、虚拟地址和物理地址、段页式存储管理方式">
 <meta property="og:type" content="article">
-<meta property="og:title" content="内存管理">
-<meta property="og:url" content="http://example.com/2021/05/17/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:title" content="调度算法">
+<meta property="og:url" content="http://example.com/2021/04/17/%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="https:&#x2F;&#x2F;www.cnblogs.com&#x2F;wkfvawl&#x2F;p&#x2F;11733057.html https:&#x2F;&#x2F;github.com&#x2F;mio4&#x2F;learn-java&#x2F;blob&#x2F;master&#x2F;Note&#x2F;interview.md#12-内存管理">
+<meta property="og:description" content="主要记录调度算法，包括，作业调度、进程调度、页面置换、磁盘调度、虚拟地址和物理地址、段页式存储管理方式">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-05-17T01:36:56.000Z">
-<meta property="article:modified_time" content="2021-06-11T02:42:05.507Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20170407165752062">
+<meta property="article:published_time" content="2021-04-17T00:53:13.000Z">
+<meta property="article:modified_time" content="2021-06-16T01:59:15.252Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20170407165752062">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -149,29 +151,73 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-内存管理" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-调度算法" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      内存管理
+      调度算法
     </h1>
   
 
         
-        <a href="/2021/05/17/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="archive-article-date">
-  	<time datetime="2021-05-17T01:36:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-17</time>
+        <a href="/2021/04/17/%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/" class="archive-article-date">
+  	<time datetime="2021-04-17T00:53:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-17</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <a id="more"></a>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wkfvawl/p/11733057.html">https://www.cnblogs.com/wkfvawl/p/11733057.html</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/mio4/learn-java/blob/master/Note/interview.md#12-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86">https://github.com/mio4/learn-java/blob/master/Note/interview.md#12-内存管理</a></p>
+        <p>主要记录调度算法，包括，作业调度、进程调度、页面置换、磁盘调度、虚拟地址和物理地址、段页式存储管理方式</p>
+<a id="more"></a>
+<p>首先说明调度算法分为<code>高级调度</code>和<code>低级调度</code>，其中作业调度就是高级调度，进程调度就是低级调度。作业调度次数少，进程调度频率相对来说高。</p>
+<h3 id="作业调度">作业调度</h3>
+<p><strong>先来先服务FCFS</strong>：主要就是最先到达的作业，最先开始工作，实现较为简单，公平，非抢占式，没有饥饿问题，但是缺点就是对短作业相当不友好，可能等待时间比运行时间长的多。</p>
+<p><strong>短作业优先SJF</strong>：优先处理短作业，这里的短作业指的是运行时间较为短的作业。而在作业未提交时，系统并不知道作业的实际运行时间。所以需要预先知道作业的运行时间。短作业优先是一种抢占式，可能造成饥饿问题。</p>
+<p><strong>最高相应比优先算法HRRN</strong>：针对上面提到的两种情况，提出了一种权衡的办法，就是通过计算，选择相应比较高的作业优先进行。具体公式就是 <code>相应比=（作业等待时间+作业处理时间）/ 作业处理时间</code> 也可以化简成 <code>相应比= 1 + 作业等待时间 / 作业处理时间</code></p>
+<p><strong>优先级调度算法</strong>：每个作业规定一个表示该作业的优先级别的整数，然后通过优先级进行调用。</p>
+<p><strong>均衡调度算法</strong>：主要依据是资源，根据使用不同的资源进行分类，使得占用不同资源的作业能够同时执行，从而提高效率，和系统的吞吐量。</p>
+<h3 id="进程调度">进程调度</h3>
+<p><strong>先进先出FIFO</strong>：按照进程进入就绪队列的先后次序来进行选择，就是说先进入的先被处理。</p>
+<p><strong>时间片轮转RR</strong>：基本思想就是说，将CPU的处理时间进行划分成一个个的时间片，就绪队列中的进程轮流运行一个时间片。当时间片结束时，就强迫该进程让出CPU，该进程进入就绪队列，等待下一次的调度。</p>
+<p><strong>最高优先级HPF</strong>：进程调度每次将处理机分配给具有最高优先级的就绪进程。最高优先级算法可与不同的CPU方式结合形成可抢占式最高优先级算法和不可抢占式最高优先级算法。</p>
+<p><strong>多级队列反馈法</strong>：几种调度算法的结合形式多级队列方式。</p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20170407165752062" alt="img"></p>
+<h3 id="页面置换算法">页面置换算法</h3>
+<p>虚拟页式存储管理中的页面置换算法<br>
+<strong>理想页面置换算法OPT</strong>：这是一种理想的算法，在现实中不太可能实现(因为操作系统也不知道各个页面下一次式在什么时候被访问)。基本思想：发生缺页时，选择以后永不使用或者最长时间内不在被访问的内存页面予以淘汰。这个算法也是仅仅作为一种和其他算法进行衡量比较。</p>
+<p><strong>先进先出页面置换算法FIFO</strong>：选择最先进入内存的页面予以淘汰。</p>
+<p><strong>最近最久未使用算法LRU</strong>：选择在最近一段时间内最久没有使用过的页，把它淘汰。</p>
+<p><strong>最少使用算法LFU</strong>：选择到当前时间为止被访问次数最少的页转换。</p>
+<p>下面记录LRU和LFU的具体实现过程：</p>
+<h3 id="磁盘调度">磁盘调度</h3>
+<p><strong>先来先服务FCFS</strong>：是按请求访问者的先后次序启动磁盘驱动器，而不考虑它们要访问的物理位置。</p>
+<p><strong>最短寻道时间优先SSTF</strong>：让离当前磁道最近的请求访问者启动磁盘驱动器，即是让查找时间最短的那个作业先执行，而不考虑请求访问者到来的先后次序，这样就克服了先来先服务调度算法中磁臂移动过大的问题。</p>
+<p><strong>扫面算法或电梯调度算法</strong>：总是从磁臂当前位置开始，沿磁臂的移动方向去选择离当前磁臂最近的那个柱面的访问者。如果沿磁臂的方向无请求访问时，就改变磁臂的移动方向。在这种调度方法下磁臂的移动类似于电梯的调度，所以它也称为电梯调度算法。</p>
+<p><strong>循环扫描算法CSCAN</strong>：循环扫描调度算法是在扫描算法的基础上改进的。磁臂改为单项移动，由外向里。当前位置开始沿磁臂的移动方向去选择离当前磁臂最近的哪个柱面的访问者。如果沿磁臂的方向无请求访问时，再回到最外，访问柱面号最小的作业请求。</p>
+<h2 id="知识点补充">知识点补充</h2>
+<p><strong>虚拟地址</strong>：程序产生的由段选择符和段内偏移地址两个部分组成的地址。为什么被称为虚拟地址呢？主要是因为前面说的两个组成部分并没有直接访问物理地址，而是要通过分段地址的交换机构处理或映射后才会找到相对应的物理内存地址。</p>
+<p><strong>物理地址</strong>：指的是现在CPU外部地址总线上的寻址物理内存的地址信号，是地址变换的最终结果。</p>
+<p><strong>虚拟地址怎么转换成物理地址</strong></p>
+<ul>
+<li>先将虚拟地址转换成逻辑地址：根据虚拟地址所在的段，然后在加上段偏移，我们就得到一个逻辑地址。</li>
+<li>逻辑地址转换成线性地址：只需要把逻辑地址加上段的基地址就能生成一个线性地址。</li>
+<li>线性地址转换成物理地址：
+<ul>
+<li>如果启用了分页机制，那么就需要将需要找到段中对应页的地址，然后再找到页内偏移地址，最后得到物理地址</li>
+<li>如果没有启用分页机制，那么线型地址直接就是物理地址了</li>
+</ul>
+</li>
+</ul>
+<p><strong>逻辑地址</strong>：指由程序产生的与段相关的偏移地址部分，每一个逻辑地址都由一个段和偏移量组成。</p>
+<p><strong>线性地址</strong>：逻辑地址到物理地址变换之间的中间层，程序代码会产生逻辑地址，或者说是段中的偏移地址，加上相应段的基地址就生成了一个线性地址。<code>如果启用了分页机制</code>，那么线性地址可以再经变换以产生一个物理地址。若<code>没有启用分页机制</code>，那么线性地址直接就是物理地址`</p>
+<blockquote>
+<p>参考链接</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="http://blog.chinaunix.net/uid-25132162-id-361291.html">OS中常用的调度算法总结</a></p>
 
       
 
@@ -241,7 +287,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/05/17/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/04/17/%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -255,9 +301,18 @@
   
 <nav id="article-nav">
   
+    <a href="/2021/04/17/Linux%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Linux环境搭建
+        
+      </div>
+    </a>
   
-    <a href="/2021/05/17/%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">调度算法</div>
+  
+    <a href="/2021/04/15/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">排序算法</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -431,15 +486,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Redis</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
