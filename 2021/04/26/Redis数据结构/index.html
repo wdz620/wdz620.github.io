@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/g6hBZ0jzZb0Zb0XiaaR6bGaN80wicXIIP7nibCkJgvSO9H4ABiaCHe32ORXjVo1QAz0qIbtkqdZW7VIwnw0MHlP1wA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
 <meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/g6hBZ0jzZb0Zb0XiaaR6bGaN80wicXIIP7xgecNQ4nvH3PDdibyB4FVTVIq8VARFUy6sicxRoI7czmLib03DnNTmqCA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
 <meta property="article:published_time" content="2021-04-26T06:29:13.000Z">
-<meta property="article:modified_time" content="2021-06-16T07:06:41.654Z">
+<meta property="article:modified_time" content="2021-06-17T11:52:28.321Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Redis">
 <meta name="twitter:card" content="summary">
@@ -226,6 +226,39 @@ Redis中<code>列表键</code>就是使用链表做为底层实现原理。</p>
 <p>Redis 作为 K-V 型数据库，所有的键值都是用字典来存储的。<br>
 日常学习中使用的字典你应该不会陌生，想查找某个词通过某个字就可以直接定位到，速度非常快。这里所说的字典原理上是一样的，通过某个 key 可以直接获取到对应的value。<br>
 字典又称为哈希表，这点没什么可说的。哈希表的特性大家都很清楚，能够在 O(1) 时间复杂度内取出和插入关联的值。</p>
+<p><code>rehash</code><br>
+简单来说就是Redis通过对字典的两个表进行控制，ht[0]和ht[1]。起初元素都存储在第一个数组中，然后在需要扩容或者缩容的时候使用第二个表。然后全部rehash结束之后，将ht[1]标记位ht[0]，感觉很像JVM中的Survivor区一样。<br>
+<code>渐进式rehash</code><br>
+为了避免rehash对服务器性能造成影响。Redis并非一次性将数据rehash，而是采取一种渐进式的过程。分多次、渐进式地将ht[0]里面的键值慢慢地rehash到ht[1]。<br>
+具体过程：<br>
+1、为ht[1]分配空间，让字典同时持有ht[0]和ht[1]两个哈希表。<br>
+2、在字典中维持一个索引计数器变量rehashidx，起始值为0表示rehash正式开始。<br>
+3、在rehash过程中，每次对字典执行添加、删除、查找或者更新的时候，程序除了执行指定的操作外，还会顺带将ht[0]哈希表在rehashidx索引上的所有键值对rehash到ht[1]，当rehash工作完成后，将rehashidx属性的值加一。<br>
+4、随着字典的不断操作，最终在某个时间点上，ht[0]上的所有键值对都会被rehash到ht[1],此时程序将rehashidx的值置为-1，表示rehash操作完成。<br>
+注意：在渐进式rehash过程中，因为控制两个表，所以在查找的时候先查找ht[0]，在添加的时候将数据添加到ht[1]。这就保证了ht[0]的数据只会减少不会增加。</p>
+<p><strong>什么时候扩容或者缩容：</strong><br>
+在使用过程中，当 ht[0]满足以下两个条件时，会发生扩容的 rehash 操作</p>
+<ul>
+<li>
+<ol>
+<li>当 redis 没有发生持久化操作时，并且此时的 ht【0】存储的键值对数量大于等于 ht【0】的 size 时会发生 rehash</li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li>当 ht【0】存储的键值对数量大于等于五倍的 size 时，不管有没有发生持久化，都会进行 rehash 操作</li>
+</ol>
+</li>
+</ul>
+<p>当 ht【0】存储的键值对数量小于 size 的十分之一时，会发生缩容的 rehash 操作</p>
+<blockquote>
+<p>HashMap 的 hash 和 Redis 中的 hash 结构有什么不同？</p>
+</blockquote>
+<ol>
+<li>HashMap 中的结构采用数组 + 链表 + 红黑树；Redis 中采用数组加链表的方式，并且会维护两个 hash table</li>
+<li>HashMap 当存储键值对个数大于阈值时会进行扩容操作；Redis 中当没有发生持久化并且 used 大于等于 size 或者 used 大于 5 倍的 size 会发生扩容</li>
+<li>HashMap 只会发生扩容操作，而 Redis 会发生缩容操作，当 used &lt; 0.1 * size 时会发生缩容</li>
+</ol>
 <h2 id="跳表">跳表</h2>
 <p>Redis使用跳表作为有序集合键的底层实现之一。如果一个有序集合包含的元素数量较多，又或者有序集合中元素的成员是比较长的字符串时，Redis就会使用跳表作为有序集合键的底层实现。<br>
 作为 Redis 中特有的数据结构-跳跃表，其在链表的基础上增加了多级索引来提升查找效率。<br>
@@ -517,11 +550,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">

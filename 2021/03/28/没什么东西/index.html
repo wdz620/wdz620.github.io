@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210328192146510.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png">
 <meta property="article:published_time" content="2021-03-28T11:43:13.000Z">
-<meta property="article:modified_time" content="2021-06-14T06:03:05.202Z">
+<meta property="article:modified_time" content="2021-06-17T08:34:43.646Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="创建文章">
 <meta name="twitter:card" content="summary">
@@ -344,6 +344,14 @@ CMS主要关注低延迟，因而采用并发方式，清理垃圾时，应用�
 </blockquote>
 <h1>数据库</h1>
 <h2 id="线上环境RR隔离级别下可能出现的问题？">线上环境RR隔离级别下可能出现的问题？</h2>
+<h2 id="group-by-实现原理和过程">group by 实现原理和过程</h2>
+<p>MySQL中group by实现方式有三种，<code>松散索引</code>，<code>紧凑索引</code>，<code>临时文件（文件排序）</code>。<br>
+<code>松散索引</code>：当MySQL完全利用索引扫描来实现 GROUP BY 的时候，并不需要扫描所有满足条件的索引键即可完成操作得出结果。<br>
+<code>紧凑索引</code>: 需要在扫描索引的时候，读取所有满足条件的索引键，然后再根据读取到的数据来完成GROUP BY 操作得到相应结果。<br>
+<code>临时文件（文件排序）</code>： 前面两种 GROUP BY 的实现方式都是在有可以利用的索引的时候使用的，当 MySQL查询优化器无法找到合适的索引可以利用的时候，就不得不先读取需要的数据，然后通过临时表来完成 GROUP BY 操作。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/newjiang/p/12841570.html">Group By 过程</a></p>
+</blockquote>
 <h2 id="INT-10-和-INT-11-有什么区别？">INT(10) 和 INT(11) 有什么区别？</h2>
 <p>int (10) 和 int (11) 没有任何区别，就是显示宽度不同。<br>
 补充：<br>
@@ -911,11 +919,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
