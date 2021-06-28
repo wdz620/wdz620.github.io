@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210328192146510.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png">
 <meta property="article:published_time" content="2021-03-28T11:43:13.000Z">
-<meta property="article:modified_time" content="2021-06-25T14:53:47.085Z">
+<meta property="article:modified_time" content="2021-06-27T06:32:32.506Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="创建文章">
 <meta name="twitter:card" content="summary">
@@ -664,6 +664,13 @@ CHAR和VARCHAR最大的不同就是一个是固定长度，一个是可变长度
 <p>1、CA机构有自己的根公钥和根私钥。</p>
 <p>2、在证书颁发之前，机构会用根私钥将这个证书内容加密得到一个签名，这个签名只能用对应的根公钥去解密。</p>
 <p>3、在客户端（浏览器）收到服务端发过来的证书以后，我们首先从浏览器中拿到机构的根公钥，用这个根公钥去解析证书的签名得到一个哈希值H1，这个H1代表证书的原始内容，假设这个证书上的签名是不法分子伪造的，但是伪造的签名不可能是根私钥加密生成的（因为根私钥是CA机构私有），所以根公钥也不可能去解密任何第三方生成的签名（加密内容只能由对应的公钥私钥解析）。然后我们再用同样的哈希算法对收证书内容进行计算得到哈希值H2，通过对比H1和H2是否相等就知道证书有没有被篡改过了。</p>
+<h1>操作系统</h1>
+<h2 id="进程上下文切换">进程上下文切换</h2>
+<p>进程上下文是进程执行活动全过程的静态描述。我们把已执行过的进程指令和数据在相关寄存器与堆栈中的内容称为<code>进程上文</code>，把正在执行的指令和数据在寄存器与堆栈中的内容称为<code>进程正文</code>，把待执行的指令和数据在寄存器与堆栈中的内容称为<code>进程下文</code>。<br>
+<strong>上下文切换详细过程</strong><br>
+进程上下文切换主要涉及到两部分主要过程：<code>进程地址空间切换和处理器状态切换</code>。地址空间切换主要是针对用户进程而言，而处理器状态切换对应于所有的调度单位。下面我们分别看下这两个过程：<br>
+1、进程地址空间切换<br>
+进程地址空间指的是进程所拥有的虚拟地址空间，而这个地址空间是假的，是linux内核通过数据结构来描述出来的，从而使得每一个进程都感觉到自己拥有整个内存的假象，cpu访问的指令和数据最终会落实到实际的物理地址，对用进程而言通过缺页异常来分配和建立页表映射。进程地址空间内有进程运行的指令和数据，因此到调度器从其他进程重新切换到我的时候，为了保证当前进程访问的虚拟地址是自己的必须切换地址空间。</p>
 
       
 
@@ -952,11 +959,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
