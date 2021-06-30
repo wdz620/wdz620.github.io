@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210328192146510.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png">
 <meta property="article:published_time" content="2021-03-28T11:43:13.000Z">
-<meta property="article:modified_time" content="2021-06-29T10:07:06.418Z">
+<meta property="article:modified_time" content="2021-06-30T09:11:16.105Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="创建文章">
 <meta name="twitter:card" content="summary">
@@ -185,6 +185,12 @@
 <p>答：首先字符串的内容是由一个字符数组 char[] 来存储的，由于数组的长度及索引是整数，且String类中返回字符串长度的方法length() 的返回值也是int ，所以通过查看java源码中的类Integer我们可以看到Integer的最大范围是2^31 -1,由于数组是从0开始的，所以数组的最大长度可以使【0~2^31-1】通过计算是大概4GB。<br>
 但是通过翻阅java虚拟机手册对class文件格式的定义以及常量池中对String类型的结构体定义我们可以知道对于索引定义了u2，就是无符号占2个字节，2个字节可以表示的最大范围是2^16 -1 = 65535。<br>
 其实是65535，但是由于JVM需要1个字节表示结束指令，所以这个范围就为65534了。超出这个范围在编译时期是会报错的，但是运行时拼接或者赋值的话范围是在整形的最大范围。</p>
+<h2 id="时间复杂度的O-n-或者O-lgn-中的n代表什么？">时间复杂度的O(n)或者O(lgn)中的n代表什么？</h2>
+<p>在 大O符号表示法中，时间复杂度的公式是： T(n) = O( f(n) )，其中f(n) 表示每行代码执行次数之和，而 O 表示正比例关系，这个公式的全称是：算法的渐进时间复杂度。<br>
+所以可以知道 O 后面的括号中有一个函数，指明某个算法的耗时/耗空间与数据增长量之间的关系。其中的n代表输入数据的量。<br>
+O(1)就是最低的时空复杂度了，也就是耗时/耗空间与输入数据大小无关，无论输入数据增大多少倍，耗时/耗空间都不变。<br>
+比如快速排序的时间复杂度是<code>O(nlogn)</code>，n 乘以 logn，当数据增大256倍时，耗时增大256*8=2048倍。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 时间复杂度是 O(nlogn)</span><br><span class="line">for(m&#x3D;1; m&lt;n; m++)</span><br><span class="line">&#123;</span><br><span class="line">    i &#x3D; 1;</span><br><span class="line">    while(i&lt;n)</span><br><span class="line">    &#123;</span><br><span class="line">        i &#x3D; i * 2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="如何减少上下文切换">如何减少上下文切换</h3>
 <p>1、无锁并发编程。多线程竞争锁时，会引起上下文切换，所以多线程处理数据时，可以用一些办法来避免使用锁，如将数据的ID按照Hash算法取模分段，不同的线程处理不同段的数据。<br>
 2、CAS算法。<br>
@@ -384,6 +390,19 @@ varchar(10)表示存储10个变长的字符，存储多少个就是多少个，�
 2NF:属性具有唯一性，不存在部分依赖。比如学分依赖课程号，姓名依赖学号就不可以。<br>
 3NF:属性无冗余，不存在传递依赖。<br>
 <a target="_blank" rel="noopener" href="https://www.huaweicloud.com/articles/c1c4f2d4c72b61eab44114ae8286835f.html">三大范式介绍</a></p>
+<h2 id="一对一、一对多、多对多的建表方式">一对一、一对多、多对多的建表方式</h2>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6860005655110615053">MySQL多表&amp;外键&amp;数据库设计</a></p>
+</blockquote>
+<p>一对一关系是指，一个表的记录对应到另一个表的唯一一个记录。<br>
+一些应用会把一个大表拆成两个一对一的表，目的是把经常读取和不经常读取的字段分开，以获得更高的性能。例如，把一个大的用户表分拆为用户基本信息表user_info和用户详细信息表user_profiles，大部分时候，只需要查询user_info表，并不需要查询user_profiles表，这样就提高了查询速度。</p>
+<p>通过一个表的外键关联到另一个表，我们可以定义出一对多关系。</p>
+<p>多对多关系实际上是通过两个一对多关系实现的，即通过一个中间表，关联两个一对多关系，就形成了多对多关系。</p>
+<p>简单的实例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 一对多关系 省表与市表</span></span><br><span class="line"><span class="comment">-- 创建省表 主表 一的一方</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> province(</span><br><span class="line">	id <span class="type">INT</span> <span class="keyword">PRIMARY</span> <span class="keyword">KEY</span> AUTO_INCREMENT,</span><br><span class="line">	NAME <span class="type">VARCHAR</span>(<span class="number">20</span>),</span><br><span class="line">	description <span class="type">VARCHAR</span>(<span class="number">20</span>)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建市表 从表 中 外键字段指向 主表的主键</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> city(</span><br><span class="line">	cid <span class="type">INT</span> <span class="keyword">PRIMARY</span> <span class="keyword">KEY</span> AUTO_INCREMENT,</span><br><span class="line">	NAME <span class="type">VARCHAR</span>(<span class="number">20</span>),</span><br><span class="line">	description <span class="type">VARCHAR</span>(<span class="number">20</span>),</span><br><span class="line">	</span><br><span class="line">	<span class="comment">-- 创建外键 添加外键约束</span></span><br><span class="line">	pid <span class="type">INT</span>,</span><br><span class="line">	<span class="keyword">FOREIGN</span> <span class="keyword">KEY</span>(pid) <span class="keyword">REFERENCES</span> province(id)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">-----------------</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 多对多关系 演员与角色</span></span><br><span class="line"><span class="comment">-- 演员表</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> actor(</span><br><span class="line">	id <span class="type">INT</span> <span class="keyword">PRIMARY</span> <span class="keyword">KEY</span> AUTO_INCREMENT,</span><br><span class="line">	NAME <span class="type">VARCHAR</span>(<span class="number">20</span>)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 角色表</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> role(</span><br><span class="line">	id <span class="type">INT</span> <span class="keyword">PRIMARY</span> <span class="keyword">KEY</span> AUTO_INCREMENT,</span><br><span class="line">	NAME <span class="type">VARCHAR</span>(<span class="number">20</span>)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建中间表</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> actor_role(</span><br><span class="line">	<span class="comment">-- 中间表的主键</span></span><br><span class="line">	id <span class="type">INT</span> <span class="keyword">PRIMARY</span> <span class="keyword">KEY</span> AUTO_INCREMENT,</span><br><span class="line">	</span><br><span class="line">	<span class="comment">-- aid 字段 指向 actor表的主键</span></span><br><span class="line">	aid <span class="type">INT</span>,</span><br><span class="line">	</span><br><span class="line">	<span class="comment">-- rid 指向 role表的主键</span></span><br><span class="line">	rid <span class="type">INT</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 添加外键约束</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- aid字段添加外键约束</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> actor_role <span class="keyword">ADD</span> <span class="keyword">FOREIGN</span> <span class="keyword">KEY</span>(aid) <span class="keyword">REFERENCES</span> actor(id);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- rid字段添加外键约束</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> actor_role <span class="keyword">ADD</span> <span class="keyword">FOREIGN</span> <span class="keyword">KEY</span>(rid) <span class="keyword">REFERENCES</span> role(id);</span><br></pre></td></tr></table></figure>
+<h2 id="多对多关系，必须中间表吗？">多对多关系，必须中间表吗？</h2>
+<p>当然不是必须的，可以在两个表中分别记录。但是可想而知操作的难度和复杂性。比如在学生和课程之间，可以在学生表中的课程字段中以1，2，3，4这样的形式记录课程，同理在课程中以同样的方式记录学生。但是性能和可操作性明显下降。</p>
+<p>另一方面可以通过范式的角度分析，如果将多个课程id放入学生表中，这就不满足第一范式的要求。</p>
 <h2 id="保证某一属性唯一的几种方式">保证某一属性唯一的几种方式</h2>
 <p>DISTINCT + Group by</p>
 <h2 id="MySQL-中的-page-结构？">MySQL 中的 page 结构？</h2>
@@ -505,6 +524,9 @@ join更像是一种交集。</p>
 <li>数量： 一张表只能有一个主键，一张表可以有多个唯一索引</li>
 <li>执行速度：主键执行计划优先、聚集索引所以效率很高。需要回表查询，效率较低。</li>
 </ul>
+<p>联合主键：<br>
+关系数据库实际上还允许通过多个字段唯一标识记录，即两个或更多的字段都设置为主键，这种主键被称为联合主键。<br>
+没有必要的情况下，我们尽量不使用联合主键，因为它给关系表带来了复杂度的上升。</p>
 <h2 id="最左匹配原则">最左匹配原则</h2>
 <p>简单来说，就是MySQL采用b+树原理查询，每次查询复合字段从左到右的属性。会一直向右匹配直到遇到范围查询(&gt;、&lt;、between、like)就停止匹配。<br>
 其实就是索引的失效：<br>
@@ -927,15 +949,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -975,11 +997,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
