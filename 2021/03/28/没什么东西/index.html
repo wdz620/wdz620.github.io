@@ -15,6 +15,7 @@
 <meta property="og:site_name" content="无雨无晴">
 <meta property="og:description" content="主要是搜集网上的一些关于MySQL的问题，然后尝试通过自己浅薄的知识进行回答，如有错误，请您谅解。当然非常欢迎在文末进行交流~ 仅供个人学习回顾使用，如有侵权留言联系删除！">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/318837-20191216150101017-1343100893.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210412105019801.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210412105345691.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/97A6DE98FF0359D70255CBB5EF053DF5">
@@ -22,11 +23,11 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210328192146510.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png">
 <meta property="article:published_time" content="2021-03-28T11:43:13.000Z">
-<meta property="article:modified_time" content="2021-07-01T04:56:25.283Z">
+<meta property="article:modified_time" content="2021-07-01T14:45:00.003Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="创建文章">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210412105019801.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/318837-20191216150101017-1343100893.jpg">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -181,6 +182,24 @@
 <a id="more"></a>
 <h1>Java</h1>
 <h2 id="Java基础">Java基础</h2>
+<h3 id="Java泛型">Java泛型</h3>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jingmoxukong/p/12049160.html#top">深入理解 Java 泛型</a></p>
+</blockquote>
+<p>泛型就是编写模板代码来适应任意类型；泛型的好处是使用时不必对类型进行强制转换，它通过编译器对类型进行检查；注意泛型的继承关系：可以把ArrayList<Integer>向上转型为List<Integer>（T不能变！）<br>
+不单单在集合上可以使用泛型，在类上也可以使用泛型，而且还可以使用多个泛型，还可以进行嵌套泛型。<br>
+<code>public class Info&lt;T&gt; &#123;&#125;</code> 单个 <code>public class MyMap&lt;K,V&gt; &#123;&#125;</code> 多个 <code>Map&lt;Integer, Set&lt;String&gt;&gt; map</code> 嵌套<br>
+接口也可以使用泛型。<br>
+泛型方法可以是普通方法、静态方法以及构造方法。<code>是否拥有泛型方法，与其所在的类是否是泛型没有关系。</code></p>
+<h4 id="类型擦除">类型擦除</h4>
+<p>Java 泛型是使用类型擦除来实现的，使用泛型时，任何具体的类型信息都被擦除了。</p>
+<ul>
+<li>把泛型中的所有类型参数替换为 Object，如果指定类型边界，则使用类型边界来替换。因此，生成的字节码仅包含普通的类，接口和方法。</li>
+<li>擦除出现的类型声明，即去掉 &lt;&gt; 的内容。比如 T get() 方法声明就变成了 Object get() ；List<String> 就变成了 List。如有必要，插入类型转换以保持类型安全。</li>
+<li>生成桥接方法以保留扩展泛型类型中的多态性。类型擦除确保不为参数化类型创建新类；因此，泛型不会产生运行时开销。</li>
+</ul>
+<p>使用泛型时，任何具体的类型信息都被擦除了。这意味着：<code>ArrayList&lt;Object&gt;</code> 和 <code>ArrayList&lt;String&gt;</code> 在运行时，JVM 将它们视为同一类型。<br>
+<img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/318837-20191216150101017-1343100893.jpg" alt="img"></p>
 <h3 id="字符串有长度限制吗？是多少">字符串有长度限制吗？是多少</h3>
 <p>答：首先字符串的内容是由一个字符数组 char[] 来存储的，由于数组的长度及索引是整数，且String类中返回字符串长度的方法length() 的返回值也是int ，所以通过查看java源码中的类Integer我们可以看到Integer的最大范围是2^31 -1,由于数组是从0开始的，所以数组的最大长度可以使【0~2^31-1】通过计算是大概4GB。<br>
 但是通过翻阅java虚拟机手册对class文件格式的定义以及常量池中对String类型的结构体定义我们可以知道对于索引定义了u2，就是无符号占2个字节，2个字节可以表示的最大范围是2^16 -1 = 65535。<br>
@@ -270,6 +289,15 @@ O(1)就是最低的时空复杂度了，也就是耗时/耗空间与输入数据
 int与int比较，直接使用==比较<br>
 Integer与int比较，==比较时，Integer将会发生自动拆箱(调用intValue()方法)<br>
 两个Integer比较时，当它们都在[-128,127]之间，使用 == 比较和equals比较返回的都是true；在此区间范围之外 == 比较为false，equals比较为true。原因是因为Integer中有一个内部类IntegerCache，当处于此区间的值都是相同的地址和值，因此此区间的==与equals都为true</p>
+<h3 id="讲下final修饰符">讲下final修饰符</h3>
+<p>Java中final修饰符既可以修饰类、方法，也可以修饰变量。<br>
+用final修饰的类不能被继承。断子绝孙类：String<br>
+用final修饰的方法不可重写。<br>
+用final修饰的变量最多只能赋值一次，值不可变。表示该属性一旦被初始化便不可改变，这里不可改变的意思对基本类型来说是其值不可变，而对对象属性来说其引用不可再变。<br>
+final修饰符通常和static修饰符一起使用来创建类常量。<br>
+finally主要是用来关闭资源（数据库连接，网络连接，磁盘文件等），不管是否发生异常，资源都必须进行关闭。通常写在try…catch…后面，无论try…catch…块中出现什么异常，finally的语句块都将会执行，除非关闭JVM，它才不会执行。</p>
+<h3 id="String为什么是不可修改的？">String为什么是不可修改的？</h3>
+<p>通过源码知道String底层是由char数组构成，当创建一个字符串对象的时候，其实是将字符串保存在final修饰的char数组中，因为数组是引用对象，为了防止数组可变，JDK加了final修饰，但是加了final修饰的数组只是代表了引用不可变，不代表数组内容不可变，因此JDK为了真正防止不可变，又加了private修饰符。</p>
 <h3 id="String-s-new-String-“a”-创建了几个对象？分别在哪？">String s = new String(“a”);创建了几个对象？分别在哪？</h3>
 <p>回看笔记</p>
 <h3 id="Java内存模型">Java内存模型</h3>
@@ -312,13 +340,6 @@ Integer与int比较，==比较时，Integer将会发生自动拆箱(调用intVal
 <h3 id="B树跟B-树区别">B树跟B+树区别</h3>
 <p>首先B+树的所有数据都存在在叶子节点，并且叶子节点使用有序链表进行连接。<br>
 首先从性能来说，B+树更稳定，因为所有数据都在叶子节点。B+树可以方便范围查找。</p>
-<h3 id="讲下final修饰符">讲下final修饰符</h3>
-<p>Java中final修饰符既可以修饰类、方法，也可以修饰变量。<br>
-用final修饰的类不能被继承。断子绝孙类：String<br>
-用final修饰的方法不可重写。<br>
-用final修饰的变量最多只能赋值一次，值不可变。表示该属性一旦被初始化便不可改变，这里不可改变的意思对基本类型来说是其值不可变，而对对象属性来说其引用不可再变。<br>
-final修饰符通常和static修饰符一起使用来创建类常量。<br>
-finally主要是用来关闭资源（数据库连接，网络连接，磁盘文件等），不管是否发生异常，资源都必须进行关闭。通常写在try…catch…后面，无论try…catch…块中出现什么异常，finally的语句块都将会执行，除非关闭JVM，它才不会执行。</p>
 <h3 id="GC垃圾回收算法、垃圾收集器">GC垃圾回收算法、垃圾收集器</h3>
 <p>四大引用：强引用、软引用、弱引用、虚引用<br>
 ​	引用计数法<br>
@@ -363,6 +384,10 @@ CMS主要关注低延迟，因而采用并发方式，清理垃圾时，应用�
 </blockquote>
 <h1>数据库</h1>
 <h2 id="线上环境RR隔离级别下可能出现的问题？">线上环境RR隔离级别下可能出现的问题？</h2>
+<h2 id="一个事务中，查询2次，更改9次，连接数据库多少次？">一个事务中，查询2次，更改9次，连接数据库多少次？</h2>
+<p>DB连接池必须要确保某一时间内一个connection只能分配给一个线程。不同conection的事务是相互独立的。<br>
+事务具有原子性，此时要求对数据库的操作符合原子操作：要么不做，要么全做。<br>
+当2个线程共用一个连接Connection对象，而且各自都有自己的事务要处理的时候，对于连接池 是一个很头疼的问题，因为即使Connection类提供了相应的事务支持，可是我们仍然不能确定那个数据库操作是对应那个事务的，这是由于我们有两个线程都在进行事务操作而引起的，为此我们可以使用每一个事物独占一个连接来实现，虽然这种方法有点浪费连接池资源但是可以大大降低事物管理的复杂性。</p>
 <h2 id="group-by-实现原理和过程">group by 实现原理和过程</h2>
 <p>MySQL中group by实现方式有三种，<code>松散索引</code>，<code>紧凑索引</code>，<code>临时文件（文件排序）</code>。<br>
 <code>松散索引</code>：当MySQL完全利用索引扫描来实现 GROUP BY 的时候，并不需要扫描所有满足条件的索引键即可完成操作得出结果。<br>
@@ -995,10 +1020,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
@@ -1007,11 +1028,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
               </li>
              
               <li class="article-tag-list-item">
