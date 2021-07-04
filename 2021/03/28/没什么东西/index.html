@@ -23,7 +23,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210328192146510.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png">
 <meta property="article:published_time" content="2021-03-28T11:43:13.000Z">
-<meta property="article:modified_time" content="2021-07-02T08:59:23.656Z">
+<meta property="article:modified_time" content="2021-07-04T12:55:45.737Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="创建文章">
 <meta name="twitter:card" content="summary">
@@ -734,6 +734,10 @@ CHAR和VARCHAR最大的不同就是一个是固定长度，一个是可变长度
 进程执行的内核栈还是前一个进程的，当前执行流也还是前一个进程的，需要做切换。</p>
 <p>总结：<br>
 进程管理中最重要的一步要进行进程上下文切换，其中主要有两大步骤：<code>地址空间切换</code>和<code>处理器状态切换</code>（硬件上下文切换），前者保证了进程回到用户空间之后能够访问到自己的指令和数据（其中包括减小tlb清空的ASID机制），后者保证了进程内核栈和执行流的切换，会将当前进程的硬件上下文保存在进程所管理的一块内存，然后将即将执行的进程的硬件上下文从内存中恢复到寄存器，有了这两步的切换过程保证了进程运行的有条不紊，当然切换的过程是在内核空间完成，这对于进程来说是透明的。</p>
+<h1>Redis</h1>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Redis里面的惰性删除指的是什么?</span><br><span class="line">删除过期key是定时清理+懒惰删除。</span><br><span class="line">懒惰删除默认是在主线程删除，并释放key内存的。</span><br><span class="line">但在4.0+版本又做了优化，释放key内存可以放到了异步线程中去做了（lazy-free），目的是可以减少主线程释放内存的耗时，提升主线程处理性能。</span><br><span class="line">也就是说4.0之前，懒惰删除就是同步删除。4.0优化后，懒惰删除就是同步删除全局hash表的键值对+子线程程执行释放内存，但需要开启lazy-free配置才生效。</span><br><span class="line"></span><br><span class="line">惰性删除：每次从键空间中获取键时，都检查取得的键是否过期，如果过期的话，就删除该键；如果没有过期，就返回该键。</span><br><span class="line">定期删除：每隔一段时间，程序就对数据库进行一次检查，删除里面的过期键。</span><br></pre></td></tr></table></figure>
+<h3 id="Redis并未使用双向链表实现LRU">Redis并未使用双向链表实现LRU</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Redis整体上是一个大的dict，如果实现一个双向链表需要在每个key上首先增加两个指针，需要16个字节，并且额外需要一个list结构体去存储该双向链表的头尾节点信息。Redis作者认为这样实现不仅内存占用太大，而且可能导致性能降低。</span><br></pre></td></tr></table></figure>
 
       
 
