@@ -23,7 +23,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210328192146510.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png">
 <meta property="article:published_time" content="2021-03-28T11:43:13.000Z">
-<meta property="article:modified_time" content="2021-07-09T08:24:19.285Z">
+<meta property="article:modified_time" content="2021-07-09T09:04:25.874Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="创建文章">
 <meta name="twitter:card" content="summary">
@@ -214,6 +214,12 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">super</span>.clone();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>深拷贝</code>：在对引用数据类型进行拷贝的时候，创建了一个新的对象，并且复制其内的成员变量。<br>
 实现方式：重写clone()方法和序列法。</p>
+<h3 id="throw-和-throws-的区别">throw 和 throws 的区别</h3>
+<p>1）throws 关键字用于声明异常，它的作用和 try-catch 相似；而 throw 关键字用于显式的抛出异常。<br>
+2）throws 关键字后面跟的是异常的名字；而 throw 关键字后面跟的是异常的对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">throws</span> ArithmeticException;</span><br><span class="line"><span class="keyword">throw</span> <span class="keyword">new</span> ArithmeticException(<span class="string">&quot;算术异常&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>3）throws 关键字出现在方法签名上，而 throw 关键字出现在方法体里。<br>
+4）throws 关键字在声明异常的时候可以跟多个，用逗号隔开；而 throw 关键字每次只能抛出一个异常。</p>
 <h3 id="Java序列化和反序列化">Java序列化和反序列化</h3>
 <p>Java序列化是指把Java对象转换为字节序列的过程；而Java反序列化是指把字节序列恢复为Java对象的过程。<br>
 <strong>为什么需要序列化与反序列化</strong><br>
@@ -1115,11 +1121,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1147,11 +1153,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
