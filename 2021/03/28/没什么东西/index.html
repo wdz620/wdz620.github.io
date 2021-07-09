@@ -23,7 +23,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210328192146510.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png">
 <meta property="article:published_time" content="2021-03-28T11:43:13.000Z">
-<meta property="article:modified_time" content="2021-07-07T09:08:49.958Z">
+<meta property="article:modified_time" content="2021-07-09T08:24:19.285Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="创建文章">
 <meta name="twitter:card" content="summary">
@@ -322,6 +322,17 @@ O(1)就是最低的时空复杂度了，也就是耗时/耗空间与输入数据
 <p>synchronized 通过 Monitor 来实现线程同步，Monitor 是依赖于底层的操作系统的 Mutex Lock 来实现的线程同步。而 Monitor 又会根据对象头中的 Mark Word 判断该对象的锁状态，Mark Word 里面保存了当前对象的 HashCode，锁状态，锁标记，以及 GC 年龄。</p>
 <h3 id="为什么有了锁状态还要有一个锁标记">为什么有了锁状态还要有一个锁标记</h3>
 <p>锁状态占有 2 个 bit，按照排列组合最多能够表示 4 种状态，其中00，01，10，11分别代表轻量级锁、无锁/偏向锁、重量级锁、GC标记。我们还需要标识是否为偏向锁，所以需要一个辅助字段来标识，加上锁标记的 1 bit，刚好能够标识所有的锁状态。</p>
+<h3 id="sleep、yield、wait、join的区别">sleep、yield、wait、join的区别</h3>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/aspirant/p/8876670.html">sleep、yield、wait、join的区别</a></p>
+</blockquote>
+<p>sleep(long mills)：让出CPU资源，但是不会释放锁资源。<br>
+wait()：让出CPU资源和锁资源。<br>
+sleep与Wait的区别：sleep是线程方法，wait是object方法；<br>
+sleep ，释放cpu资源，不释放锁资源，如果线程进入sleep的话，释放cpu资源，如果外层包有Synchronize，那么此锁并没有释放掉。<br>
+wait，释放cpu资源，也释放锁资源，一般用于锁机制中 肯定是要释放掉锁的，因为notify并不会立即调起此线程，因此cpu是不会为其分配时间片的，也就是说wait 线程进入等待池，cpu不分时间片给它，锁释放掉。</p>
+<p>yield：让出CPU调度，Thread类的方法，类似sleep只是不能由用户指定暂停多长时间 ，并且yield()方法只能让同优先级的线程有执行的机会。 yield()只是使当前线程重新回到可执行状态，所以执行yield()的线程有可能在进入到可执行状态后马上又被执行。调用yield方法只是一个建议，告诉线程调度器我的工作已经做的差不多了，可以让别的相同优先级的线程使用CPU了，没有任何机制保证采纳。</p>
+<p>join：一种特殊的wait，当前运行线程调用另一个线程的join方法，当前线程进入阻塞状态直到另一个线程运行结束等待该线程终止。 注意该方法也需要捕捉异常。</p>
 <h3 id="两个Integer类型如何比较">两个Integer类型如何比较</h3>
 <p>==是比较基本数据类型是比较值，比较引用类型是比较地址；equals比较引用类型是比较值。<br>
 int与int比较，直接使用==比较<br>
@@ -530,6 +541,26 @@ InnoDB使用的是聚簇索引，InnoDB之所以可以锁行，是因为Innodb�
 <p>主键最好选择自增id，因为一张表的主键就是一个聚簇索引，而聚簇索引的数据结构是B+树，为了保证叶子节点的顺序，如果采用自增id就能减少一些修改，比如随机id或者uuid，再加入新的元素时，需要对已有链表进行排序，找到属于自己的位置，然后进行修改，可能会出现页分裂的问题。<br>
 主键的无序和有序对数据库还是有影响的，假如再无序情况下，假如要加入的元素小于叶子中存储的最大元素，就要去整个叶子节点的双向链表中去遍历，去查找出它的位置，然后对已有链表进行调整，可能出现页分裂的问题。<br>
 <img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/1FF89677EDF103456F5BD07DF4A400EF" alt="图片说明"></p>
+<h2 id="自增主键用完了怎么办？">自增主键用完了怎么办？</h2>
+<p>int 的范围： 有符号 -2147483648 ~ 2147483648； 有符号0 ~ 4294967295。<br>
+此时用完了之后再插入就会报主键冲突错误！ 解决办法<code>将int改成bigint</code>。数据非常大，就算每条1w条，100年也用不完！！</p>
+<blockquote>
+<p>那么怎么在线修改呢？</p>
+</blockquote>
+<ul>
+<li><code>方式一</code>直接ALTER，不支持DML操作！也就是说，如果直接使用ALTER在线修改数据表，将导致这张表无法进行更新类操作(DELETE、UPDATE、DELETE)</li>
+<li><code>方式二</code>借助第三方工具，能够在执行ALTER操作的时候，表不会阻塞！pt-online-shcema-change和gh-ost。 大致原理：
+<ul>
+<li>1、创建一个新的表，表结构为修改后的数据表，用于从源数据表向新表导入数据。</li>
+<li>2、创建触发器，用于记录从拷贝数据开始之后，对源数据表继续进行数据修改的操作记录下来，用于数据拷贝结束后，执行这些操作，保证数据不会丢失。</li>
+<li>3、拷贝数据，从源数据表中拷贝数据到新表中。</li>
+<li>4、rename源数据表为old表，把新表rename为源表名，并将old表删除。</li>
+<li>5、删除触发器。<br>
+缺点：如果在表中存在触发器和外键，那么这两个工具GG</li>
+</ul>
+</li>
+<li><code>方式三</code>改从库表结构，然后主从切换。唯一需要注意的是，主从切换过程中可能会有数据丢失的情况！</li>
+</ul>
 <h2 id="什么是聚簇索引？">什么是聚簇索引？</h2>
 <p>聚簇索引就是按照每张表的主键构造一棵B+树，同时叶子节点中存放的即为整张表的行记录信息，也将聚簇索引的叶子节点称为数据页。每个数据页都通过一个双向链表来进行链接。聚簇索引的存储并不是物理上连续的，而是逻辑上连续的。这其中有两点：一是前面说过的页通过双向链表链接，页按照主键的顺序排序；另一点就是每个页的记录也是通过双向链表进行维护的。</p>
 <h3 id="聚簇索引优缺点">聚簇索引优缺点</h3>
@@ -723,6 +754,39 @@ CHAR和VARCHAR最大的不同就是一个是固定长度，一个是可变长度
 <p>HTTP缓存分为强制缓存和对比缓存。</p>
 <p>其中强制缓存有两个字段来标明失效规则：<code>Expires/Cache-Control</code>。浏览器直接读本地缓存，不会再跟服务器端交互，状态码 200。<br>
 对比缓存就是通过<code>Last-Modified / If-Modified-Since</code>和<code>Etag  /  If-None-Match（优先级高于Last-Modified  /  If-Modified-Since）</code>每次请求需要让服务器判断一下资源是否更新过，从而决定浏览器是否使用缓存，如果是，则返回304，否则重新完整响应。</p>
+<h2 id="什么是RESTful">什么是RESTful</h2>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://toutiao.io/posts/in4tvcz/preview">什么是 RESTful ？</a></p>
+</blockquote>
+<p>一种结构清晰、符合标准、易于理解、扩展方便让大部分人都能够理解接受的接口风格,RESTful API 就是满足REST架构风格的接口。<br>
+<code>几大特征：</code></p>
+<ul>
+<li>以资源为基础：资源可以是一个图片、音乐、一个XML格式、HTML格式或者JSON格式等网络上的一个实体，除了一些二进制的资源外普通的文本资源更多以JSON为载体、面向用户的一组数据(通常从数据库中查询而得到)。</li>
+<li>统一接口: 对资源的操作包括获取、创建、修改和删除，这些操作正好对应HTTP协议提供的GET、POST、PUT和DELETE方法。</li>
+<li>URI指向资源：URI = Universal Resource Identifier 统一资源标志符，用来标识抽象或物理资源的一个紧凑字符串。URI包括URL和URN，在这里更多时候可能代指URL(统一资源定位符)。RESTful是面向资源的，每种资源可能由一个或多个URI对应，但一个URI只指向一种资源。</li>
+<li>无状态：服务器不能保存客户端的信息， 每一次从客户端发送的请求中，要包含所有必须的状态信息，会话信息由客户端保存， 服务器端根据这些状态信息来处理请求。当客户端可以切换到一个新状态的时候发送请求信息， 当一个或者多个请求被发送之后, 客户端就处于一个状态变迁过程中。每一个应用的状态描述可以被客户端用来初始化下一次的状态变迁。</li>
+</ul>
+<p><code>REST架构限制条件</code><br>
+标准的REST约束应满足以下6个原则：</p>
+<ul>
+<li>客户端-服务端（Client-Server）: 这个更专注客户端和服务端的分离，服务端独立可更好服务于前端、安卓、IOS等客户端设备。</li>
+<li>无状态（Stateless）：服务端不保存客户端状态，客户端保存状态信息每次请求携带状态信息。</li>
+<li>可缓存性（Cacheability） ：服务端需回复是否可以缓存以让客户端甄别是否缓存提高效率。</li>
+<li>统一接口（Uniform Interface）：通过一定原则设计接口降低耦合，简化系统架构，这是RESTful设计的基本出发点。当然这个内容除了上述特点提到部分具体内容比较多详细了解可以参考这篇REST论文内容</li>
+<li>分层系统（Layered System）：客户端无法直接知道连接的到终端还是中间设备，分层允许你灵活的部署服务端项目。</li>
+<li>按需代码（Code-On-Demand，可选）：按需代码允许我们灵活的发送一些看似特殊的代码给客户端例如JavaScript代码。</li>
+</ul>
+<p><code>对于RESTful API的URL具体设计的规范如下：</code></p>
+<ul>
+<li>不用大写字母，所有单词使用英文且小写。</li>
+<li>连字符用中杠<code>&quot;-&quot;</code>而不用下杠<code>&quot;_&quot;</code></li>
+<li>正确使用 <code>&quot;/&quot;</code>表示层级关系,URL的层级不要过深，并且越靠前的层级应该相对越稳定</li>
+<li>URL中不出现动词，用请求方式表示动作</li>
+<li>资源表示用复数不要用单数</li>
+<li>不要使用文件扩展名</li>
+</ul>
+<p><code>状态码和返回数据</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1xx：相关信息  2xx：操作成功  3xx：重定向  4xx：客户端错误  5xx：服务器错误</span><br><span class="line">200 OK - [GET]：服务器成功返回用户请求的数据，该操作是幂等的（Idempotent）。</span><br><span class="line">201 CREATED - [POST&#x2F;PUT&#x2F;PATCH]：用户新建或修改数据成功。</span><br><span class="line">202 Accepted - [*]：表示一个请求已经进入后台排队（异步任务）</span><br><span class="line">204 NO CONTENT - [DELETE]：用户删除数据成功。</span><br><span class="line">400 INVALID REQUEST - [POST&#x2F;PUT&#x2F;PATCH]：用户发出的请求有错误，服务器没有进行新建或修改数据的操作，该操作是幂等的。</span><br><span class="line">401 Unauthorized - [*]：表示用户没有权限（令牌、用户名、密码错误）。</span><br><span class="line">403 Forbidden - [*] 表示用户得到授权（与401错误相对），但是访问是被禁止的。</span><br><span class="line">404 NOT FOUND - [*]：用户发出的请求针对的是不存在的记录，服务器没有进行操作，该操作是幂等的。</span><br><span class="line">406 Not Acceptable - [GET]：用户请求的格式不可得（比如用户请求JSON格式，但是只有XML格式）。</span><br><span class="line">410 Gone -[GET]：用户请求的资源被永久删除，且不会再得到的。</span><br><span class="line">422 Unprocesable entity - [POST&#x2F;PUT&#x2F;PATCH] 当创建一个对象时，发生一个验证错误。</span><br><span class="line">500 INTERNAL SERVER ERROR - [*]：服务器发生错误，用户将无法判断发出的请求是否成功。</span><br></pre></td></tr></table></figure>
 <h2 id="TCP-的-Keepalive-和-HTTP-的-Keep-Alive-是一个东西吗？">TCP 的 Keepalive 和 HTTP 的 Keep-Alive 是一个东西吗？</h2>
 <p>HTTP 的 Keep-Alive 也叫 HTTP 长连接，该功能是由「应用程序」实现的，可以使得用同一个 TCP 连接来发送和接收多个 HTTP 请求/应答，减少了 HTTP 短连接带来的多次 TCP 连接建立和释放的开销。<br>
 TCP 的 Keepalive 也叫 TCP 保活机制，该功能是由「内核」实现的，当客户端和服务端长达一定时间没有进行数据交互时，内核为了确保该连接是否还有效，就会发送探测报文，来检测对方是否还在线，然后来决定是否要关闭该连接。</p>
@@ -1039,11 +1103,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1056,6 +1120,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">SpringBoot</a>
               </li>
              
               <li class="article-tag-list-item">

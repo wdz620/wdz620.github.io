@@ -16,7 +16,7 @@
 <meta property="og:description" content="封装 介绍 lombok相关 继承 多态">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-16T02:40:53.000Z">
-<meta property="article:modified_time" content="2021-04-26T02:52:51.332Z">
+<meta property="article:modified_time" content="2021-07-08T08:46:21.119Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Java基础">
 <meta name="twitter:card" content="summary">
@@ -180,10 +180,10 @@ lombok相关</li>
 <blockquote>
 <p>封装</p>
 </blockquote>
-<p>封装是指一种将抽象性函式接口的实现细节部分封装、隐藏起来的方法，封装可以被看作是一个保护屏障，防止该类的代码和数据被外部定义的代码随机进行访问。<strong>封装的目的</strong>就是为了增强安全性和简化编程，使用者不必去了解具体的实现细节而只是通过外部接口去使用类的成员。**封装的基本要求：**把所有的属性私有化，对每个属性提供getter和setter方法，如果有一个带参的构造函数的话，那就必须要写一个不带参数的构造函数，而且大部分情况还要重写toString方法，方便测试。</p>
+<p>封装是指一种将抽象性函式接口的实现细节部分封装、隐藏起来的方法，封装可以被看作是一个保护屏障，防止该类的代码和数据被外部定义的代码随机进行访问。<code>封装的目的</code>就是为了增强安全性和简化编程，使用者不必去了解具体的实现细节而只是通过外部接口去使用类的成员。<code>封装的基本要求</code>把所有的属性私有化，对每个属性提供getter和setter方法，如果有一个带参的构造函数的话，那就必须要写一个不带参数的构造函数，而且大部分情况还要重写toString方法，方便测试。</p>
 <p>在开发中有个神奇，lombok插件。下面进行简单的介绍。<br>
 首先进行安装：因为我使用的是idea，首先需要在Plugins中安装lombok，然后引入maven依赖。<br>
-<em>为什么maven中加入lombok依赖后，还需要安装插件？</em><br>
+<code>为什么maven中加入lombok依赖后，还需要安装插件？</code><br>
 因为lombok的引入使得java文件使用javac编译成字节码文件中包含get set函数,但是源代码中找不到定义，IDE会认为这是错误，因此需要安装一个lombok的插件。<br>
 常用注解：</p>
 <ul>
@@ -198,23 +198,24 @@ lombok相关</li>
 1、javac对源代码进行分析，生成了一棵抽象语法树（AST）<br>
 2、运行过程中调用实现了“JSR 269 API”的Lombok程序<br>
 3、此时Lombok就对第一步骤得到的AST进行处理，找到@Data注解所在类对应的语法树（AST），然后修改该语法树（AST），增加getter和setter方法定义的相应树节点<br>
-4、javac使用修改后的抽象语法树（AST）生成字节码文件，即给class增加新的节点（代码块）<br>
-封装指的就是将属性私有化，但是需要提供必要的setter和getter方法来访问其中的属性</p>
+4、javac使用修改后的抽象语法树（AST）生成字节码文件，即给class增加新的节点（代码块）封装指的就是将属性私有化，但是需要提供必要的setter和getter方法来访问其中的属性</p>
 <p>Lombok优缺点：<br>
-优点：1、能通过注解的形式自动生成构造器、getter和setter等方法，提升开发效率。2、代码简洁、不用关注相应的方法，同时也简化了修改属性时重写相应方法的，方便维护。<br>
-缺点：1、不支持多种参数构造器的重载。2、虽然省去了手动创建getter和setter方法，但是也同时减低了源代码的可读性和完整。</p>
-<p><em>扩展问题：通过lombok可以添加相应的set和get方法，但是需要运行环境安装lombok插件，如果将来程序在Linux系统中发布，是否也需要提前安装lombok插件呢？</em><br>
-不需要，LOM插件在编译期生效。 IDE工具将.java文件 编译为.class文件时,lombok插件开始工作.。为.class文件动态拼接get/set/toString等方法.所以当程序在Linux中运行时. xxxx.jar 项目 (.class)文件. 可以直接运行.和lombok是否安装无关。</p>
+<code>优点</code>1、能通过注解的形式自动生成构造器、getter和setter等方法，提升开发效率。2、代码简洁、不用关注相应的方法，同时也简化了修改属性时重写相应方法的，方便维护。<br>
+<code>缺点</code>1、不支持多种参数构造器的重载。2、虽然省去了手动创建getter和setter方法，但是也同时减低了源代码的可读性和完整。</p>
+<p><code>扩展问题：通过lombok可以添加相应的set和get方法，但是需要运行环境安装lombok插件，如果将来程序在Linux系统中发布，是否也需要提前安装lombok插件呢？</code><br>
+不需要，LOM插件在编译期生效。 IDE工具将.java文件 编译为.class文件时,lombok插件开始工作。为.class文件动态拼接get/set/toString等方法.所以当程序在Linux中运行时. xxxx.jar 项目 (.class)文件. 可以直接运行和lombok是否安装无关。</p>
 <p>回归正题：<br>
-封装的优点：便于使用、提高可用性、提高安全性。缺点：将变量等使用private修饰，或者封装锦方法内，使其不能直接被访问，增加了访问步骤与难度。</p>
+封装的优点：便于使用、提高可用性、提高安全性。<br>
+缺点：将变量等使用private修饰，或者封装锦方法内，使其不能直接被访问，增加了访问步骤与难度。</p>
 <blockquote>
 <p>继承</p>
 </blockquote>
-<p>继承关键字：<em>extends</em><br>
-继承是指将多个相同的属性和方法提取出来，新建一个父类。从而在多个类中不需要重复定义公共部分！这个公共部分就是父类，也可以称为超类或者基类，其他的类就被称为子类。Java中一个类只能继承一个父类，且只能继承访问权限非private的属性和方法。子类可以重写父类中的方法，命名与父类中同名的属性。继承的特点：1、子类比父类更强大。2、Java是单继承，不能进行多继承，但是可以继承多层子类（一般不建议超过三层）3、子类继承父类，但是对父类的成员变量是无法直接操作的，只能通过父类继承过来的setter和getter方法。<br>
-继承的目的：代码复用<br>
-优点：减少代码量、很好的提高复用率，使类与类之间存在继承关系，是实现多态操作的前提。<br>
-缺点：继承使得多个类之间育有了子父类关系，当一个类存在多个子类的时候，如果父类发生变化，那么这些子类会跟着一同变化，造成类之间的“强耦合”关系。</p>
+<p>继承关键字：<code>extends</code><br>
+继承是指将多个相同的属性和方法提取出来，新建一个父类。从而在多个类中不需要重复定义公共部分！这个公共部分就是父类，也可以称为超类或者基类，其他的类就被称为子类。<code>Java中一个类只能继承一个父类，且只能继承访问权限非private的属性和方法。</code>子类可以重写父类中的方法，命名与父类中同名的属性。</p>
+<p><code>继承的特点</code>1、子类比父类更强大。2、Java是单继承，不能进行多继承，但是可以继承多层子类（一般不建议超过三层）3、子类继承父类，但是对父类的成员变量是无法直接操作的，只能通过父类继承过来的setter和getter方法。</p>
+<p><code>继承的目的</code>代码复用</p>
+<p><code>优点</code>减少代码量、很好的提高复用率，使类与类之间存在继承关系，是实现多态操作的前提。<br>
+<code>缺点</code>继承使得多个类之间育有了子父类关系，当一个类存在多个子类的时候，如果父类发生变化，那么这些子类会跟着一同变化，造成类之间的“强耦合”关系。</p>
 <blockquote>
 <p>多态</p>
 </blockquote>
@@ -551,11 +552,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -568,6 +569,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">SpringBoot</a>
               </li>
              
               <li class="article-tag-list-item">
