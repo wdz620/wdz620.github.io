@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>ConcurrentHashMap学习 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="学习技术针对是一门任重道远的，也是一场长久赛，而不是即时的满足，需要你不断的重复、重复、重复。终有一刻， 你会到达哪里。我们要做的就是耐心等待，保持自我，坚守本心。那么美梦终将成真，希望如此吧。 通过之前的学习，知道了HashMap的一些特性，知道它并非是线程安全的，接下来学习一下ConcurrentHashMap。">
+  <meta name="description" content="学习技术真的是一门任重道远的，也是一场长久赛，而不是即时的满足，需要你不断的重复、重复、重复。终有一刻， 你会到达哪里。我们要做的就是耐心等待，保持自我，坚守本心。那么美梦终将成真，希望如此吧。 通过之前的学习，知道了HashMap的一些特性，知道它并非是线程安全的（在resize将导致数据丢失）接下来学习一下ConcurrentHashMap。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ConcurrentHashMap学习">
 <meta property="og:url" content="http://example.com/2021/04/04/ConcurrentHashMap%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="学习技术针对是一门任重道远的，也是一场长久赛，而不是即时的满足，需要你不断的重复、重复、重复。终有一刻， 你会到达哪里。我们要做的就是耐心等待，保持自我，坚守本心。那么美梦终将成真，希望如此吧。 通过之前的学习，知道了HashMap的一些特性，知道它并非是线程安全的，接下来学习一下ConcurrentHashMap。">
+<meta property="og:description" content="学习技术真的是一门任重道远的，也是一场长久赛，而不是即时的满足，需要你不断的重复、重复、重复。终有一刻， 你会到达哪里。我们要做的就是耐心等待，保持自我，坚守本心。那么美梦终将成真，希望如此吧。 通过之前的学习，知道了HashMap的一些特性，知道它并非是线程安全的（在resize将导致数据丢失）接下来学习一下ConcurrentHashMap。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRWdFd0hIQ0NKQjIzeTk0RTBQUzJ3QW96NEJhSWVYbGZKeGVVOEllNXhrQW51REo2Nlo2S3ZXUS82NDA?x-oss-process=image/format,png">
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sYUVtaWJIRnhGdzRXaWM3QTRtQW8wUjZFaWNyRHQ3c1NwRXg5RjhtMUllR2liYlM0MGlhV2t4a2liZGVZeXQzQ1N0bGtQcTdGVlFZNGJ6dDdNZnBxQ0hUQmxLQS82NDA?x-oss-process=image/format,png">
 <meta property="article:published_time" content="2021-04-04T02:35:56.000Z">
-<meta property="article:modified_time" content="2021-07-07T08:08:52.648Z">
+<meta property="article:modified_time" content="2021-07-10T14:20:13.520Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Java集合">
 <meta name="twitter:card" content="summary">
@@ -172,24 +172,35 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>学习技术针对是一门任重道远的，也是一场长久赛，而不是即时的满足，需要你不断的重复、重复、重复。终有一刻， 你会到达哪里。我们要做的就是耐心等待，保持自我，坚守本心。那么美梦终将成真，希望如此吧。<br>
-通过之前的学习，知道了HashMap的一些特性，知道它并非是线程安全的，接下来学习一下ConcurrentHashMap。</p>
+        <p>学习技术真的是一门任重道远的，也是一场长久赛，而不是即时的满足，需要你不断的重复、重复、重复。终有一刻， 你会到达哪里。我们要做的就是耐心等待，保持自我，坚守本心。那么美梦终将成真，希望如此吧。<br>
+通过之前的学习，知道了HashMap的一些特性，知道它并非是线程安全的（在resize将导致数据丢失）接下来学习一下ConcurrentHashMap。</p>
 <a id="more"></a>
 <p>首先还是来复习一下，如何才能保证HashMap线程安全的几种方式？</p>
 <h3 id="如何保证HashMap线程安全？">如何保证HashMap线程安全？</h3>
 <p>我们都知道HashMap不是线程安全的，一般有三个方式能替换原生的线程不安全的<code>hashMap</code><br>
 1、使用 java.util.Collections 类的 synchronizedMap 方法包装一下 HashMap，得到线程安全的 HashMap，其原理就是对所有的修改操作都加上 synchronized。方法如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;K,V&gt; <span class="function">Map&lt;K,V&gt; <span class="title">synchronizedMap</span><span class="params">(Map&lt;K,V&gt; m)</span> </span></span><br></pre></td></tr></table></figure>
-<p>2、使用线程安全的 Hashtable 类代替，该类在对数据操作的时候都会上锁，也就是加上 synchronized<br>
+<p>2、使用线程安全的 HashTable 类代替，该类在对数据操作的时候都会上锁，也就是加上 synchronized<br>
 3、使用线程安全的 ConcurrentHashMap 类代替，该类在 JDK 1.7 和 JDK 1.8 的底层原理有所不同，JDK 1.7 采用数组 + 链表存储数据，使用分段锁 Segment 保证线程安全；JDK 1.8 采用数组 + 链表/红黑树存储数据，使用 CAS + synchronized 保证线程安全。</p>
 <p>不过前两者的线程并发度并不高，容易发生大规模阻塞，所以一般使用的都是 ConcurrentHashMap，他的性能和效率明显高于前两者。</p>
 <h3 id="volatile">volatile</h3>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/111713858?spm=1001.2014.3001.5501">TODO</a></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/111713858?spm=1001.2014.3001.5501">打工人</a></p>
+</blockquote>
+<p>volatile：</p>
+<ul>
+<li>1、<code>保证可见性</code> Happens-before 关系中对于 volatile 是这样描述的：对一个 volatile 变量的写操作 happen-before 后面对该变量的读操作。这就代表了如果变量被 volatile 修饰，那么每次修改之后，接下来在读取这个变量的时候一定能读取到该变量最新的值。</li>
+<li>2、<code>不保证原子性</code> 从Load到store到内存屏障，一共4步，其中最后一步jvm让这个最新的变量的值在所有线程可见，也就是最后一步让所有的CPU内核都获得了最新的值，但中间的几步（从Load到Store）是不安全的，中间如果其他的CPU修改了值将会丢失。所以volatile不能保证i++操作的原子性</li>
+<li>3、<code>禁止指令重排</code> 先介绍一下 as-if-serial 语义：不管怎么重排序，（单线程）程序的执行结果不会改变。在满足 as-if-serial 语义的前提下，由于编译器或 CPU 的优化，代码的实际执行顺序可能与我们编写的顺序是不同的，这在单线程的情况下是没问题的，但是一旦引入多线程，这种乱序就可能会导致严重的线程安全问题。用了 volatile 关键字就可以在一定程度上禁止这种重排序。</li>
+</ul>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1687484">如何实现可见性</a>volatile实现内存可见性是通过store和load指令完成的；也就是对volatile变量执行写操作时，会在写操作后加入一条store指令，即强迫线程将最新的值刷新到主内存中；而在读操作时，会加入一条load指令，即强迫从主内存中读入变量的值。</p>
+</blockquote>
 <h3 id="synchronized">synchronized</h3>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/111713858?spm=1001.2014.3001.5501">TODO</a></p>
 <h2 id="ConcurrentHashMap">ConcurrentHashMap</h2>
 <blockquote>
-<p>主要通过学习<a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/104586114/">singwhatiwanna</a>  整理。(仅供自己学习使用)</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/104586114/">singwhatiwanna</a></p>
 </blockquote>
 <h3 id="JDK1-7">JDK1.7</h3>
 <p>ConcurrentHashMap类所采用的方法就是分段锁的思想，将HashMap进行切割，把HashMap中的哈希数组切分成小数组，每个小数组由n个HashEntry组成，其中小数组继承字ReentrantLock(可重入锁)，这个小数组名叫Segment，如图：<br>
@@ -202,7 +213,7 @@
 ConcurrentHashMap 中 <code>synchronized 只锁定当前链表或红黑二叉树的首节点</code>，只要节点 hash 不冲突，就不会产生并发，相比 JDK1.7 的 ConcurrentHashMap 效率又提升了 N 倍！</p>
 <h2 id="JDK1-7和JDK1-8源码分析">JDK1.7和JDK1.8源码分析</h2>
 <blockquote>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/singwhatiwanna/article/details/104586114/">学习链接1</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hello-shf/p/12183263.html">源码解析</a></p>
 </blockquote>
 <h2 id="put方法">put方法</h2>
 <p>先看总结，再看源码。</p>
@@ -216,7 +227,10 @@ ConcurrentHashMap 中 <code>synchronized 只锁定当前链表或红黑二叉树
 但是 JDK1.7 中，HashMap 容易因为冲突链表过长，造成查询效率低，所以在 JDK1.8 中，HashMap 引入了红黑树特性，当冲突链表长度大于 8 时，会将链表转化成红黑二叉树结构。</p>
 <p>在 JDK1.8 中，与此对应的 ConcurrentHashMap 也是采用了与 HashMap 类似的存储结构，但是 JDK1.8 中 ConcurrentHashMap 并没有采用分段锁的策略，而是在元素的节点上采用 <code>CAS + synchronized </code>操作来保证并发的安全性，源码的实现比 JDK1.7 要复杂的多。</p>
 <h4 id="CAS补充">CAS补充</h4>
-<p>在CAS中有三个值，内存中的值V，旧的预期值A，还有一个新的值B，首先就是去判断A是否等于V，如果相等就将B赋值给内存，如果不相等就什么也不做。CAS的问题就是 ABA 和自旋占用资源的问题。 其中ABA可以使用一个版本号去解决，从Java1.5开始JDK的atomic包里提供了一个类AtomicStampedReference来解决ABA问题。这个类的compareAndSet方法作用是首先检查当前引用是否等于预期引用，并且当前标志是否等于预期标志，如果全部相等，则以原子方式将该引用和该标志的值设置为给定的更新值。那么它是怎么保证原子性的呢？主要是通过调用unsafe类中的CAS，那个方法好像是compareAndSwapInt，它是一个native方法，在操作系统的层面上实现原子性。第二个问题自旋的解决办法：如果JVM能支持处理器提供的pause指令那么效率会有一定的提升，pause指令有两个作用，第一它可以延迟流水线执行指令（de-pipeline）,使CPU不会消耗过多的执行资源，延迟的时间取决于具体实现的版本，在一些处理器上延迟时间是零。第二它可以避免在退出循环的时候因内存顺序冲突（memory order violation）而引起CPU流水线被清空（CPU pipeline flush），从而提高CPU的执行效率。</p>
+<p>在CAS中有三个值，内存中的值V，旧的预期值A，还有一个新的值B，首先就是去判断A是否等于V，如果相等就将B赋值给内存，如果不相等就什么也不做。<br>
+CAS的问题就是 <code>ABA</code> 和<code>自旋占用资源</code>的问题。<br>
+其中ABA可以使用一个版本号去解决，从Java1.5开始JDK的atomic包里提供了一个类AtomicStampedReference来解决ABA问题。这个类的compareAndSet方法作用是首先检查当前引用是否等于预期引用，并且当前标志是否等于预期标志，如果全部相等，则以<code>原子方式</code>将该引用和该标志的值设置为给定的更新值。那么它是怎么保证原子性的呢？主要是通过调用unsafe类中的CAS，那个方法好像是compareAndSwapInt，它是一个native方法，在操作系统的层面上实现原子性。<br>
+第二个问题自旋的解决办法：如果JVM能支持处理器提供的pause指令那么效率会有一定的提升，pause指令有两个作用，第一它可以延迟流水线执行指令（de-pipeline）,使CPU不会消耗过多的执行资源，延迟的时间取决于具体实现的版本，在一些处理器上延迟时间是零。第二它可以避免在退出循环的时候因内存顺序冲突（memory order violation）而引起CPU流水线被清空（CPU pipeline flush），从而提高CPU的执行效率。</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
@@ -472,15 +486,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -500,11 +514,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
