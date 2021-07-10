@@ -15,11 +15,16 @@
 <meta property="og:site_name" content="无雨无晴">
 <meta property="og:description" content="主要通过学习《Java并发编程的艺术》">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210710222636882.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210710231641548.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210710231938099.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210710232043310.png">
 <meta property="article:published_time" content="2021-07-06T08:49:02.000Z">
-<meta property="article:modified_time" content="2021-07-08T09:13:46.051Z">
+<meta property="article:modified_time" content="2021-07-10T15:26:36.655Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Java并发">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210710222636882.png">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -176,7 +181,43 @@
 <p>好处：<br>
 第一：降低资源消耗。通过重复利用已创建的线程降低线程创建和销毁造成的消耗。<br>
 第二：提高响应速度。当任务到达时，任务可以不需要等到线程创建就能立即执行。<br>
-第三：提高线程的可管理性。线程是稀缺资源，如果无限制的创建，不仅会消耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一的分配，调优和监控</p>
+第三：提高线程的可管理性。线程是稀缺资源，如果无限制的创建，不仅会消耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一的分配，调优和监控。</p>
+<h2 id="线程池的主要处理流程">线程池的主要处理流程</h2>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210710222636882.png" alt="image-20210710222636882"></p>
+<p>ThreadPoolExecutor执行execute方法分以下四种情况：</p>
+<ul>
+<li>如果当前运行的线程少于corePoolSize。则创建新线程来执行任务(注意，执行这一个步骤需要获取<code>全局锁</code>)。</li>
+<li>如果运行的线程等于或多于corePoolSize，则将任务加入BlockingQueue。</li>
+<li>如果无法将任务加入BlockingQueue(队列已满)，则创建新的线程来处理任务。(注意，执行这一个步骤需要获取<code>全局锁</code>)。</li>
+<li>如果创建新线程将使当前运行的线程超出maximumPoolSize。任务将被拒绝，并调用RejectExecutionHandler.rejectExecution()方法.</li>
+</ul>
+<h2 id="线程池的使用">线程池的使用</h2>
+<p>我们一般通过<code>ThreadPoolExecutor</code>来创建一个线程池。</p>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210710231641548.png" alt="image-20210710231641548"></p>
+<p><code>new ThreadPoolExecutor(corePoolSize, maximuxPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler)</code></p>
+<ul>
+<li><code>corePoolSize</code>（线程池的基本大小）当提交一个任务到线程池时，线程池会创建一个线程来执行任务，即使其他空闲的基本线程能够执行新任务也会创建线程，等到需要执行的任务数大于线程池基本大小时就不再创建。</li>
+<li><code>maximuxPoolSize</code>（线程池最大数量）如果队列满了，并且已创建的线程数小于最大线程数，则线程池会再创建新的线程执行任务。</li>
+<li><code>keepAliveTime</code>（线程活动保持时间）线程池的工作线程空闲后，保持存活的时间。所以，如果任务很多，并且每个人物执行的时间比较短，可以调大时间，提高线程的利用率。</li>
+<li><code>unit</code>（线程活动保存时间的单位）</li>
+<li><code>workQueue</code>（任务队列）用于保存等待执行的任务的阻塞队列。
+<ul>
+<li>ArrayBlockingQueue一个基于数组结构的有界阻塞队列，此队列按FIFO原则对元素进行排序。</li>
+<li>LinkedBlockingQueue一个基于链表结构的阻塞队列，此队列也按照FIFO原则，吞吐量要高于ArrayBlockingQueue。</li>
+<li>SynchronousQueue一个不存储元素的阻塞队列。每个插入操作必须等到另一个线程调用移除操作。否则插入操作一直处于阻塞状态，吞吐量通常高于LinkedBlockingQueue。</li>
+<li>PriorityBlockingQueue一个具有优先级的无线阻塞队列。</li>
+</ul>
+</li>
+<li><code>threadFactory</code>用于设置线程的工厂。</li>
+<li><code>handler</code>（饱和策略）当队列和线程池都满了，说明线程池处于饱和状态，那么必须采取一种策略处理提交的新任务。默认情况下是<code>AbortPolicy</code>表示无法处理新任务时抛出异常。
+<ul>
+<li><code>AbortPolicy</code> 直接抛出异常。</li>
+<li><code>CallerRunsPolicy</code> 只用调用者所在线程来运行任务。</li>
+<li><code>DiscardOldestPolicy</code> 丢弃队列里最近的一个任务，并执行当前任务。</li>
+<li><code>DiscardPolicy</code> 不处理，丢弃掉。</li>
+</ul>
+</li>
+</ul>
 <h2 id="常用线程池">常用线程池</h2>
 <p>Java中有三个比较常用的线程池，分别是FixedThreadPool，SingleThreadExecutor，CachedThreadPool。</p>
 <ol>
@@ -193,6 +234,71 @@
 一看到Cache就知道这是一个和缓存有关的线程池，每次有任务提交到线程池的时候，如果池中没有空闲的线程，线程池就会为这个任务创建一个线程，如果有空闲的线程，就会使用已有的空闲线程执行任务。有的人可能会有个疑惑：这样线程不就越来越多了吗？其实不是的，这个线程池还有一个销毁机制，如果一个线程60秒之内没有被使用过，这个线程就会被销毁，这样就节省了很多资源。CachedThreadPool是一个比较通用的线程池，它在多数情况下都能表现出优良的性能。以后编码的时候，遇事不决，用缓存（线程池）。</p>
 </li>
 </ol>
+<h2 id="线程池问答">线程池问答</h2>
+<blockquote>
+<p>为什么需要线程池</p>
+</blockquote>
+<p>线程的一些特性：</p>
+<ul>
+<li>Java中线程与操作系统线程是一比一的关系。</li>
+<li>线程的创建和销毁是一个“较重”的操作。</li>
+<li>多线程的主要是为了提高 CPU 的利用率。</li>
+<li>线程的切换有开销，线程数的多少需要结合 CPU核心数与 I/O 等待占比。</li>
+</ul>
+<p>如果服务端每接受一个任务，创建一个线程执行。但面对成千上万的任务，采用上述一对一方式，将创建数以万计的线程，这不是一个好的选择，因为会涉及到线程上下文切换，并且创建销毁也会消耗资源，所以需要线程池。</p>
+<blockquote>
+<p>什么是线程池？</p>
+</blockquote>
+<p>线程池其实是一个典型的<code>生产者-消费者模式</code>。<br>
+线程池内部会有一个队列来存储我们提交的任务，而内部线程不断地从队列中索取任务来执行，这就是线程池最原始的执行机制。<br>
+首先线程池内需要定义两个成员变量，分别是阻塞队列和线程列表，然后自定义线程使它的任务就是不断的从阻塞队列中拿任务然后执行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">YesThreadPool</span> </span>&#123;</span><br><span class="line">    BlockingQueue&lt;Runnable&gt; taskQueue;  <span class="comment">//存放任务的阻塞队列</span></span><br><span class="line">    List&lt;YesThread&gt; threads; <span class="comment">//线程列表</span></span><br><span class="line"></span><br><span class="line">    YesThreadPool(BlockingQueue&lt;Runnable&gt; taskQueue, <span class="keyword">int</span> threadSize) &#123;</span><br><span class="line">        <span class="keyword">this</span>.taskQueue = taskQueue;</span><br><span class="line">        threads = <span class="keyword">new</span> ArrayList&lt;&gt;(threadSize);</span><br><span class="line">        <span class="comment">// 初始化线程，并定义名称</span></span><br><span class="line">        IntStream.rangeClosed(<span class="number">1</span>, threadSize).forEach((i)-&gt; &#123;</span><br><span class="line">            YesThread thread = <span class="keyword">new</span> YesThread(<span class="string">&quot;yes-task-thread-&quot;</span> + i);</span><br><span class="line">        thread.start();</span><br><span class="line">        threads.add(thread);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//提交任务只是往任务队列里面塞任务</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable task)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        taskQueue.put(task);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">YesThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123; <span class="comment">//自定义一个线程</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">YesThread</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">super</span>(name);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123; <span class="comment">//死循环</span></span><br><span class="line">                Runnable task = <span class="keyword">null</span>;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    task = taskQueue.take(); <span class="comment">//不断从任务队列获取任务</span></span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    logger.error(<span class="string">&quot;记录点东西.....&quot;</span>, e);</span><br><span class="line">                &#125;</span><br><span class="line">                task.run(); <span class="comment">//执行</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再写个 main 方法用一用，丝滑，非常丝滑。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    YesThreadPool pool = <span class="keyword">new</span> YesThreadPool(<span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;(<span class="number">10</span>), <span class="number">3</span>);</span><br><span class="line">    IntStream.rangeClosed(<span class="number">1</span>, <span class="number">5</span>).forEach((i)-&gt; &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            pool.execute(()-&gt; &#123;</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot; 公众号：yes的练级攻略&quot;</span>);</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            logger.error(<span class="string">&quot;记录点东西.....&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>你知道线程池有几种状态吗？</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210710231938099.png" alt="image-20210710231938099"></p>
+<ul>
+<li>RUNNING：能接受新任务，并处理阻塞队列中的任务</li>
+<li>SHUTDOWN：不接受新任务，但是可以处理阻塞队列中的任务</li>
+<li>STOP：不接受新任务，并且不处理阻塞队列中的任务，并且还打断正在运行任务的线程，就是直接撂担子不干了！</li>
+<li>TIDYING：所有任务都终止，并且工作线程也为0，处于关闭之前的状态</li>
+<li>TERMINATED：已关闭。</li>
+</ul>
+<blockquote>
+<p>你知道线程池的状态是如何变迁的吗？</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210710232043310.png" alt="image-20210710232043310"></p>
+<blockquote>
+<p>为什么要把任务先放在任务队列里面，而不是把线程先拉满到最大线程数？</p>
+</blockquote>
+<p>线程池本意只是让核心数量的线程工作着，不论是 core 的取名，还是 keepalive 的设定，所以你可以直接把 core 的数量设为你想要线程池工作的线程数，而任务队列起到一个缓冲的作用。最大线程数这个参数更像是无奈之举，在最坏的情况下做最后的努力，去新建线程去帮助消化任务。</p>
+<p>所以我个人觉得没有为什么，就是这样设计的，并且这样的设定挺合理。</p>
+<blockquote>
+<p>如果线程池中的线程在执行任务的时候，抛异常了，会怎么样？</p>
+</blockquote>
+<p>把这个线程废了，然后新建一个线程替换之。</p>
+<p>如果一个任务执行一半就抛出异常，并且你没有自行处理这个异常，那么这个任务就这样戛然而止了，后面也不会有线程继续执行剩下的逻辑，所以要自行捕获和处理业务异常。</p>
+<blockquote>
+<p>原生线程池的核心线程一定伴随着任务慢慢创建的吗？</p>
+</blockquote>
+<p>并不是，线程池提供了两个方法：</p>
+<ul>
+<li>prestartCoreThread：启动一个核心线程</li>
+<li>prestartAllCoreThreads ：启动所有核心线程</li>
+</ul>
+<p>不要小看这个预创建方法，预热很重要，不然刚重启的一些服务有时是顶不住瞬时请求的，就立马崩了，所以有预热线程、缓存等等操作。</p>
+<blockquote>
+<p>线程池的核心线程在空闲的时候一定不会被回收吗？</p>
+</blockquote>
+<p>有个 allowCoreThreadTimeOut 方法，把它设置为 true ，则所有线程都会超时，不会有核心数那条线的存在。</p>
+<blockquote>
+<p>参考链接</p>
+</blockquote>
+<p>主要参考《Java并发编程的艺术》第九章<br>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/qSdC22JS-y5ifvjDhHehlg">线程池问答</a><br>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/dZijUru_HNpbOWDnEFwEZQ">线程池TODO</a></p>
 
       
 
@@ -441,6 +547,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
@@ -449,15 +559,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -466,6 +568,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Redis</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
               </li>
              
               <li class="article-tag-list-item">
