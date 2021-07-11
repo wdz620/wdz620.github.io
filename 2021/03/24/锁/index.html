@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B9%90%E8%A7%82%E9%94%81.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/lock%E5%92%8Clatch.png">
 <meta property="article:published_time" content="2021-03-24T00:02:06.000Z">
-<meta property="article:modified_time" content="2021-05-03T07:58:12.676Z">
+<meta property="article:modified_time" content="2021-07-11T12:04:45.390Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -248,10 +248,38 @@ InnoDB使用间隙锁的两个目的：<br>
 <p><a target="_blank" rel="noopener" href="http://blog.itpub.net/31555607/viewspace-2637109/">http://blog.itpub.net/31555607/viewspace-2637109/</a><br>
 <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38238296/article/details/88362999">https://blog.csdn.net/qq_38238296/article/details/88362999</a></p>
 </blockquote>
-<blockquote>
 <p>一些思考问题</p>
+<blockquote>
+<p>事务在读取记录的时候需要获取 S 锁吗？</p>
 </blockquote>
-<p>1、乐观锁和MVVC区别 <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/27876575">参考链接</a></p>
+<p>不准确。益与 MVCC 的功劳，普通的 select 是不需要加锁的。<br>
+而 SELECT … LOCK IN SHARE MODE; 这种读取需要对记录上  S 锁。<br>
+SELECT … FOR UPDATE; 这种需要对记录上 X 锁。</p>
+<blockquote>
+<p>表锁使用情况</p>
+</blockquote>
+<p>InnoDB 的表锁很鸡肋，据我了解：</p>
+<ul>
+<li>LOCK TABLES test READ 是对 test 这个表上 S 锁。</li>
+<li>LOCK TABLES yes WRITE 是对 yes 这个表上 X 锁。</li>
+</ul>
+<p>但是基本不会使用。<br>
+平日的 update 、select 要用也是用行锁了，不可能用粒度粗的表锁。唯一能想到用上表锁的就是 DDL 语句了，比如 ALTER TABLE 的时候，应该锁定整个表，防止查询和修改。<br>
+但是这个 server 已经提供了一个叫 MDL 的东西，即 <code>Metadata Locks</code>，所以已经用 MDL 来阻塞了，表锁也就排不上用场了。</p>
+<p>真要用表锁，估计也就是数据恢复的时候，手动锁表还原数据了。</p>
+<blockquote>
+<p>表锁和行锁是怎么处理的 -&gt; 意向锁</p>
+</blockquote>
+<p>IS（Intention Shared Lock），共享意向锁<br>
+IX（Intention Exclusive Lock），独占意向锁。<br>
+这两个锁是表级别的锁，当需要对表中的某条记录上 S 锁的时候，先在表上加个 IS 锁，表明此时表内有 S 锁。当需要对表中的某条记录上 X 锁的时候，先在表上加个 IX 锁，表明此时表内有 X 锁。<br>
+这样操作之后，如果要加表锁，就不需要遍历所有记录去找了，直接看看表上面有没有 IS 和 IX 锁。<br>
+比如，此时要上表级别的 S 锁，如果表上没有 IX ，说明表中没有记录有独占锁，其实就可以直接上表级 S 锁。<br>
+如果此时要上表级别的 X 锁，如果表上没有 IX 和 IS ，说明表中的所有记录都没加锁，其实就可以直接上表级 X 锁。<br>
+因此 IS 和 IX 的作用就是在上表级锁的时候，可以快速判断是否可以上锁，而不需要遍历表中的所有记录。</p>
+<blockquote>
+<p>乐观锁和MVVC区别 <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/27876575">参考链接</a></p>
+</blockquote>
 <p>MVCC是多版本并发控制，同一个数据有多个版本，事务开启时看到是哪个版本就看到这个版本，最大的好处是读写不冲突，只有写于写是冲突的，这个特性可以很大程度上提升性能。<br>
 而乐观锁就是另外一个东西，它是一个前提假设，遇到读写冲突需要回退，在数据库的实现中，一般使用悲观锁，即：操作数据之前先拿到对应的锁。</p>
 <p>另一个角度：<br>
@@ -260,7 +288,7 @@ MVCC理论：基于快照隔离机制(Snapshot Isolations)进行并发控制</p>
 <p>另一个角度：<br>
 没有区别，属于包含与被包含的关系，乐观锁包含 MVCC，MVCC 只是乐观锁的一种实现方式。</p>
 <blockquote>
-<p>2、了解过lock吗？</p>
+<p>了解过lock吗？</p>
 </blockquote>
 <p>lock和latch都可以被称为“锁”。<br>
 latch一般称为闩锁，其目的是用来保证并发线程操作临界资源的正确性，并且通常没有死锁检测的机制。<br>
@@ -268,7 +296,7 @@ lock的对象是事务。用来锁定的是数据库中的对象，如表、页�
 lock和latch的比较<br>
 <img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/lock%E5%92%8Clatch.png" alt=""></p>
 <blockquote>
-<p>3、间隙锁</p>
+<p>间隙锁</p>
 </blockquote>
 <p>InnoDB存储引擎有3种行锁的算法：</p>
 <ul>
@@ -282,7 +310,24 @@ lock和latch的比较<br>
 <p>innodb_locks_unsafe_for_binlog：默认值为0，即启用gap lock。<br>
 关闭间隙锁(gap lock)方法: 在my.cnf里面的[mysqld]添加 innodb_locks_unsafe_for_binlog = 1 重启MySQL后生效.</p>
 <blockquote>
-<p>4、说一下乐观锁和CAS</p>
+<p>间隙锁之间会不会冲突？</p>
+</blockquote>
+<p>不会，<code>间隙锁的唯一目的就是防止其他事务插入数据到间隙中</code> ，所以即使两个间隙锁要锁住相同的间隙也没有关系，因为它们的目的是一致的，所以不冲突。</p>
+<blockquote>
+<p>间隙锁可以显式禁用吗?</p>
+</blockquote>
+<p>可以的。间隙锁是在事务隔离级别为可重复读的时候生效的，如果将事务隔离级别更改为 READ COMMITTED，就会禁用了，此时，间隙锁对于搜索和索引扫描是禁用的，仅用于外键约束检查和重复键检查。</p>
+<blockquote>
+<p>插入意向锁了解吗？</p>
+</blockquote>
+<p><code>插入意向锁</code>，即 Insert Intention Locks，它也是一类<code>间隙锁</code>，但是它不是锁定间隙，而是等待某个间隙。比如由于被间隙锁给阻塞了，所以事务会生成一个插入意向锁，表明等待这个间隙锁的释放。</p>
+<p>并且插入意向锁之间不会阻塞，因为它们的目的也是只等待这个间隙被释放，所以插入意向锁之间没有冲突。</p>
+<p>锁其实就是内存里面的一个结构，每个事务为某个记录或者间隙上锁就是创建一个锁对象来争抢资源。<br>
+如果某个事务没有抢到资源，那也会生成一个锁对象，只是状态是等待的，而当拥有资源的事务释放锁之后，就会寻找正在等待当前资源的锁结构，然后选一个让它获得资源并唤醒对应的事务使之得以执行。</p>
+<p>所以按照这么个逻辑，<code>那些在等待间隙锁的插入事务，也需要对应的建立一个锁结构，然后锁类型是插入意向锁。</code></p>
+<p>这样一来，间隙锁的事务在释放间隙锁的时候，才能得以找到那些等待插入的事务，然后进行唤醒，而由锁的类型也可以得知是插入意向锁，之间不需要阻塞，所以可以一起执行插入。</p>
+<blockquote>
+<p>说一下乐观锁和CAS</p>
 </blockquote>
 <p>首先CAS可以说是乐观锁实现的一种方法，还有一种方法是版本号控制。<br>
 CAS主要通过三个变量去控制，需要读取的内存值V、进行比较的值A、拟写入的值B。当且仅当 V 的值等于 A时，CAS通过原子方式用新值B来更新V的值，否则不会执行任何操作（比较和替换是一个原子操作）。一般情况下是一个自旋操作，即不断的重试。<br>
@@ -303,6 +348,30 @@ ABA问题的解决思路就是使用版本号。在变量前面追加上版本�
 共享锁用法：<code>SELECT ... LOCK IN SHARE MODE;</code><br>
 排他锁用法：<code>SELECT ... FOR UPDATE;</code><br>
 再简单提一句乐观锁，乐观锁不是数据库自带的。需要我们自己去实现。</p>
+<blockquote>
+<p>如果插入的事务还未提交，现在有另一个事务通过SELECT … LOCK IN SHARE MODE 或者SELECT … FOR UPDATE 打算读取这条记录怎么办？此时生效的是什么锁？</p>
+</blockquote>
+<p>插入的事务还未提交，此时普通 select 没问题，有 MVCC 在，所以读不到未提交的版本。而 SELECT … LOCK IN SHARE MODE或者SELECT … FOR UPDATE`  是要获取记录 S 锁和 X 锁的，但是此时事务还未提交，因此这两类 select 会阻塞。</p>
+<p>具体是怎么阻塞的呢？因为有事务ID！通过 MVCC 可以利用事务ID 来进行判断当前记录是否可见，这其实相当于一把隐式锁！知道当前记录不可见，于是这个查询事务会为之前未提交的插入的事务生成一个锁结构，然后查询事务自己也生成锁结构，接着等待插入事务的释放，这样就完成了阻塞！</p>
+<blockquote>
+<p>AUTO-INC Locks 锁吗？</p>
+</blockquote>
+<p>Auto-Inc Lock 是一个特殊的表级锁，用于自增列插入数据时使用。在插入一条数据的时候，需要在表上加个 Auto-Inc Lock，然后为自增列分配递增的值，在语句插入结束之后，再释放 Auto-Inc Lock。</p>
+<p>MySQL 5.1.22 版本之后，又弄了个互斥量来进行自增减的累加。互斥量的性能高于 Auto-Inc Lock，因为 Auto-Inc Lock是语句插入完毕之后才释放锁，而互斥量是在语句插入的时候，<code>获得递增值之后，就可以释放锁</code>，所以性能更好。</p>
+<p>但是我们还需要考虑主从的情况，由于并发插入的情况，基于 statement -based binlog 复制时，自增的值顺序无法把控，可能会导致主从数据不一致。</p>
+<p>所以 MySQL 有个 innodb_autoinc_lock_mode 配置，一共有三个值：</p>
+<ul>
+<li>0，只用 Auto-Inc Lock。</li>
+<li>1，默认值，对于插入前已知插入行数的插入，用互斥量，对于插入前不知道具体插入数的插入，用 Auto-Inc Lock，这样即使基于 statement -based binlog 复制也是安全的。</li>
+<li>2，只用互斥量。</li>
+</ul>
+<p><code>注意,MyISAM 插入本来就用了表锁。所以MyISAM 没有 AUTO-INC Locks 锁</code></p>
+<blockquote>
+<p>谓词锁了解吗？</p>
+</blockquote>
+<p>InnoDB 是支持空间数据的，所以有空间索引，为了处理涉及空间索引的操作的锁定，next-key locking 不好使，因为多维数据中没有绝对排序的概念，因此不清楚“下一个” key 在哪。</p>
+<p>所以为了支持具有空间索引的表的隔离级别，InnoDB使用谓词锁。</p>
+<p>空间索引包含最小边界矩形（MBR）值，因此 InnodB 通过在用于查询的 MBR 值上设置谓词锁定，使得 InnoDB 在索引上执行一致性读， 其他事务无法插入或修改与查询条件匹配的行。</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
@@ -581,19 +650,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Redis</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -609,11 +678,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
