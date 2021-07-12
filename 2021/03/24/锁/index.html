@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B9%90%E8%A7%82%E9%94%81.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/lock%E5%92%8Clatch.png">
 <meta property="article:published_time" content="2021-03-24T00:02:06.000Z">
-<meta property="article:modified_time" content="2021-07-11T12:04:45.390Z">
+<meta property="article:modified_time" content="2021-07-12T07:05:45.859Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -265,7 +265,7 @@ SELECT … FOR UPDATE; 这种需要对记录上 X 锁。</p>
 </ul>
 <p>但是基本不会使用。<br>
 平日的 update 、select 要用也是用行锁了，不可能用粒度粗的表锁。唯一能想到用上表锁的就是 DDL 语句了，比如 ALTER TABLE 的时候，应该锁定整个表，防止查询和修改。<br>
-但是这个 server 已经提供了一个叫 MDL 的东西，即 <code>Metadata Locks</code>，所以已经用 MDL 来阻塞了，表锁也就排不上用场了。</p>
+但是这个 server 已经提供了一个叫 MDL 的东西，即 元数据锁<code>Metadata Locks</code>，所以已经用 MDL 来阻塞了，表锁也就排不上用场了。</p>
 <p>真要用表锁，估计也就是数据恢复的时候，手动锁表还原数据了。</p>
 <blockquote>
 <p>表锁和行锁是怎么处理的 -&gt; 意向锁</p>
@@ -354,7 +354,14 @@ ABA问题的解决思路就是使用版本号。在变量前面追加上版本�
 <p>插入的事务还未提交，此时普通 select 没问题，有 MVCC 在，所以读不到未提交的版本。而 SELECT … LOCK IN SHARE MODE或者SELECT … FOR UPDATE`  是要获取记录 S 锁和 X 锁的，但是此时事务还未提交，因此这两类 select 会阻塞。</p>
 <p>具体是怎么阻塞的呢？因为有事务ID！通过 MVCC 可以利用事务ID 来进行判断当前记录是否可见，这其实相当于一把隐式锁！知道当前记录不可见，于是这个查询事务会为之前未提交的插入的事务生成一个锁结构，然后查询事务自己也生成锁结构，接着等待插入事务的释放，这样就完成了阻塞！</p>
 <blockquote>
-<p>AUTO-INC Locks 锁吗？</p>
+<p>AUTO_INCREMENT修饰的列递增赋值的原理</p>
+</blockquote>
+<p>1、采用<code>AUTO-INC锁</code>，也就是在执行插入语句时就在<code>表级别</code>加一个AUTO-INC锁，然后为每条待插入记录的AUTO_INCREMENT修饰的列分配递增的值，在该语句执行结束后，再把AUTO-INC锁释放掉。这样一个事务在持有AUTO-INC锁的过程中，其他事务的插入语句都要被<code>阻塞</code>，可以保证一个语句中分配的递增值是连续的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AUTO-INC锁的作用范围只是单个插入语句，插入语句执行完成后，这个锁就被释放了，跟我们之前介绍的锁在事务结束时释放是不一样的。</span><br></pre></td></tr></table></figure>
+<p>2、采用一个轻量级的锁，在为插入语句生成<code>AUTO_INCREMENT</code>修饰的列的值时获取一下这个轻量级锁，然后生成本次插入语句需要用到的<code>AUTO_INCREMENT</code>列的值之后，就把该轻量级锁释放掉，并不需要等到整个插入语句执行完才释放锁。</p>
+<p>如果我们的插入语句在执行前就可以确定具体要插入多少条记录，那么一般采用轻量级锁的方式对AUTO_INCREMENT修饰的列进行赋值。这种方式可以避免锁定表，可以提升插入性能。</p>
+<blockquote>
+<p>AUTO-INC Locks 详细介绍</p>
 </blockquote>
 <p>Auto-Inc Lock 是一个特殊的表级锁，用于自增列插入数据时使用。在插入一条数据的时候，需要在表上加个 Auto-Inc Lock，然后为自增列分配递增的值，在语句插入结束之后，再释放 Auto-Inc Lock。</p>
 <p>MySQL 5.1.22 版本之后，又弄了个互斥量来进行自增减的累加。互斥量的性能高于 Auto-Inc Lock，因为 Auto-Inc Lock是语句插入完毕之后才释放锁，而互斥量是在语句插入的时候，<code>获得递增值之后，就可以释放锁</code>，所以性能更好。</p>
@@ -650,19 +657,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -678,11 +685,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
