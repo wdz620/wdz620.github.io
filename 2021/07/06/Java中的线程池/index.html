@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210710231938099.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210710232043310.png">
 <meta property="article:published_time" content="2021-07-06T08:49:02.000Z">
-<meta property="article:modified_time" content="2021-07-10T15:26:36.655Z">
+<meta property="article:modified_time" content="2021-07-14T08:16:46.294Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Java并发">
 <meta name="twitter:card" content="summary">
@@ -220,20 +220,9 @@
 </ul>
 <h2 id="常用线程池">常用线程池</h2>
 <p>Java中有三个比较常用的线程池，分别是FixedThreadPool，SingleThreadExecutor，CachedThreadPool。</p>
-<ol>
-<li>
-<p>FixedThreadPool<br>
-这是一个线程数固定的线程池，当这个线程池被创建的时候，池里的线程数就已经固定了。当需要运行的线程数量大体上变化不大时，适合使用这种线程池。固定数量还有一个好处，它可以一次性支付高昂的创建线程的开销，之后再使用的时候就不再需要这种开销。</p>
-</li>
-<li>
-<p>SingleThreadExecutor<br>
-这是一个线程数量为1的线程池，所有提交的这个线程池的任务都会按照提交的先后顺序排队执行。单个线程执行有个好处：由于任务之间没有并发执行，因此提交到线程池种的任务之间不会相互干扰。程序执行的结果更具有确定性。</p>
-</li>
-<li>
-<p>CachedThreadPool<br>
-一看到Cache就知道这是一个和缓存有关的线程池，每次有任务提交到线程池的时候，如果池中没有空闲的线程，线程池就会为这个任务创建一个线程，如果有空闲的线程，就会使用已有的空闲线程执行任务。有的人可能会有个疑惑：这样线程不就越来越多了吗？其实不是的，这个线程池还有一个销毁机制，如果一个线程60秒之内没有被使用过，这个线程就会被销毁，这样就节省了很多资源。CachedThreadPool是一个比较通用的线程池，它在多数情况下都能表现出优良的性能。以后编码的时候，遇事不决，用缓存（线程池）。</p>
-</li>
-</ol>
+<p><code>FixedThreadPool</code>  这是一个线程数固定的线程池，当这个线程池被创建的时候，池里的线程数就已经固定了。当需要运行的线程数量大体上变化不大时，适合使用这种线程池。固定数量还有一个好处，它可以一次性支付高昂的创建线程的开销，之后再使用的时候就不再需要这种开销。</p>
+<p><code>SingleThreadExecutor</code> 这是一个线程数量为1的线程池，所有提交的这个线程池的任务都会按照提交的先后顺序排队执行。单个线程执行有个好处：由于任务之间没有并发执行，因此提交到线程池种的任务之间不会相互干扰。程序执行的结果更具有确定性。</p>
+<p><code>CachedThreadPool</code> 一看到Cache就知道这是一个和缓存有关的线程池，每次有任务提交到线程池的时候，如果池中没有空闲的线程，线程池就会为这个任务创建一个线程，如果有空闲的线程，就会使用已有的空闲线程执行任务。有的人可能会有个疑惑：这样线程不就越来越多了吗？其实不是的，这个线程池还有一个销毁机制，如果一个线程60秒之内没有被使用过，这个线程就会被销毁，这样就节省了很多资源。CachedThreadPool是一个比较通用的线程池，它在多数情况下都能表现出优良的性能。以后编码的时候，遇事不决，用缓存（线程池）。</p>
 <h2 id="线程池问答">线程池问答</h2>
 <blockquote>
 <p>为什么需要线程池</p>
@@ -298,7 +287,7 @@
 </blockquote>
 <p>主要参考《Java并发编程的艺术》第九章<br>
 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/qSdC22JS-y5ifvjDhHehlg">线程池问答</a><br>
-<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/dZijUru_HNpbOWDnEFwEZQ">线程池TODO</a></p>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/dZijUru_HNpbOWDnEFwEZQ">线程池执行流程</a></p>
 
       
 
@@ -563,11 +552,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -607,11 +596,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
               </li>
              
               <li class="article-tag-list-item">
