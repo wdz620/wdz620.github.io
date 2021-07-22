@@ -146,6 +146,103 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-CopyOnWriteArrayList" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/01/10/CopyOnWriteArrayList/">CopyOnWriteArrayList</a>
+    </h1>
+  
+
+        
+        <a href="/2021/01/10/CopyOnWriteArrayList/" class="archive-article-date">
+  	<time datetime="2021-01-10T07:43:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1>CopyOnWriteArrayList</h1>
+<p><strong>允许Null</strong></p>
+<ul>
+<li>实现了List接口，List的一种实现方式</li>
+<li>实现RandomAccess接口，看名称就知道随机访问，和数组访问一样根据下标</li>
+<li>实现Cloneable接口，代表可以克隆</li>
+<li>实现了Serializable接口接口，代表可以被序列化</li>
+</ul>
+<p>当容器被初始化添加元素成功之后，多个线程读取容器中的元素，如果此刻没有元素的添加，并发多个线程读取出来的数据大家都是一样的，可以理解为线程安全的 。<br>
+如果此刻有个线程往容器中添加一个新的元素，这个时候CopyOnWriteArrayList就会拷贝一个新的数组出来，将新的元素添加到新的数组中。<br>
+在添加元素的这段时间里，如果多线程访问容器中的元素，将会读取到旧的数据，等添加元素成功之后会将新的引用地址赋值给旧的list引用地址。</p>
+<p><strong>简单来说就是，读的时候数据没有差异，但是又写的操作时，其他线程将会读取旧地址数值，当写完成之后修改引用地址。</strong></p>
+<p>CopyOnWriteArrayList 实现了 List 接口，不过，它不在 java.util 包下，而在 java.util.concurrent 包下，算作是 ArrayList 的增强版，线程安全的。CopyOnWriteArrayList 在进行写操作（add、set、remove）的时候会先进行拷贝，底层是通过数组复制来实现的。Java 8 的时候，CopyOnWriteArrayList 的增删改操作方法使用的是 ReentrantLock（可重入锁，一个线程获得了锁之后仍然可以反复的加锁，不会出现自己阻塞自己的情况）。</p>
+<p>CopyOnWriteArrayList的设计思想是怎样的，有什么缺点？解答：设计思想：读写分离+最终一致</p>
+<p>缺点：<br>
+1、内存占用问题，写时复制机制，内存里会同时驻扎两个对象的内存，旧的对象和新写入的对象，如果对象大则容易发生Yong GC和Full GC<br>
+2、数据一致性问题，因为CopyOnWrite容器只能保证最终的数据一致性，并不能保证数据的实时性，也就是不具备原子性的效果。<br>
+3、数据修改，随着数组的元素越来越多，修改的时候拷贝数组将会越来越耗时。</p>
+<p>优点：<br>
+多读少写，很多时候我们的系统应对的都是读多写少的并发场景，读操作是无锁操作所以性能较高。</p>
+<blockquote>
+<p>参考链接</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000037678123">CopyOnWriteArrayList 使用入门及源码详解</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/01/10/CopyOnWriteArrayList/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-设计模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -609,11 +706,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -641,11 +738,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
               </li>
              
               <li class="article-tag-list-item">

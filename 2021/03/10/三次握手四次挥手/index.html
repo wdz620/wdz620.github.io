@@ -19,8 +19,9 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.gif">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210722155207211.png">
 <meta property="article:published_time" content="2021-03-10T12:01:41.000Z">
-<meta property="article:modified_time" content="2021-04-26T06:37:49.646Z">
+<meta property="article:modified_time" content="2021-07-22T07:57:48.406Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary">
@@ -302,6 +303,26 @@ TCP还设有一个保活计时器，显然，客户端如果出现故障，服�
 <li>采用SYN cookie设置，如果短时间内连续收到某个IP的重复SYN请求，则认为受到了该IP的攻击，丢弃来自该IP的后续请求报文</li>
 <li>在网关处设置过滤，拒绝将一个源IP地址不属于其来源子网的包进行更远的路由</li>
 </ul>
+<blockquote>
+<p>深度解析</p>
+</blockquote>
+<h3 id="先上结论：">先上结论：</h3>
+<p>服务端收到客户端发起的 <code>SYN</code> 请求后，内核会把该连接存储到<code>半连接队列</code>，并向客户端响应 <code>SYN+ACK</code>，接着客户端会返回 <code>ACK</code>，服务端收到第三次握手的 ACK 后，内核会把连接从<code>半连接队列移除</code>，然后创建新的<code>完全的连接</code>，并将其添加到 <code>accept</code> 队列，等待进程调用 accept 函数时把连接取出来。</p>
+<p>不管是半连接队列还是全连接队列，都有最大长度限制，超过限制时，<strong>内核会直接丢弃，或返回 RST 包</strong>。</p>
+<p><strong>半连接队列溢出：<strong>客户端发送SYN报文和服务端进行第一次握手，<strong>此时服务端将此请求信息放在半连接队列中</strong>并回复SYN+ACK给客户端。这里也就是</strong>SYN攻击</strong>的点，攻击方要做的就是不停的建立连接，但是却不给出ACK确认，导致半连接队列满了，其他请求无法进入。</p>
+<p><strong>全连接队列溢出：</strong> <strong>当服务端并发处理大量请求时</strong>，如果 TCP 全连接队列过小，就容易溢出。发生 TCP 全连接队溢出的时候，后续的请求就会被丢弃，这样就会出现服务端请求数量上不去的现象。</p>
+<h3 id="一图胜千言">一图胜千言</h3>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210722155207211.png" alt="image-20210722155207211"></p>
+<ul>
+<li>1、服务器 listen 时，计算了全/半连接队列的长度，还申请了相关内存并初始化。</li>
+<li>2、客户端 connect 时，把本地 socket 状态设置成了 TCP_SYN_SENT，选则一个可用的端口，发出 SYN 握手请求并启动重传定时器。</li>
+<li>3、服务器响应 ack 时，会判断下接收队列是否满了，满的话可能会丢弃该请求。否则发出 synack，申请 request_sock 添加到半连接队列中，同时启动定时器。</li>
+<li>4、客户端响应 synack 时，清除了 connect 时设置的重传定时器，把当前 socket 状态设置为 ESTABLISHED，开启保活计时器后发出第三次握手的 ack 确认。</li>
+<li>5、服务器响应 ack 时，把对应半连接对象删除，创建了新的 sock 后加入到全连接队列中，最后将新连接状态设置为 ESTABLISHED。</li>
+<li>6、accept 从已经建立好的全连接队列中取出一个返回给用户进程。</li>
+</ul>
+<p>另外要注意的是，如果握手过程中发生丢包（网络问题，或者是连接队列溢出），内核会等待定时器到期后重试，重试时间间隔在 3.10 版本里分别是 1s 2s 4s …。在一些老版本里，比如 2.6 里，第一次重试时间是 3 秒。最大重试次数分别由 tcp_syn_retries 和 tcp_synack_retries 控制。</p>
+<p>如果你的线上接口正常都是几十毫秒内返回，但偶尔出现了 1 s、或者 3 s 等这种偶发的响应耗时变长的问题，那么你就要去定位一下看看是不是出现了握手包的超时重传了。</p>
 <blockquote>
 <p>参考链接</p>
 </blockquote>
@@ -589,11 +610,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -621,11 +642,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color5">创建文章</a>
               </li>
              
               <li class="article-tag-list-item">
