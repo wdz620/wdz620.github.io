@@ -146,106 +146,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-JVM参数模板" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/07/26/JVM%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF/">JVM参数模板</a>
-    </h1>
-  
-
-        
-        <a href="/2021/07/26/JVM%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF/" class="archive-article-date">
-  	<time datetime="2021-07-26T07:31:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <a id="more"></a>
-<h2 id="JVM参数">JVM参数</h2>
-<p>Java启动参数共分为三类：</p>
-<ul>
-<li><code>标准参数（-）</code>：所有的JVM实现都必须实现这些参数的功能，而且向后兼容，如 -version、-classpath</li>
-<li><code>非标准参数（-X）</code>：默认jvm实现这些参数的功能，但是并不保证所有jvm实现都满足，且不保证向后兼容，如 -Xms、-Xmx</li>
-<li><code>非Stable参数（-XX）</code>：此类参数各个jvm实现会有所不同，将来可能会随时取消，需要慎重使用，如 -XX:UseParNewGC、-XX:MetaspaceSize</li>
-</ul>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6919127548542582797#heading-25">具体案例参考</a></p>
-</blockquote>
-<h2 id="JVM参考模板">JVM参考模板</h2>
-<p>对于一般的系统，我们可能使用4核8G的机器来部署，那么总结一套模板如下:</p>
-<ul>
-<li>堆内存分配4G，新生代3G，老年代1G，Eden区2.4G，Survivor区各300M，一般来说YoungGC后存活的对象小于150M就没太大问题。</li>
-<li>元空间给个 512M 一般就足够了，如果系统会运行时创建很多类，可以调大这个值。</li>
-<li><code>-XX:MaxTenuringThreshold</code> 对象GC年龄调整为5岁，让长期存活的对象更快的进入老年代</li>
-<li><code>-XX:PretenureSizeThreshold</code> 大对象阀值设置为1M，如果有超过1M的大对象，可以调整下这个值</li>
-<li><code>-XX:+UseParNewGC</code>、<code>-XX:+UseConcMarkSweepGC</code>，垃圾回收器使用 ParNew + CMS 的组合</li>
-<li><code>-XX:CMSFullGCsBeforeCompaction</code> 设置为0，每次FullGC后都进行一次内存碎片整理</li>
-<li><code>-XX:+CMSParallelInitialMarkEnabled</code>，CMS初始标记阶段开启多线程并发执行，降低FullGC的时间</li>
-<li><code>-XX:+CMSScavengeBeforeRemark</code>，CMS重新标记阶段之前，先尽量执行一次Young GC</li>
-<li><code>-XX:+DisableExplicitGC</code>，禁止显示手动GC</li>
-<li><code>-XX:+HeapDumpOnOutOfMemoryError</code>，OOM时导出堆快照便于分析问题</li>
-<li><code>-XX:+PrintGC</code>，打印GC日志便于出问题时分析问题</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">-Xms4G</span><br><span class="line">-Xmx4G</span><br><span class="line">-Xmn3G</span><br><span class="line">-Xss1M</span><br><span class="line">-XX:SurvivorRatio&#x3D;8</span><br><span class="line">-XX:MetaspaceSize&#x3D;512M</span><br><span class="line">-XX:MaxMetaspaceSize&#x3D;512M</span><br><span class="line">-XX:MaxTenuringThreshold&#x3D;5</span><br><span class="line">-XX:PretenureSizeThreshold&#x3D;1M</span><br><span class="line">-XX:+UseParNewGC</span><br><span class="line">-XX:+UseConcMarkSweepGC</span><br><span class="line">-XX:CMSInitiatingOccupancyFraction&#x3D;92</span><br><span class="line">-XX:+UseCMSInitiatingOccupancyOnly</span><br><span class="line">-XX:CMSWaitDuration&#x3D;2000</span><br><span class="line">-XX:+UseCMSCompactAtFullCollection</span><br><span class="line">-XX:CMSFullGCsBeforeCompaction&#x3D;0</span><br><span class="line">-XX:+CMSParallelInitialMarkEnabled</span><br><span class="line">-XX:+CMSScavengeBeforeRemark</span><br><span class="line">-XX:+DisableExplicitGC</span><br><span class="line">-XX:+HeapDumpOnOutOfMemoryError</span><br><span class="line">-XX:HeapDumpPath&#x3D;dump.hprof</span><br><span class="line">-XX:+PrintGC</span><br><span class="line">-XX:+PrintGCDetails</span><br><span class="line">-XX:+PrintGCDateStamps</span><br><span class="line">-Xloggc:.&#x2F;gc.log</span><br></pre></td></tr></table></figure>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/07/26/JVM%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-SpringBoot内置Tomcat" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -937,6 +837,82 @@
 
 
   
+    <article id="post-Redis和数据库的一致性" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/27/Redis%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7/">Redis和数据库的一致性</a>
+    </h1>
+  
+
+        
+        <a href="/2021/04/27/Redis%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7/" class="archive-article-date">
+  	<time datetime="2021-04-27T10:28:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-27</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>对于热点数据（经常被查询，但不经常被修改的数据），我们可以将其放入redis缓存中，以增加查询效率，但需要保证从redis中读取的数据与数据库中存储的数据最终是一致的。</p>
+        
+          <a class="article-more-a" href="/2021/04/27/Redis%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Redis</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/27/Redis%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1050,15 +1026,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
