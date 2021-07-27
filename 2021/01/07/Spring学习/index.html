@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20200630204747172.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210726164257638.png">
 <meta property="article:published_time" content="2021-01-07T10:15:04.000Z">
-<meta property="article:modified_time" content="2021-07-26T08:47:08.318Z">
+<meta property="article:modified_time" content="2021-07-27T12:26:09.002Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="Spring">
 <meta name="twitter:card" content="summary">
@@ -261,10 +261,16 @@ jdk提供了三种方式获取一个对象的Class，就User user来说<br>
 <h3 id="3、JDK动态代理实现日志框架">3、JDK动态代理实现日志框架</h3>
 <p>Spring AOP内部是使用动态代理模式来实现的</p>
 <p>总结JDK动态代理的一般实现步骤：<br>
-  （1）创建一个实现InvocationHandler接口的类xxx，它必须实现invoke方法。<br>
+  （1）创建一个实现<code>InvocationHandler</code>接口的类xxx，它必须实现invoke方法。<br>
   （2）创建被代理的类xxxService以及接口xxxServiceImpl实现。<br>
-  （3）调用Proxy的静态方法mewProxyInstance，创建一个代理类。<br>
+  （3）调用<code>Proxy</code>的静态方法newProxyInstance，创建一个代理类。<br>
   （4）通过代理类调用方法。</p>
+<p>补充另一种实现方式：<code>CGLib动态代理</code><br>
+JDK的动态代理存在限制，那就是被代理的类必须是一个实现了接口的类，代理类需要实现相同的接口，代理接口中声明的方法。若需要代理的类没有实现接口，此时JDK的动态代理将没有办法使用，于是Spring会使用CGLib的动态代理来生成代理对象。<br>
+<code>CGLib无法代理final方法，因为子类无法重写父类的final方法。</code></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://bbs.huaweicloud.com/blogs/164988">Spring中AOP的实现原理</a></p>
+</blockquote>
 <h3 id="4、Spring-AOP实现日志框架">4、Spring AOP实现日志框架</h3>
 <p>在配置文件spring-mvc.xml中添加配置，具体如下</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">aop:aspectj-autoproxy</span> <span class="attr">proxy-target-class</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
@@ -340,64 +346,6 @@ jdk提供了三种方式获取一个对象的Class，就User user来说<br>
   1、基于XML的配置<br>
   2、基于注解的配置<br>
   3、基于Java的配置。</p>
-<h3 id="Spring怎么设置事务隔离级别">Spring怎么设置事务隔离级别</h3>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904179341737991">@Transactional学习</a></p>
-</blockquote>
-<p>用<code>@Transactional </code>注解声明式事务的事务管理中来设置 <code>isolation</code> 属性的隔离级别</p>
-<p>propagation实验：<code>@Transactional(propagation = Propagation.设置) </code><br>
-1、一个总方法中包括两个方法，在方法上都加入了 <code>@Transactional</code>,那么当第一个方法中抛出异常，所有都不会被执行，因为会被外层的捕捉到，所以不会执行。(前提是默认的传播方式<code>required</code>)<br>
-2、如果将第一个方法的传播方式改为<code>REQUIRES_NEW</code>，如果还是第一个方法出现异常，那么两个方法都不会执行。<br>
-3、如果将第一个方法的传播方式改为<code>REQUIRES_NEW</code>，但是现在第二个方法出现异常，那么第一个方法会被执行，第二个不会被执行。<br>
-4、如果将两个方法的传播方式都改为<code>REQUIRES_NEW</code>，在第二个方法出现异常，此时第一个不会被影响，因为相当于开了三个事务连接，各干各的。<br>
-5、如果将两个方法的传播方式都改为<code>REQUIRES_NEW</code>，在第一个方法出现异常，那么就相当于实验二，都不会执行，因为会向外抛异常，不会继续往下走。解决办法就是使用try…catch，别外抛，就不会影响到其他的事务。<br>
-6、嵌套事务也叫寄生事务，里面两个事务和最外面的事务其实用的是同一个数据库连接。所以无论里面哪个抛异常都会影响到外层，导致不会执行。</p>
-<h4 id="失效场景">失效场景</h4>
-<p>1、@Transactional 应用在非 public 修饰的方法上，@Transactional 将会失效。protected、private 修饰的方法上使用 @Transactional 注解，虽然事务无效，但不会有任何报错，这是我们很容犯错的一点。<br>
-2、@Transactional 注解属性 propagation 设置错误。<br>
-3、@Transactional 注解属性 rollbackFor 设置错误，这个上面演示给大家看了，默认的只会对 RuntimeException 类型和 Error 类型的才进行回滚。如果在事务中抛出其他类型的异常，却希望 Spring 能够回滚事务，就需要指定 rollbackFor 属性。<br>
-4、同一个类中方法调用，导致 @Transactional 失效。<br>
-5、异常被吃了，这个在实验五里面也说了，吃掉以后虽然不影响其他事务，但是其他数据的 commit 会造成数据不一致，所以有些时候 try catch 反倒会画蛇添足。<br>
-6、数据库引擎不支持事务，这一点很简单，myisam 引擎是不支持事务的，innodb 引擎支持事务。<br>
-7、最后就是一个方法内多数据库（多数据源）的情况下会失效，这个也是我同事做实验得出来的。</p>
-<blockquote>
-<p>回滚是只判断异常类型是 <code>RuntimeException</code> 和 <code>Error</code> 的才会进行回滚，别的异常类型是不会回滚的。</p>
-</blockquote>
-<p>在配置文件中设置事务<code>&lt;tx:method&gt;</code>元素</p>
-<h3 id="Spring的事务隔离级别和数据库的事务隔离级别区别">Spring的事务隔离级别和数据库的事务隔离级别区别</h3>
-<p>Spring中的隔离级别</p>
-<table>
-<thead>
-<tr>
-<th>常量</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ISOLATION_DEFAULT</td>
-<td>这是个 PlatfromTransactionManager 默认的隔离级别，使用数据库默认的事务隔离级别。另外四个与 JDBC 的隔离级别相对应。</td>
-</tr>
-<tr>
-<td>ISOLATION_READ_UNCOMMITTED</td>
-<td>这是事务最低的隔离级别，它充许另外一个事务可以看到这个事务未提交的数据。这种隔离级别会产生脏读，不可重复读和幻像读。</td>
-</tr>
-<tr>
-<td>ISOLATION_READ_COMMITTED</td>
-<td>保证一个事务修改的数据提交后才能被另外一个事务读取。另外一个事务不能读取该事务未提交的数据。</td>
-</tr>
-<tr>
-<td>ISOLATION_REPEATABLE_READ</td>
-<td>这种事务隔离级别可以防止脏读，不可重复读。但是可能出现幻像读。</td>
-</tr>
-<tr>
-<td>ISOLATION_SERIALIZABLE</td>
-<td>这是花费最高代价但是最可靠的事务隔离级别。事务被处理为顺序执行。</td>
-</tr>
-</tbody>
-</table>
-<p>spring事务本质上使用数据库锁；<br>
-spring事务只有在方法执行过程中出现异常才会回滚，并且只回滚数据库相关的操作；</p>
 <h3 id="Spring中Bean的生命周期">Spring中Bean的生命周期</h3>
 <p>对于普通的Java对象，当new的时候创建对象，当它没有任何引用的时候被垃圾回收机制回收。而由Spring IoC容器托管的对象，它们的生命周期完全由容器控制。Spring中每个Bean的生命周期如下：</p>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210726164257638.png" alt="image-20210726164257638"></p>
@@ -687,11 +635,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -708,6 +656,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">SpringBoot</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Spring</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -736,10 +688,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">中间件</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Spring</a>
               </li>
             
             <div class="clearfix"></div>
