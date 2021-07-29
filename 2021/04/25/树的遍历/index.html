@@ -16,7 +16,7 @@
 <meta property="og:description" content="关于树的一些算法和习题">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-04-25T00:40:53.000Z">
-<meta property="article:modified_time" content="2021-07-28T02:26:06.767Z">
+<meta property="article:modified_time" content="2021-07-29T01:21:44.962Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -171,6 +171,12 @@
       
         <p>关于树的一些算法和习题</p>
 <a id="more"></a>
+<h2 id="1104-二叉树寻路">1104. 二叉树寻路</h2>
+<p>在一棵无限的二叉树上，每个节点都有两个子节点，树中的节点 逐行 依次按 “之” 字形进行标记。<br>
+在奇数行（即，第一行、第三行、第五行……）中，按从左到右的顺序进行标记；<br>
+而偶数行（即，第二行、第四行、第六行……）中，按从右到左的顺序进行标记。<br>
+给你树上某一个节点的标号 label，请你返回从根节点到该标号为 label 节点的路径，该路径是由途经的节点标号所组成的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 14 -&gt; [1,3,4,14]</span></span><br><span class="line">    <span class="comment">// 26 -&gt; [1,2,6,10,26]</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">pathInZigZagTree</span><span class="params">(<span class="keyword">int</span> label)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> row = <span class="number">1</span>, rowStart = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span>(rowStart * <span class="number">2</span> &lt;= label) &#123;</span><br><span class="line">            row++;</span><br><span class="line">            rowStart *= <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>((row &amp; <span class="number">1</span>) == <span class="number">0</span>) &#123; <span class="comment">// 偶数行 翻转</span></span><br><span class="line">            label = getReverse(label, row);</span><br><span class="line">        &#125;</span><br><span class="line">        List&lt;Integer&gt; rPath = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">while</span>(row &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>((row &amp; <span class="number">1</span>) == <span class="number">0</span>) &#123; <span class="comment">// 偶数行 翻转</span></span><br><span class="line">                rPath.add(getReverse(label, row));</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                rPath.add(label);</span><br><span class="line">            &#125;</span><br><span class="line">            row--;</span><br><span class="line">            label &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Collections.reverse(rPath);</span><br><span class="line">        <span class="keyword">return</span> rPath;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getReverse</span><span class="params">(<span class="keyword">int</span> label, <span class="keyword">int</span> row)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 因为叶子节点这一层 必为偶数，那么必然成对出现，且头尾是一对，那么就能找到原来位置。</span></span><br><span class="line">        <span class="comment">// 例如 4 5 6 7 -&gt; 4 + 7 == 5 + 6 进一步 如果知道层数以及一个位置，</span></span><br><span class="line">        <span class="comment">// 根据层找出头尾 然后 头 + 尾 - 一个位置 == 另一个位置 注意树的特性！</span></span><br><span class="line">        <span class="keyword">int</span> levelStart = <span class="number">1</span> &lt;&lt; row - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> levelEnd = <span class="number">1</span> &lt;&lt; row;</span><br><span class="line">        <span class="keyword">return</span> levelStart + levelEnd - label - <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="863-二叉树中所有距离为-K-的结点">863. 二叉树中所有距离为 K 的结点</h2>
 <p>给定一个二叉树（具有根结点 root）， 一个目标结点 target ，和一个整数值 K 。<br>
 返回到目标结点 target 距离为 K 的所有结点的值的列表。 答案可以以任何顺序返回。</p>
@@ -493,11 +499,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -517,11 +523,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
