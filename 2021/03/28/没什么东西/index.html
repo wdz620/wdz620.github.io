@@ -23,7 +23,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210328192146510.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png">
 <meta property="article:published_time" content="2021-03-28T11:43:13.000Z">
-<meta property="article:modified_time" content="2021-07-28T14:11:30.377Z">
+<meta property="article:modified_time" content="2021-07-29T14:39:34.822Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="创建文章">
 <meta name="twitter:card" content="summary">
@@ -851,7 +851,10 @@ TCP 的 Keepalive 也叫 TCP 保活机制，该功能是由「内核」实现的
 缺点： 当进程中的一个线程奔溃时，会导致其所属进程的所有线程奔溃。</p>
 <h1>Redis</h1>
 <blockquote>
-<p><a target="_blank" rel="noopener" href="https://blog.51cto.com/u_15103028/2647021">问答</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.51cto.com/u_15103028/2647021">问答</a><br>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/BIydG9GXZ0MXyFnaUWqOiA">Redis变慢的原因</a><br>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Do53X63qe7Bg3pIKk1w9xQ">Redis实践总结</a><br>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/eeVUCsUdroFWbho-sz6rPg">Redis红锁</a></p>
 </blockquote>
 <h3 id="Redis里面的惰性删除指的是什么">Redis里面的惰性删除指的是什么?</h3>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">删除过期key是定时清理+懒惰删除。</span><br><span class="line">懒惰删除默认是在主线程删除，并释放key内存的。</span><br><span class="line">但在4.0+版本又做了优化，释放key内存可以放到了异步线程中去做了（lazy-free），目的是可以减少主线程释放内存的耗时，提升主线程处理性能。</span><br><span class="line">也就是说4.0之前，懒惰删除就是同步删除。4.0优化后，懒惰删除就是同步删除全局hash表的键值对+子线程程执行释放内存，但需要开启lazy-free配置才生效。</span><br><span class="line"></span><br><span class="line">惰性删除：每次从键空间中获取键时，都检查取得的键是否过期，如果过期的话，就删除该键；如果没有过期，就返回该键。</span><br><span class="line">定期删除：每隔一段时间，程序就对数据库进行一次检查，删除里面的过期键。</span><br></pre></td></tr></table></figure>
@@ -1131,11 +1134,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1143,11 +1146,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">Redis</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1171,11 +1174,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
