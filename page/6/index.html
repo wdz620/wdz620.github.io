@@ -146,6 +146,83 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-PriorityQueue的使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/15/PriorityQueue%E7%9A%84%E4%BD%BF%E7%94%A8/">PriorityQueue的使用</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/15/PriorityQueue%E7%9A%84%E4%BD%BF%E7%94%A8/" class="archive-article-date">
+  	<time datetime="2021-03-15T05:40:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-15</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>PriorityQueue 默认使用小根堆，首先出去的是最小的，如果需要改成大根堆，需要重写。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认小根堆</span></span><br><span class="line">Queue&lt;Integer&gt; queue = <span class="keyword">new</span> PriorityQueue&lt;&gt;(); </span><br><span class="line"><span class="comment">// 重写大根堆</span></span><br><span class="line">Queue&lt;Integer&gt; queue1 = <span class="keyword">new</span> PriorityQueue&lt;&gt;(((o1, o2) -&gt; &#123;</span><br><span class="line">            <span class="keyword">return</span> o2 - o1;</span><br><span class="line">&#125;));</span><br></pre></td></tr></table></figure>
+        
+          <a class="article-more-a" href="/2021/03/15/PriorityQueue%E7%9A%84%E4%BD%BF%E7%94%A8/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java集合</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/15/PriorityQueue%E7%9A%84%E4%BD%BF%E7%94%A8/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Java内存区域与溢出异常" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -886,87 +963,6 @@ tcp属于双全工，在进行连接之后双方都可以进行数据传送。</
 
 
   
-    <article id="post-Java类的加载顺序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/05/Java%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F/">Java类的加载顺序</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/05/Java%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F/" class="archive-article-date">
-  	<time datetime="2021-03-05T01:26:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="Java类的加载顺序">Java类的加载顺序</h4>
-<blockquote>
-<p>有继承关系的加载顺序</p>
-</blockquote>
-<p>父类静态方法/静态代码块-&gt;子类静态方法/静态方法块-&gt;父类成员变量/非静态代码块(从上到下顺序排列)-&gt;父类构造器-&gt;子类成员变量/非静态代码块(从上到下顺序排列)-&gt;子类构造器</p>
-<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/Java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F-1614906219572.jpg" alt="顺序"></p>
-        
-          <a class="article-more-a" href="/2021/03/05/Java%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Java基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/05/Java%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/5/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/7/">Next &amp;raquo;</a>
@@ -1080,6 +1076,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
@@ -1109,10 +1109,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Spring</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">

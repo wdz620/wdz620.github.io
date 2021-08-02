@@ -166,35 +166,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <a id="more"></a>
-<h2 id="fork">fork</h2>
-<p>一个进程可以通过调用 fork 函数创建新的进程，被创建出来的这个进程就叫子进程。<br>
-这里需要注意一下，fork 函数的返回值父子进程区别。</p>
-<ul>
-<li>子进程 ： 返回值是 0，返回 0 的理由是子进程的父进程是可以唯一确定的，通过 getppid 方法可以获取到父进程 id。</li>
-<li>父进程 : 返回的是新创建的子进程的 id,因为父进程可以有多个子进程，也没有这样的函数可以获取该线程的子线程的所有 id</li>
-</ul>
-<h1>孤儿进程</h1>
-<p>当一个进程正在运行时，他的父进程忽然退出，此时该进程就是一个孤儿进程。作为一个进程，需要找到一个父进程，否则这种进程在退出之后没人回收他的进程描述符，空耗内存。此时该进程会找到一个父进程，如果自己所在的进程组没人收养，那就作为init进程的子进程。</p>
-<h3 id="简单总结">简单总结</h3>
-<p>当父进程退出时，它的子进程们（一个或者多个）就成了孤儿进程了。<br>
-因为孤儿进程会被 init 进程接管，所以孤儿进程是没有危害的。</p>
-<h1>僵尸进程</h1>
-<p>已完成且处于终止状态，但在进程表中仍然存在的进程。通常发生在父子关系的进程中，由于父进程仍需要读取子进程的退出状态造成的。</p>
-<h3 id="简单总结-v2">简单总结</h3>
-<p>和孤儿进程相反的是，这次是子进程先退出，而父进程又没有去处理回收释放子进程的资源，这个时候子进程就成了僵尸进程。</p>
-<p>资源上是占用不了什么资源。但是通常系统的进程数量都是有限制的，如果有大量的僵尸进程占用进程号，导致新的进程无法创建，这个危害类似于占个坑，不办事。</p>
-<h4 id="解决办法">解决办法</h4>
-<p>1、干掉父进程<br>
-干掉父进程后，让剩下的子进程成为孤儿进程，成为孤儿进程后就和我们上面说的一样了，由 init 进程来领养这些进程，并且来处理这些进程的资源释放等工作。</p>
-<p>2、fork 两次<br>
-第一次 fork : 父进程 fork 一个子进程<br>
-第二次 fork : 子进程 fork 一个孙进程后退出<br>
-那么孙进程被 init 接管，当孙进程结束后，init 会回收。<br>
-但子进程的回收还要自己做。</p>
-<blockquote></blockquote>
-<p><a target="_blank" rel="noopener" href="https://xie.infoq.cn/article/3a980c8f6a5a0a7a26cc3d2e8">参考</a></p>
-
+        <p>孤儿进程 和 僵尸进程</p>
+        
+          <a class="article-more-a" href="/2021/08/02/%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B%E5%92%8C%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B/#more">more >></a>
+        
       
 
       
@@ -1051,6 +1026,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
@@ -1080,10 +1059,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Spring</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
