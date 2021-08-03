@@ -377,6 +377,95 @@
 
 
   
+    <article id="post-生产消费模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/03/%E7%94%9F%E4%BA%A7%E6%B6%88%E8%B4%B9%E6%A8%A1%E5%BC%8F/">生产消费模式</a>
+    </h1>
+  
+
+        
+        <a href="/2021/04/03/%E7%94%9F%E4%BA%A7%E6%B6%88%E8%B4%B9%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
+  	<time datetime="2021-04-03T11:31:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <a id="more"></a>
+<p>生产者/消费者模型能解决绝大多数并发问题，通过平衡生产线程和消费线程的工作能力,来提高程序的整体处理数据的速度。</p>
+<p>生产者线程和消费者线程的处理速度差异，会引起消费者想要获取数据时，数据还没生成或者生产者想要交付数据，却没有消费者接收的问题。对于这样的问题，生产者/消费者模型可以消除这个差异。</p>
+<p>需要注意的是：</p>
+<p>（1）wait()、notify()和notifyAll()必须在synchronized修饰的方法或代码块中使用。<br>
+（2）在while循环里而不是if语句下使用wait()，确保在线程睡眠前后都检查wait()触发的条件（防止虚假唤醒）。<br>
+（3）wait()方法必须在多线程共享的对象上调用。</p>
+<p>首先，按照注意事项（1）和（2）的要求，定义一个生产者，往队列里添加元素：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 生产者</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Producer</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Queue&lt;Integer&gt; queue;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> maxSize;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Producer</span><span class="params">(Queue&lt;Integer&gt; queue, <span class="keyword">int</span> maxSize)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.queue = queue;</span><br><span class="line">        <span class="keyword">this</span>.maxSize = maxSize;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 这里为了方便演示做了一个死循环，现实开发中不要这样搞</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">            <span class="comment">//（1）wait()、notify()和notifyAll()必须在synchronized修饰的方法或代码块中使用</span></span><br><span class="line">            <span class="keyword">synchronized</span> (queue)&#123;</span><br><span class="line">                <span class="comment">//（2）在while循环里而不是if语句下使用wait()，确保在线程睡眠前后都检查wait()触发的条件（防止虚假唤醒）</span></span><br><span class="line">                <span class="keyword">while</span> (queue.size() == maxSize)&#123;</span><br><span class="line">                    <span class="keyword">try</span>&#123;</span><br><span class="line">                        System.out.println(<span class="string">&quot;Queue is Full&quot;</span>);</span><br><span class="line">                        <span class="comment">// 生产者线程进入等待状态，在此对象监视器上等待的所有线程（其实只有那个消费者线程）开始争夺锁</span></span><br><span class="line">                        queue.wait();</span><br><span class="line">                    &#125;<span class="keyword">catch</span> (InterruptedException ie)&#123;</span><br><span class="line">                        ie.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                Random random = <span class="keyword">new</span> Random();</span><br><span class="line">                <span class="keyword">int</span> i = random.nextInt();</span><br><span class="line">                System.out.println(<span class="string">&quot;Produce &quot;</span> + i);</span><br><span class="line">                queue.add(i);</span><br><span class="line">                <span class="comment">// 唤醒这个Queue对象的等待池中的所有线程（其实只有那个消费者线程），等待获取对象监视器</span></span><br><span class="line">                queue.notifyAll();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来，再定义一个与之类似的消费者类，除了从队列里移除元素的逻辑之外，整体代码大同小异：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 消费者类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Queue&lt;Integer&gt; queue;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> maxSize;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Consumer</span><span class="params">(Queue&lt;Integer&gt; queue, <span class="keyword">int</span> maxSize)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.queue = queue;</span><br><span class="line">        <span class="keyword">this</span>.maxSize = maxSize;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (queue)&#123;</span><br><span class="line">                <span class="keyword">while</span> (queue.isEmpty())&#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;Queue is Empty&quot;</span>);</span><br><span class="line">                    <span class="keyword">try</span>&#123;</span><br><span class="line">                        queue.wait();</span><br><span class="line">                    &#125;<span class="keyword">catch</span> (InterruptedException ie)&#123;</span><br><span class="line">                        ie.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">int</span> v = queue.remove();</span><br><span class="line">                System.out.println(<span class="string">&quot;Consume &quot;</span> + v);</span><br><span class="line">                queue.notifyAll();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//（3）wait()方法必须在多线程共享的对象上调用</span></span><br><span class="line">    <span class="comment">// 这个队列就是给消费者、生产者两个线程共享的对象</span></span><br><span class="line">    Queue&lt;Integer&gt; queue = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    <span class="keyword">int</span> maxSize = <span class="number">5</span>;</span><br><span class="line">    Producer p = <span class="keyword">new</span> Producer(queue, maxSize);</span><br><span class="line">    Consumer c = <span class="keyword">new</span> Consumer(queue, maxSize);</span><br><span class="line">    Thread pT = <span class="keyword">new</span> Thread(p);</span><br><span class="line">    Thread pC = <span class="keyword">new</span> Thread(c);</span><br><span class="line">    <span class="comment">// 生产者线程启动，获取锁</span></span><br><span class="line">    pT.start();</span><br><span class="line">    <span class="comment">// 消费者线程启动</span></span><br><span class="line">    pC.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>TODO 我们还可以使用Lock接口中的Condition的await、signalAll实现。</p>
+</blockquote>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/03/%E7%94%9F%E4%BA%A7%E6%B6%88%E8%B4%B9%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-输入URL后的全过程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -847,84 +936,6 @@ MySQL的InnoDB存储引擎是基于磁盘存储的，并且是按照页的方式
 
 
   
-    <article id="post-锁" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/24/%E9%94%81/">锁</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/24/%E9%94%81/" class="archive-article-date">
-  	<time datetime="2021-03-24T00:02:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>首先明确锁是数据库系统区别于文件系统的一个重要特性。数据库使用锁是为了支持对共享资源进行并发访问，提供数据的完整性和一致性。<br>
-排它锁，共享锁，表锁，页锁，间隙锁，意向排它锁，意向共享锁，行锁，读锁，写锁，乐观锁，悲观锁，死锁。我不是知道你看到这些概念在想什么，反正我是一脸懵X。。。。。<br>
-下面通过整理学习，不断去了解它，打败它。</p>
-        
-          <a class="article-more-a" href="/2021/03/24/%E9%94%81/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/24/%E9%94%81/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
@@ -1022,15 +1033,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java集合</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1078,11 +1089,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
