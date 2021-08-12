@@ -16,7 +16,7 @@
 <meta property="og:description" content="关于树的一些算法和习题">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-04-25T00:40:53.000Z">
-<meta property="article:modified_time" content="2021-08-04T11:18:00.389Z">
+<meta property="article:modified_time" content="2021-08-12T06:06:42.597Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="数据结构">
 <meta property="article:tag" content="算法">
@@ -176,6 +176,9 @@
 <p>自答：思路差不多想出来，也是利用HashMap去存储，但是自己只想到用HashMap存列，并没有关注行的问题，而且在处理完HashMap，对其进行排序的时候，就出现了重复覆盖的问题，而且排序改用了TreeMap，相当笨重！！！<br>
 参考答案：使用HashMap，但是其键值设置能重复利用，尤其在遍历输出的时候，展现功底，值得学习！！！</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 首先这个 int[] 是自己没想到的！</span></span><br><span class="line">    Map&lt;TreeNode, <span class="keyword">int</span>[]&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> List&lt;List&lt;Integer&gt;&gt; verticalTraversal(TreeNode root) &#123;</span><br><span class="line">        map.put(root, <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">0</span>, <span class="number">0</span>, root.val&#125;);</span><br><span class="line">        dfs(root);</span><br><span class="line">        List&lt;<span class="keyword">int</span>[]&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;(map.values()); <span class="comment">// 技巧1 生成数组</span></span><br><span class="line">        Collections.sort(list, (a, b) -&gt; &#123; <span class="comment">// 技巧2 排序</span></span><br><span class="line">            <span class="keyword">if</span>(a[<span class="number">0</span>] != b[<span class="number">0</span>]) <span class="keyword">return</span> a[<span class="number">0</span>] - b[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">if</span>(a[<span class="number">1</span>] != b[<span class="number">1</span>]) <span class="keyword">return</span> a[<span class="number">1</span>] - b[<span class="number">1</span>];</span><br><span class="line">            <span class="keyword">return</span> a[<span class="number">2</span>] - b[<span class="number">2</span>];            </span><br><span class="line">        &#125;);</span><br><span class="line">        List&lt;List&lt;Integer&gt;&gt; ans = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">int</span> n = list.size();</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ) &#123; <span class="comment">// 这里作者 思路相当清晰！值得学习</span></span><br><span class="line">            <span class="keyword">int</span> j = i;</span><br><span class="line">            List&lt;Integer&gt; tmp = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">            <span class="keyword">while</span>(j &lt; n &amp;&amp; list.get(j)[<span class="number">0</span>] == list.get(i)[<span class="number">0</span>]) &#123;</span><br><span class="line">                tmp.add(list.get(j++)[<span class="number">2</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">            ans.add(tmp);</span><br><span class="line">            i = j;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 这里和自己想的一样，利用递归将元素添加道map，但是自己没想到怎么处理行和列，只关心列</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dfs</span><span class="params">(TreeNode root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(root == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span>[] info = map.get(root);</span><br><span class="line">        <span class="keyword">int</span> col = info[<span class="number">0</span>], row = info[<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span>(root.left != <span class="keyword">null</span>) &#123;</span><br><span class="line">            map.put(root.left, <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;col - <span class="number">1</span>, row + <span class="number">1</span>, root.left.val&#125;);</span><br><span class="line">            dfs(root.left);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(root.right != <span class="keyword">null</span>) &#123;</span><br><span class="line">            map.put(root.right, <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;col + <span class="number">1</span>, row + <span class="number">1</span>, root.right.val&#125;);</span><br><span class="line">            dfs(root.right);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="257-二叉树的所有路径">257. 二叉树的所有路径</h2>
+<p>给定一个二叉树，返回所有从根节点到叶子节点的路径。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">binaryTreePaths</span><span class="params">(TreeNode root)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; ans = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        dfs(root, <span class="string">&quot;&quot;</span>, ans);</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dfs</span><span class="params">(TreeNode root, String path, List&lt;String&gt; ans)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(root != <span class="keyword">null</span>) &#123;</span><br><span class="line">            StringBuilder sb = <span class="keyword">new</span> StringBuilder(path); <span class="comment">// 比String拼接快了大概10倍</span></span><br><span class="line">            sb.append(root.val);</span><br><span class="line">            <span class="keyword">if</span>(root.left == <span class="keyword">null</span> &amp;&amp; root.right == <span class="keyword">null</span>) &#123;</span><br><span class="line">                ans.add(sb.toString());</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                sb.append(<span class="string">&quot;-&gt;&quot;</span>);</span><br><span class="line">                dfs(root.left, sb.toString(), ans);</span><br><span class="line">                dfs(root.right, sb.toString(), ans);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="1104-二叉树寻路">1104. 二叉树寻路</h2>
 <p>在一棵无限的二叉树上，每个节点都有两个子节点，树中的节点 逐行 依次按 “之” 字形进行标记。<br>
 在奇数行（即，第一行、第三行、第五行……）中，按从左到右的顺序进行标记；<br>
@@ -498,11 +501,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -514,11 +517,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目问题</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -534,11 +537,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
