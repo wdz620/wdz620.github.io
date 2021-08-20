@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.gif">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210722155207211.png">
 <meta property="article:published_time" content="2021-03-10T12:01:41.000Z">
-<meta property="article:modified_time" content="2021-07-22T07:57:48.406Z">
+<meta property="article:modified_time" content="2021-08-18T02:57:42.854Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary">
@@ -276,7 +276,8 @@ connect在第二次握手，accept在第三次握手后返回。<br>
 <p>为什么要等待2MSL的时间才关闭？</p>
 <ul>
 <li>为了确保连接的可靠关闭，如果服务端没有收到最后一个ack，那么就会重发FIN</li>
-<li>为了避免段冲重用带来的数据混淆。如果客户端直接进入关闭又用相同的端口向服务端建立一个连接，上一次连接的部分数据在网络上延迟到达客户端，数据就可能发生混淆。</li>
+<li>为了避免段冲重用带来的数据混淆。如果客户端直接进入关闭又用相同的端口向服务端建立一个连接，上一次连接的部分数据在网络上延迟到达客户端，数据就可能发生混淆。<br>
+(换一种说法解释：如果没有TIME_WAIT状态，主动请求关闭链接的一方就会直接进入关闭状态，如果因为网络原因最后一个ACK发生了丢包，服务端就会不断的请求FIN，等待最后一个ACK，链接并没有成功关闭，并且如果此时打开一个新的链接，那么服务器端就会把SYN请求当成ACK，因而发生请求码错误，服务端就会发送RET重置链接。而TIME_WAIT的作用就是让主动请求的一方进入TIME_WAIT状态后等待2MSL时间关闭链接，等待这段时间是为了让客户端收到服务器端的FIN后可以有充分的时间回复ACK，让网络中延迟的FIN／ACK失效)</li>
 </ul>
 <p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.gif" alt="四次挥手"></p>
 <p>为什么建立连接是三次握手，关闭连接确是四次挥手呢？</p>
@@ -598,11 +599,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
