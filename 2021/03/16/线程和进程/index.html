@@ -8,18 +8,20 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>线程和进程 | 无雨无晴</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="本文主要通过对网上各个优秀博主的总结，如有需要参考文末的链接进行探究。  抽象概念(来源百度百科)  进程（Process） 是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。 在当代面向线程设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的描述，进程是程序的实体。 线程（thread） 是操作系统能够进行运算调度的最小单位">
+  <meta name="description" content="竞争是件痛苦的事情，但它可以创造出良好的效果。  抽象概念(来源百度百科)  进程（Process） 是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。 在当代面向线程设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的描述，进程是程序的实体。 线程（thread） 是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是">
 <meta property="og:type" content="article">
 <meta property="og:title" content="线程和进程">
 <meta property="og:url" content="http://example.com/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">
 <meta property="og:site_name" content="无雨无晴">
-<meta property="og:description" content="本文主要通过对网上各个优秀博主的总结，如有需要参考文末的链接进行探究。  抽象概念(来源百度百科)  进程（Process） 是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。 在当代面向线程设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的描述，进程是程序的实体。 线程（thread） 是操作系统能够进行运算调度的最小单位">
+<meta property="og:description" content="竞争是件痛苦的事情，但它可以创造出良好的效果。  抽象概念(来源百度百科)  进程（Process） 是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。 在当代面向线程设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的描述，进程是程序的实体。 线程（thread） 是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210823200359425.png">
 <meta property="article:published_time" content="2021-03-16T06:46:48.000Z">
-<meta property="article:modified_time" content="2021-07-07T01:22:36.497Z">
+<meta property="article:modified_time" content="2021-08-23T12:37:50.430Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210823200359425.png">
   
     <link rel="alternative" href="/atom.xml" title="无雨无晴" type="application/atom+xml">
   
@@ -169,7 +171,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>本文主要通过对网上各个优秀博主的总结，如有需要参考文末的链接进行探究。</p>
+        <p>竞争是件痛苦的事情，但它可以创造出良好的效果。</p>
 <blockquote>
 <p>抽象概念(来源百度百科)</p>
 </blockquote>
@@ -185,8 +187,64 @@
 </blockquote>
 <p>进程：就是指系统中正在运行的一个应用程序；程序一旦运行就是进程；而且进程是系统资源分配和调度的基本单位。</p>
 <p>线程：系统能够进行运算调度的最小单位，也可以说是进程之内独立执行的一个单元执行流。</p>
+<h2 id="进程">进程</h2>
+<p>我们编写的代码只是一个存储在硬盘的静态文件，通过编译后就会生成二进制可执行文件，当我们运行这个可执行文件后，它会被装载到内存中，接着 CPU 会执行程序中的每一条指令，那么这个运行中的程序，就被称为<code>「进程」</code>。</p>
+<p>但是我们知道运行速度 <code>CPU &gt; 内存 &gt; 磁盘</code>，所以说，CPU不会苦苦等待磁盘的数据返回，当进程要从磁盘读取数据时，CPU不需要阻塞等待数据的返回，而是去执行另外的进程。当磁盘数据返回时，CPU会收到<code>中断</code>，此时CPU继续运行这个进程。</p>
+<p>这种<code>多个程序、交替执行</code>的思想，就有 CPU 管理多个进程的初步想法。</p>
+<p>对于一个支持多进程的系统，CPU 会从一个进程快速切换至另一个进程，其间每个进程各运行几十或几百个毫秒。</p>
+<p>虽然单核的 CPU 在某一个瞬间，只能运行一个进程。但在 1 秒钟期间，它可能会运行多个进程，这样就产生<code>并行的错觉</code>，实际上这是<code>并发</code>。</p>
+<blockquote>
+<p>并发：同一时间只有一个进程在运行。<br>
+并行：同一时间不止一个进程在运行。</p>
+</blockquote>
+<h3 id="进程的状态">进程的状态</h3>
+<p>创建状态、就绪状态、运行状态、阻塞状态、结束状态<br>
+运行和就绪之间的切换通过<code>调度程序</code>选择</p>
+<blockquote>
+<p>进程调度：FIFO、RR、最高优先级、多级反馈</p>
+</blockquote>
+<p>另外，还有一个状态叫<code>挂起状态</code>，它表示进程没有占有物理内存空间。这跟阻塞状态是不一样，阻塞状态是等待某个事件的返回。<br>
+挂起状态可以分为两种：</p>
+<ul>
+<li>阻塞挂起状态：进程在外存（硬盘）并等待某个事件的出现；</li>
+<li>就绪挂起状态：进程在外存（硬盘），但只要进入内存，即刻立刻运行；</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210823200359425.png" alt="image-20210823200359425"></p>
+<h2 id="进程的控制结构">进程的控制结构</h2>
+<p>在操作系统中，是用<code>进程控制块（process control block，PCB）</code>数据结构来描述进程的。</p>
+<p><code>PCB 是进程存在的唯一标识</code>，这意味着一个进程的存在，必然会有一个 PCB，如果进程消失了，那么 PCB 也会随之消失。</p>
+<h4 id="PCB包含">PCB包含</h4>
+<p>1、进程描述信息：</p>
+<ul>
+<li>进程标识符：标识各个进程，每个进程都有一个并且唯一的标识符；</li>
+<li>用户标识符：进程归属的用户，用户标识符主要为共享和保护服务；</li>
+</ul>
+<p>2、进程控制和管理信息：</p>
+<ul>
+<li>进程当前状态，如 new、ready、running、waiting 或 blocked 等；</li>
+<li>进程优先级：进程抢占 CPU 时的优先级；</li>
+</ul>
+<p>3、资源分配清单：</p>
+<ul>
+<li>有关内存地址空间或虚拟地址空间的信息，所打开文件的列表和所使用的 I/O 设备信息。</li>
+</ul>
+<p>4、CPU 相关信息：</p>
+<ul>
+<li>CPU 中各个寄存器的值，当进程被切换时，CPU 的状态信息都会被保存在相应的 PCB 中，以便进程重新执行时，能从断点处继续执行。</li>
+</ul>
+<h2 id="进程的上下文切换">进程的上下文切换</h2>
+<p>各个进程之间是共享 CPU 资源的，在不同的时候进程之间需要切换，让不同的进程可以在 CPU 执行，那么这个<code>一个进程切换到另一个进程运行，称为进程的上下文切换。</code></p>
+<p>进程是由内核管理和调度的，所以进程的切换只能发生在<code>内核态</code>。所以，<strong>进程的上下文切换不仅包含了虚拟内存、栈、全局变量等用户空间的资源，还包括了内核堆栈、寄存器等内核空间的资源。</strong></p>
+<p>进程切换场景：</p>
+<ul>
+<li>为了保证所有进程可以得到公平调度，CPU 时间被划分为一段段的时间片，这些时间片再被轮流分配给各个进程。这样，当某个进程的时间片耗尽了，就会被系统挂起，切换到其它正在等待 CPU 的进程运行；</li>
+<li>进程在系统资源不足（比如内存不足）时，要等到资源满足后才可以运行，这个时候进程也会被挂起，并由系统调度其他进程运行；</li>
+<li>当进程通过睡眠函数 sleep 这样的方法将自己主动挂起时，自然也会重新调度；</li>
+<li>当有优先级更高的进程运行时，为了保证高优先级进程的运行，当前进程会被挂起，由高优先级进程来运行；</li>
+<li>发生硬件中断时，CPU 上的进程会被中断挂起，转而执行内核中的中断服务程序；</li>
+</ul>
 <hr>
-<p>一个比较生动的例子：<a target="_blank" rel="noopener" href="https://www.sohu.com/a/321408502_663371">https://www.sohu.com/a/321408502_663371</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.sohu.com/a/321408502_663371">一个比较生动的例子</a></p>
 <p>首先<code>计算机的核心是CPU</code>，它承担了所有的计算任务。就像一座工厂，时刻在运行。</p>
 <p>假设工厂的电力是有限的，一次只能给一个车间进行使用，也就是说，一个车间开始工作的时候，其他车间必须进行停工等待。含义就是<code>单个CPU一次只能运行一个任务</code>。</p>
 <p>进程就好比工厂的车间，它代表CPU所能处理的单个任务，任意时刻，<code>CPU总是运行一个进程，其他进程处于非运行状态</code>。</p>
@@ -198,15 +256,34 @@
 <p>还有些房间，可以同时容纳n个人，比如厨房。也就是说，如果人数大于n，多出来的人只能在外面等着。这好比某些内存区域，只能供给<code>固定数目</code>的线程使用。</p>
 <p>这时的解决方法，就是在门口挂n把钥匙。进去的人就取一把钥匙，出来时再把钥匙挂回原处。后到的人发现钥匙架空了，就知道必须在门口排队等着了。这种做法叫做&quot;<code>信号量</code>&quot;（Semaphore），用来保证多个线程不会互相冲突。</p>
 <p>上述例子的总结：</p>
-<p>CPU：一个工厂</p>
-<p>进程：一个车间</p>
-<p>CPU和进程：单个CPU只能运行单个进程</p>
-<p>线程：车间中的工人</p>
-<p>进程和线程：一个进程可以包括多个线程</p>
-<p>线程间内存共享：车间的空间是工人们共享的，一个进程的内存空间是共享的，每个线程都可以使用这些共享内存。</p>
-<p>内存安全：每个车间的容量大小不同，有些最多只能一个人去使用。车间人满了，其他人就不能进入了。一个线程使用某些共享内存时，其他线程必须等待它结束，才能使用该内存。</p>
-<p>互斥锁：一个防止他人进入的简单方法，就是在门口加一把锁头，先到达的人锁上门，后面来的看到有锁，只能排队等待。这就叫做互斥锁，防止多个线程同时读写某一块内存区域。</p>
-<p>信号量：在门口挂n个钥匙，进去的人拿一把钥匙，出来的时候归还钥匙，后来的人如果看到此时没有钥匙，就要等待里面的人出来。</p>
+<ul>
+<li>CPU：一个工厂</li>
+<li>进程：一个车间</li>
+<li>CPU和进程：单个CPU只能运行单个进程</li>
+<li>线程：车间中的工人</li>
+<li>进程和线程：一个进程可以包括多个线程</li>
+<li>线程间内存共享：车间的空间是工人们共享的，一个进程的内存空间是共享的，每个线程都可以使用这些共享内存。</li>
+<li>内存安全：每个车间的容量大小不同，有些最多只能一个人去使用。车间人满了，其他人就不能进入了。一个线程使用某些共享内存时，其他线程必须等待它结束，才能使用该内存。</li>
+<li>互斥锁：一个防止他人进入的简单方法，就是在门口加一把锁头，先到达的人锁上门，后面来的看到有锁，只能排队等待。这就叫做互斥锁，防止多个线程同时读写某一块内存区域。</li>
+<li>信号量：在门口挂n个钥匙，进去的人拿一把钥匙，出来的时候归还钥匙，后来的人如果看到此时没有钥匙，就要等待里面的人出来。</li>
+</ul>
+<h1>线程</h1>
+<p>线程是进程当中的一条执行流程</p>
+<h2 id="线程优缺点">线程优缺点</h2>
+<ul>
+<li>优点：
+<ul>
+<li>一个进程中可以同时存在多个线程</li>
+<li>各个线程之间可以并发执行</li>
+<li>各个线程之间可以共享地址空间和文件等资源</li>
+</ul>
+</li>
+<li>缺点：
+<ul>
+<li>当进程中的一个线程奔溃时，会导致其所属进程的所有线程奔溃</li>
+</ul>
+</li>
+</ul>
 <hr>
 <blockquote>
 <p>进程和线程的区别</p>
@@ -508,11 +585,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
