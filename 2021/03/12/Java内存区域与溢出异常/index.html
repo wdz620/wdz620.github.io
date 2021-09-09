@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313082249695.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210313085454760.png">
 <meta property="article:published_time" content="2021-03-12T11:39:00.000Z">
-<meta property="article:modified_time" content="2021-09-06T08:31:41.201Z">
+<meta property="article:modified_time" content="2021-09-06T11:11:18.450Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -358,6 +358,13 @@ TLAB（本地线程缓存池），TLAB的好处就是防止不同线程创建对
 <p>方法区溢出也是一种常见的内存溢出异常，一个类如果要被垃圾收集器回收，判定条件是很苛刻的。在经常动态生成大量Class的应用中，要特别注意这点。<br>
 <a target="_blank" rel="noopener" href="https://blog.csdn.net/huanqingdong/article/details/103931041">https://blog.csdn.net/huanqingdong/article/details/103931041</a></p>
 <blockquote>
+<p>堆和栈的在分析比较</p>
+</blockquote>
+<p>程序内存分为栈内存和堆内存。<br>
+一些基本类型的变量和对象的引用变量都是在栈内存中分配。<br>
+堆内存用于存放由new创建的对象和数组。<br>
+创建出来的数组和对象在没有引用变量（栈地址）指向它的时候，才变成垃圾，不能再被系统使用，但是仍然占着内存，在随后的一个不确定的时间被垃圾回收器释放掉。这个也是java比较占内存的主要原因，实际上，栈中的变量指向堆内存中的变量，这就是Java中的指针!</p>
+<blockquote>
 <p>请你说一下OOM可能发生在哪，怎么查看，怎么调优</p>
 </blockquote>
 <p>最常见的OOM情况有以下三种：</p>
@@ -655,14 +662,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
@@ -671,11 +670,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Redis</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
