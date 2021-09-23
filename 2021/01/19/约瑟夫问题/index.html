@@ -16,7 +16,7 @@
 <meta property="og:description" content="思想  设编号为1，2，……n得n个人围坐一圈，约定编号为k（k大于等于1并且小于等于n）的人从1开始报数，数到m的那个人出列。它的下一位继续从1开始报数，数到m的人出列，依次类推，直到所有人都出列为止。 解决方法：  1、数组 2、链表 3、递归 4、迭代">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-01-19T03:06:13.000Z">
-<meta property="article:modified_time" content="2021-03-10T12:03:45.259Z">
+<meta property="article:modified_time" content="2021-09-23T12:36:26.378Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -181,6 +181,10 @@
 <li>4、迭代</li>
 </ul>
 <a id="more"></a>
+<h3 id="笔试题目">笔试题目</h3>
+<p>有n个人围成一圈，顺序编号。从第1个人开始报数（从1-3报数），凡报到3的人退出圈子，问最后留下的是原来第几号的那位？</p>
+<p>输入：10  输出：4</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">method</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> num = n; <span class="comment">// 记录剩余数个数</span></span><br><span class="line">    <span class="keyword">int</span>[] arr = <span class="keyword">new</span> <span class="keyword">int</span>[n]; <span class="comment">// 标记剩余数的位置 0 代表存活,初始全部存活   1 代表删除</span></span><br><span class="line">    <span class="keyword">int</span> flag = <span class="number">0</span>; <span class="comment">// 标记报名，到三降0</span></span><br><span class="line">    <span class="keyword">int</span> del = <span class="number">3</span>; <span class="comment">// 扩展字段，将报三的删除，可以任意定义</span></span><br><span class="line">    <span class="keyword">while</span> (num != <span class="number">1</span>) &#123; <span class="comment">// 当剩余数量为1时，停止循环</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (arr[i] == <span class="number">0</span>) &#123; <span class="comment">// 判断当前元素是否存活</span></span><br><span class="line">                flag++;  <span class="comment">// 元素存活，报名数加一;每次for循环后，报名数会接着下次循环继续增长，约瑟夫环循环</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (flag == del) &#123; <span class="comment">//当报名数为三时</span></span><br><span class="line">                arr[i] = <span class="number">1</span>; <span class="comment">// 将当前元素标记为1，删除操作</span></span><br><span class="line">                flag = <span class="number">0</span>; <span class="comment">// 报名数降为0</span></span><br><span class="line">                num--; <span class="comment">// 总人数减去1</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (arr[i] == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> i + <span class="number">1</span>; <span class="comment">// 输出最后剩下的人</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>; <span class="comment">// 没有人剩下</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>模拟题目 JZ-46</p>
 </blockquote>
@@ -473,11 +477,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java并发</a>
               </li>
              
               <li class="article-tag-list-item">
