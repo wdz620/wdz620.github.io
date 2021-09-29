@@ -23,7 +23,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/image-20210328192146510.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wdz620/PicGo/master/img/20200901220051826.png">
 <meta property="article:published_time" content="2021-03-28T11:43:13.000Z">
-<meta property="article:modified_time" content="2021-09-05T11:03:52.876Z">
+<meta property="article:modified_time" content="2021-09-29T12:57:35.848Z">
 <meta property="article:author" content="一直默默潜行的修行者">
 <meta property="article:tag" content="创建文章">
 <meta name="twitter:card" content="summary">
@@ -450,6 +450,12 @@ CMS主要关注低延迟，因而采用并发方式，清理垃圾时，应用�
 </blockquote>
 <h1>数据库</h1>
 <h2 id="线上环境RR隔离级别下可能出现的问题？">线上环境RR隔离级别下可能出现的问题？</h2>
+<h2 id="Insert-into-select请慎用">Insert into select请慎用</h2>
+<p>使用insert into tablA select * from tableB语句时，一定要确保tableB后面的where，order或者其他条件，都需要有对应的索引，来避免出现tableB全部记录被锁定的情况。<br>
+备份操作更好的方式是dump出sql,改个表名，然后source，这样线上直接的sql操作不建议。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1622847">参考链接</a></p>
+</blockquote>
 <h2 id="一个事务中，查询2次，更改9次，连接数据库多少次？">一个事务中，查询2次，更改9次，连接数据库多少次？</h2>
 <p>DB连接池必须要确保某一时间内一个connection只能分配给一个线程。不同conection的事务是相互独立的。<br>
 事务具有原子性，此时要求对数据库的操作符合原子操作：要么不做，要么全做。<br>
@@ -472,6 +478,16 @@ char(10) 10位固定字符串，不足补空格 最多10个字符<br>
 varchar(10) 10位可变字符串，不足补空格 最多10个字符<br>
 char(10)表示存储定长的10个字符，不足10个就用空格补齐，占用更多的存储空间<br>
 varchar(10)表示存储10个变长的字符，存储多少个就是多少个，空格也按一个字符存储，这一点是和char(10)的空格不同的，char(10)的空格表示占位不算一个字符</p>
+<h2 id="MySQL-中-datetime-和-timestamp-的区别与选择">MySQL 中 datetime 和 timestamp 的区别与选择</h2>
+<h4 id="1、占用空间">1、占用空间</h4>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">类型                占据字节         表示形式</span><br><span class="line">datetime                8 字节              yyyy-mm-dd hh:mm:ss</span><br><span class="line">timestamp               4 字节              yyyy-mm-dd hh:mm:ss</span><br></pre></td></tr></table></figure>
+<h4 id="2、表示范围">2、表示范围</h4>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">类型                表示范围</span><br><span class="line">datetime                &#39;1000-01-01 00:00:00.000000&#39; to &#39;9999-12-31 23:59:59.999999&#39;</span><br><span class="line">timestamp               &#39;1970-01-01 00:00:01.000000&#39; to &#39;2038-01-19 03:14:07.999999&#39;</span><br></pre></td></tr></table></figure>
+<p><code>timestamp</code>即为时间戳。<br>
+对于某些时间的计算，如果是以<code>datetime</code>的形式会比较困难，假如我是 1994-1-20 06:06:06 出生，现在的时间是 2016-10-1 20:04:50 ，那么要计算我活了多少秒钟用<code>datetime</code>还需要函数进行转换，但是<code>timestamp</code>直接相减就行。</p>
+<blockquote>
+<p>还有一个区别就是如果存进去的是NULL，timestamp会自动储存当前时间，而 datetime会储存 NULL。</p>
+</blockquote>
 <h2 id="三大范式">三大范式</h2>
 <p>第一范式：每个列都不可以再拆分。<br>
 第二范式：在第一范式的基础上，非主键列完全依赖于主键，而不能是依赖于主键的一部分。<br>
